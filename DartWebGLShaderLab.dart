@@ -93,7 +93,7 @@ class DartWebGLShaderLab {
     var posBuffer = gl.createBuffer();
     gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, posBuffer);
 
-    Float32Array vertices = new Float32Array.from([ -1, -1, 0, 1, -1, 0, -1, 1, 0, 1, 1, 0 ]);
+    Float32Array vertices = new Float32Array.fromList([ -1, -1, 0, 1, -1, 0, -1, 1, 0, 1, 1, 0 ]);
 
     var aPosLoc = gl.getAttribLocation(prog_advance, "aPos");
     gl.enableVertexAttribArray(aPosLoc);
@@ -101,7 +101,7 @@ class DartWebGLShaderLab {
     var aTexLoc = gl.getAttribLocation(prog_advance, "aTexCoord");
     gl.enableVertexAttribArray(aTexLoc);
 
-    Float32Array texCoords = new Float32Array.from([ 0, 0, 1, 0, 0, 1, 1, 1 ]);
+    Float32Array texCoords = new Float32Array.fromList([ 0, 0, 1, 0, 0, 1, 1, 1 ]);
 
     var texCoordOffset = vertices.byteLength;
     
@@ -132,7 +132,7 @@ class DartWebGLShaderLab {
      * if (Math.random() > density) pixels.push(0, 0, 0, 0); else pixels.push(255, 0, 0, 0);
      */
 
-    var rawData = new Uint8Array.from(noisepixels);
+    var rawData = new Uint8Array.fromList(noisepixels);
     texture_main_l = gl.createTexture();
     gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, texture_main_l);
     gl.pixelStorei(WebGLRenderingContext.UNPACK_ALIGNMENT, 1);
@@ -147,8 +147,8 @@ class DartWebGLShaderLab {
     gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_MIN_FILTER, WebGLRenderingContext.NEAREST);
     gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_MAG_FILTER, WebGLRenderingContext.NEAREST);
 
-    rawData = new Uint8Array.from(noisepixels);
-    rawData = new Uint8Array.from(noisepixels);
+    rawData = new Uint8Array.fromList(noisepixels);
+    rawData = new Uint8Array.fromList(noisepixels);
     texture_main2_l = gl.createTexture();
     gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, texture_main2_l);
     gl.pixelStorei(WebGLRenderingContext.UNPACK_ALIGNMENT, 1);
@@ -163,7 +163,7 @@ class DartWebGLShaderLab {
     gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_MIN_FILTER, WebGLRenderingContext.NEAREST);
     gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_MAG_FILTER, WebGLRenderingContext.NEAREST);
 
-    rawData = new Uint8Array.from(pixels);
+    rawData = new Uint8Array.fromList(pixels);
     texture_helper = gl.createTexture();
     gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, texture_helper);
     gl.pixelStorei(WebGLRenderingContext.UNPACK_ALIGNMENT, 1);
@@ -171,7 +171,7 @@ class DartWebGLShaderLab {
     gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_MIN_FILTER, WebGLRenderingContext.LINEAR);
     gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_MAG_FILTER, WebGLRenderingContext.LINEAR);
 
-    rawData = new Uint8Array.from(pixels);
+    rawData = new Uint8Array.fromList(pixels);
     texture_blur = gl.createTexture();
     gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, texture_blur);
     gl.pixelStorei(WebGLRenderingContext.UNPACK_ALIGNMENT, 1);
@@ -179,7 +179,7 @@ class DartWebGLShaderLab {
     gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_MIN_FILTER, WebGLRenderingContext.LINEAR);
     gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_MAG_FILTER, WebGLRenderingContext.LINEAR);
 
-    rawData = new Uint8Array.from(noisepixels);
+    rawData = new Uint8Array.fromList(noisepixels);
     texture_noise_l = gl.createTexture();
     gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, texture_noise_l);
     gl.pixelStorei(WebGLRenderingContext.UNPACK_ALIGNMENT, 1);
@@ -333,7 +333,7 @@ class DartWebGLShaderLab {
   }
   
   anim(int i) {
-    document.window.webkitRequestAnimationFrame(anim, c);
+    document.window.webkitRequestAnimationFrame(anim);
     if (!halted) { 
       
       advance(); 
