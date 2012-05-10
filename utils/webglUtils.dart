@@ -84,7 +84,7 @@ void setRectangle(gl, x, y, width, height) {
                   x1, y2,
                   x2, y1,
                   x2, y2];
-  gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, new Float32Array.from(vertices), WebGLRenderingContext.STATIC_DRAW);
+  gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, new Float32Array.fromList(vertices), WebGLRenderingContext.STATIC_DRAW);
 }
 
 int randomInt(int range) {
