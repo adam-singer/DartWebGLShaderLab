@@ -1,414 +1,445 @@
 function Isolate() {}
 init();
 
+var $$ = {};
 var $ = Isolate.$isolateProperties;
-Isolate.$defineClass("ExceptionImplementation", "Object", ["_lib_msg"], {
+$$.ExceptionImplementation = {"":
+ ["_msg"],
+ super: "Object",
  toString$0: function() {
-  if (this._lib_msg === (void 0)) {
-    var t0 = 'Exception';
-  } else {
-    t0 = 'Exception: ' + $.stringToString(this._lib_msg);
-  }
-  return t0;
- },
-});
+  var t1 = this._msg;
+  return t1 == null ? 'Exception' : 'Exception: ' + $.S(t1);
+ }
+};
 
-Isolate.$defineClass("HashMapImplementation", "Object", ["_lib_numberOfDeleted", "_lib_numberOfEntries", "_lib_loadLimit", "_lib_values", "_lib_keys?"], {
+$$.HashMapImplementation = {"":
+ ["_numberOfDeleted", "_numberOfEntries", "_loadLimit", "_values", "_keys?"],
+ super: "Object",
  toString$0: function() {
   return $.mapToString(this);
  },
  containsKey$1: function(key) {
-  return !$.eqB(this._lib_probeForLookup$1(key), -1);
+  return !$.eqB(this._probeForLookup$1(key), -1);
  },
  forEach$1: function(f) {
-  var length$ = $.get$length(this._lib_keys);
-  if (typeof length$ !== 'number') return this.forEach$1$bailout(f, 1, length$);
-  for (var i = 0; i < length$; i = i + 1) {
-    var key = $.index(this._lib_keys, i);
-    if (key !== (void 0) && key !== $.CTC7) {
-      f.$call$2(key, $.index(this._lib_values, i));
-    }
+  var length$ = $.get$length(this._keys);
+  if (typeof length$ !== 'number') return this.forEach$1$bailout(1, f, length$);
+  for (var i = 0; i < length$; ++i) {
+    var key = $.index(this._keys, i);
+    !(key == null) && !(key === $.CTC5) && f.$call$2(key, $.index(this._values, i));
   }
  },
- forEach$1$bailout: function(f, state, env0) {
-  switch (state) {
-    case 1:
-      length$ = env0;
-      break;
-  }
-  switch (state) {
-    case 0:
-      var length$ = $.get$length(this._lib_keys);
-    case 1:
-      state = 0;
-      var i = 0;
-      L0: while (true) {
-        if (!$.ltB(i, length$)) break L0;
-        var key = $.index(this._lib_keys, i);
-        if (key !== (void 0) && key !== $.CTC7) {
-          f.$call$2(key, $.index(this._lib_values, i));
-        }
-        i = i + 1;
-      }
+ forEach$1$bailout: function(state, f, length$) {
+  for (var i = 0; $.ltB(i, length$); ++i) {
+    var key = $.index(this._keys, i);
+    !(key == null) && !(key === $.CTC5) && f.$call$2(key, $.index(this._values, i));
   }
  },
  get$length: function() {
-  return this._lib_numberOfEntries;
+  return this._numberOfEntries;
  },
  isEmpty$0: function() {
-  return $.eq(this._lib_numberOfEntries, 0);
+  return $.eq(this._numberOfEntries, 0);
  },
  operator$index$1: function(key) {
-  var index = this._lib_probeForLookup$1(key);
-  if ($.ltB(index, 0)) {
-    return;
+  var index = this._probeForLookup$1(key);
+  if (typeof index !== 'number') return this.operator$index$1$bailout(1, index, 0);
+  if (index < 0) return;
+  var t1 = this._values;
+  if (typeof t1 !== 'string' && (typeof t1 !== 'object' || t1 === null || (t1.constructor !== Array && !t1.is$JavaScriptIndexingBehavior()))) return this.operator$index$1$bailout(2, t1, index);
+  if (index !== (index | 0)) throw $.iae(index);
+  var t2 = t1.length;
+  if (index < 0 || index >= t2) throw $.ioore(index);
+  return t1[index];
+ },
+ operator$index$1$bailout: function(state, env0, env1) {
+  switch (state) {
+    case 1:
+      index = env0;
+      break;
+    case 2:
+      t1 = env0;
+      index = env1;
+      break;
   }
-  return $.index(this._lib_values, index);
+  switch (state) {
+    case 0:
+      var index = this._probeForLookup$1(key);
+    case 1:
+      state = 0;
+      if ($.ltB(index, 0)) return;
+      var t1 = this._values;
+    case 2:
+      state = 0;
+      return $.index(t1, index);
+  }
  },
  operator$indexSet$2: function(key, value) {
-  this._lib_ensureCapacity$0();
-  var index = this._lib_probeForAdding$1(key);
-  if ($.index(this._lib_keys, index) === (void 0) || $.index(this._lib_keys, index) === $.CTC7) {
-    this._lib_numberOfEntries = $.add(this._lib_numberOfEntries, 1);
-  }
-  $.indexSet(this._lib_keys, index, key);
-  $.indexSet(this._lib_values, index, value);
+  this._ensureCapacity$0();
+  var index = this._probeForAdding$1(key);
+  var t1 = $.index(this._keys, index);
+  if (!(t1 == null)) {
+    t1 = $.index(this._keys, index);
+    t1 = t1 === $.CTC5;
+  } else t1 = true;
+  if (t1) this._numberOfEntries = $.add(this._numberOfEntries, 1);
+  $.indexSet(this._keys, index, key);
+  $.indexSet(this._values, index, value);
  },
  clear$0: function() {
-  this._lib_numberOfEntries = 0;
-  this._lib_numberOfDeleted = 0;
-  var length$ = $.get$length(this._lib_keys);
+  this._numberOfEntries = 0;
+  this._numberOfDeleted = 0;
+  var length$ = $.get$length(this._keys);
   if (typeof length$ !== 'number') return this.clear$0$bailout(1, length$);
-  for (var i = 0; i < length$; i = i + 1) {
-    $.indexSet(this._lib_keys, i, (void 0));
-    $.indexSet(this._lib_values, i, (void 0));
+  for (var i = 0; i < length$; ++i) {
+    $.indexSet(this._keys, i, null);
+    $.indexSet(this._values, i, null);
   }
  },
- clear$0$bailout: function(state, env0) {
-  switch (state) {
-    case 1:
-      length$ = env0;
-      break;
-  }
-  switch (state) {
-    case 0:
-      this._lib_numberOfEntries = 0;
-      this._lib_numberOfDeleted = 0;
-      var length$ = $.get$length(this._lib_keys);
-    case 1:
-      state = 0;
-      var i = 0;
-      L0: while (true) {
-        if (!$.ltB(i, length$)) break L0;
-        $.indexSet(this._lib_keys, i, (void 0));
-        $.indexSet(this._lib_values, i, (void 0));
-        i = i + 1;
-      }
+ clear$0$bailout: function(state, length$) {
+  for (var i = 0; $.ltB(i, length$); ++i) {
+    $.indexSet(this._keys, i, null);
+    $.indexSet(this._values, i, null);
   }
  },
- _lib_grow$1: function(newCapacity) {
-  $.assert($._isPowerOfTwo(newCapacity));
-  var capacity = $.get$length(this._lib_keys);
-  if (typeof capacity !== 'number') return this._lib_grow$1$bailout(newCapacity, 1, capacity);
-  this._lib_loadLimit = $._computeLoadLimit(newCapacity);
-  var oldKeys = this._lib_keys;
-  if (typeof oldKeys !== 'string' && (typeof oldKeys !== 'object'||oldKeys.constructor !== Array)) return this._lib_grow$1$bailout(newCapacity, 2, capacity, oldKeys);
-  var oldValues = this._lib_values;
-  if (typeof oldValues !== 'string' && (typeof oldValues !== 'object'||oldValues.constructor !== Array)) return this._lib_grow$1$bailout(newCapacity, 3, capacity, oldKeys, oldValues);
-  this._lib_keys = $.List(newCapacity);
-  var t0 = $.List(newCapacity);
-  $.setRuntimeTypeInfo(t0, ({E: 'V'}));
-  this._lib_values = t0;
-  for (var i = 0; i < capacity; i = i + 1) {
-    var t1 = oldKeys.length;
+ _grow$1: function(newCapacity) {
+  var capacity = $.get$length(this._keys);
+  if (typeof capacity !== 'number') return this._grow$1$bailout(1, newCapacity, capacity, 0, 0);
+  this._loadLimit = $._computeLoadLimit(newCapacity);
+  var oldKeys = this._keys;
+  if (typeof oldKeys !== 'string' && (typeof oldKeys !== 'object' || oldKeys === null || (oldKeys.constructor !== Array && !oldKeys.is$JavaScriptIndexingBehavior()))) return this._grow$1$bailout(2, newCapacity, oldKeys, capacity, 0);
+  var oldValues = this._values;
+  if (typeof oldValues !== 'string' && (typeof oldValues !== 'object' || oldValues === null || (oldValues.constructor !== Array && !oldValues.is$JavaScriptIndexingBehavior()))) return this._grow$1$bailout(3, newCapacity, oldKeys, oldValues, capacity);
+  this._keys = $.List(newCapacity);
+  var t1 = $.List(newCapacity);
+  $.setRuntimeTypeInfo(t1, ({E: 'V'}));
+  this._values = t1;
+  for (var i = 0; i < capacity; ++i) {
+    t1 = oldKeys.length;
     if (i < 0 || i >= t1) throw $.ioore(i);
     var t2 = oldKeys[i];
-    if (t2 === (void 0) || t2 === $.CTC7) {
-      continue;
-    }
-    var t3 = oldValues.length;
-    if (i < 0 || i >= t3) throw $.ioore(i);
-    var t4 = oldValues[i];
-    var newIndex = this._lib_probeForAdding$1(t2);
-    $.indexSet(this._lib_keys, newIndex, t2);
-    $.indexSet(this._lib_values, newIndex, t4);
+    if (t2 == null || t2 === $.CTC5) continue;
+    t1 = oldValues.length;
+    if (i < 0 || i >= t1) throw $.ioore(i);
+    var t3 = oldValues[i];
+    var newIndex = this._probeForAdding$1(t2);
+    $.indexSet(this._keys, newIndex, t2);
+    $.indexSet(this._values, newIndex, t3);
   }
-  this._lib_numberOfDeleted = 0;
+  this._numberOfDeleted = 0;
  },
- _lib_grow$1$bailout: function(newCapacity, state, env0, env1, env2) {
+ _grow$1$bailout: function(state, env0, env1, env2, env3) {
   switch (state) {
     case 1:
-      capacity = env0;
+      var newCapacity = env0;
+      capacity = env1;
       break;
     case 2:
-      capacity = env0;
+      newCapacity = env0;
       oldKeys = env1;
+      capacity = env2;
       break;
     case 3:
-      capacity = env0;
+      newCapacity = env0;
       oldKeys = env1;
       oldValues = env2;
+      capacity = env3;
       break;
   }
   switch (state) {
     case 0:
-      $.assert($._isPowerOfTwo(newCapacity));
-      var capacity = $.get$length(this._lib_keys);
+      var capacity = $.get$length(this._keys);
     case 1:
       state = 0;
-      this._lib_loadLimit = $._computeLoadLimit(newCapacity);
-      var oldKeys = this._lib_keys;
+      this._loadLimit = $._computeLoadLimit(newCapacity);
+      var oldKeys = this._keys;
     case 2:
       state = 0;
-      var oldValues = this._lib_values;
+      var oldValues = this._values;
     case 3:
       state = 0;
-      this._lib_keys = $.List(newCapacity);
-      var t0 = $.List(newCapacity);
-      $.setRuntimeTypeInfo(t0, ({E: 'V'}));
-      this._lib_values = t0;
-      var i = 0;
-      L0: while (true) {
-        if (!$.ltB(i, capacity)) break L0;
-        c$0:{
-          var key = $.index(oldKeys, i);
-          if (key === (void 0) || key === $.CTC7) {
-            break c$0;
-          }
-          var value = $.index(oldValues, i);
-          var newIndex = this._lib_probeForAdding$1(key);
-          $.indexSet(this._lib_keys, newIndex, key);
-          $.indexSet(this._lib_values, newIndex, value);
-        }
-        i = i + 1;
+      this._keys = $.List(newCapacity);
+      var t1 = $.List(newCapacity);
+      $.setRuntimeTypeInfo(t1, ({E: 'V'}));
+      this._values = t1;
+      for (var i = 0; $.ltB(i, capacity); ++i) {
+        var key = $.index(oldKeys, i);
+        if (key == null || key === $.CTC5) continue;
+        var value = $.index(oldValues, i);
+        var newIndex = this._probeForAdding$1(key);
+        $.indexSet(this._keys, newIndex, key);
+        $.indexSet(this._values, newIndex, value);
       }
-      this._lib_numberOfDeleted = 0;
+      this._numberOfDeleted = 0;
   }
  },
- _lib_ensureCapacity$0: function() {
-  var newNumberOfEntries = $.add(this._lib_numberOfEntries, 1);
-  if ($.geB(newNumberOfEntries, this._lib_loadLimit)) {
-    this._lib_grow$1($.mul($.get$length(this._lib_keys), 2));
+ _ensureCapacity$0: function() {
+  var newNumberOfEntries = $.add(this._numberOfEntries, 1);
+  if ($.geB(newNumberOfEntries, this._loadLimit)) {
+    this._grow$1($.mul($.get$length(this._keys), 2));
     return;
   }
-  var numberOfFree = $.sub($.sub($.get$length(this._lib_keys), newNumberOfEntries), this._lib_numberOfDeleted);
-  if ($.gtB(this._lib_numberOfDeleted, numberOfFree)) {
-    this._lib_grow$1($.get$length(this._lib_keys));
+  var numberOfFree = $.sub($.sub($.get$length(this._keys), newNumberOfEntries), this._numberOfDeleted);
+  $.gtB(this._numberOfDeleted, numberOfFree) && this._grow$1($.get$length(this._keys));
+ },
+ _probeForLookup$1: function(key) {
+  var hash = $._firstProbe($.hashCode(key), $.get$length(this._keys));
+  for (var numberOfProbes = 1; true; ) {
+    var existingKey = $.index(this._keys, hash);
+    if (existingKey == null) return -1;
+    if ($.eqB(existingKey, key)) return hash;
+    var numberOfProbes0 = numberOfProbes + 1;
+    hash = $._nextProbe(hash, numberOfProbes, $.get$length(this._keys));
+    numberOfProbes = numberOfProbes0;
   }
  },
- _lib_probeForLookup$1: function(key) {
-  for (var hash = $._firstProbe($.hashCode(key), $.get$length(this._lib_keys)), numberOfProbes = 1; true; hash = hash0, numberOfProbes = numberOfProbes0) {
-    numberOfProbes0 = numberOfProbes;
-    hash0 = hash;
-    var existingKey = $.index(this._lib_keys, hash);
-    if (existingKey === (void 0)) {
-      return -1;
-    }
-    if ($.eqB(existingKey, key)) {
-      return hash;
-    }
-    var numberOfProbes1 = numberOfProbes + 1;
-    var hash1 = $._nextProbe(hash, numberOfProbes, $.get$length(this._lib_keys));
-    numberOfProbes0 = numberOfProbes1;
-    hash0 = hash1;
-  }
- },
- _lib_probeForAdding$1: function(key) {
-  var hash = $._firstProbe($.hashCode(key), $.get$length(this._lib_keys));
-  if (hash !== (hash | 0)) return this._lib_probeForAdding$1$bailout(key, 1, hash);
-  for (var numberOfProbes = 1, hash0 = hash, insertionIndex = -1; true; numberOfProbes = numberOfProbes0, hash0 = hash1, insertionIndex = insertionIndex0) {
-    numberOfProbes0 = numberOfProbes;
-    hash1 = hash0;
-    insertionIndex0 = insertionIndex;
-    var existingKey = $.index(this._lib_keys, hash0);
-    if (existingKey === (void 0)) {
-      if ($.ltB(insertionIndex, 0)) {
-        return hash0;
-      }
+ _probeForAdding$1: function(key) {
+  var hash = $._firstProbe($.hashCode(key), $.get$length(this._keys));
+  if (hash !== (hash | 0)) return this._probeForAdding$1$bailout(1, key, hash, 0, 0, 0);
+  for (var numberOfProbes = 1, insertionIndex = -1; true; ) {
+    var t1 = this._keys;
+    if (typeof t1 !== 'string' && (typeof t1 !== 'object' || t1 === null || (t1.constructor !== Array && !t1.is$JavaScriptIndexingBehavior()))) return this._probeForAdding$1$bailout(2, numberOfProbes, hash, key, insertionIndex, t1);
+    var t2 = t1.length;
+    if (hash < 0 || hash >= t2) throw $.ioore(hash);
+    t1 = t1[hash];
+    if (t1 == null) {
+      if (insertionIndex < 0) return hash;
       return insertionIndex;
-    } else {
-      if ($.eqB(existingKey, key)) {
-        return hash0;
-      } else {
-        insertionIndex0 = insertionIndex;
-        if ($.ltB(insertionIndex, 0) && $.CTC7 === existingKey) {
-          insertionIndex0 = hash0;
-        }
-        var numberOfProbes1 = numberOfProbes + 1;
-      }
     }
-    var hash2 = $._nextProbe(hash0, numberOfProbes, $.get$length(this._lib_keys));
-    numberOfProbes0 = numberOfProbes1;
-    hash1 = hash2;
+    if ($.eqB(t1, key)) return hash;
+    if (insertionIndex < 0 && $.CTC5 === t1) insertionIndex = hash;
+    var numberOfProbes0 = numberOfProbes + 1;
+    hash = $._nextProbe(hash, numberOfProbes, $.get$length(this._keys));
+    if (hash !== (hash | 0)) return this._probeForAdding$1$bailout(3, key, numberOfProbes0, insertionIndex, hash, 0);
+    numberOfProbes = numberOfProbes0;
   }
  },
- _lib_probeForAdding$1$bailout: function(key, state, env0) {
+ _probeForAdding$1$bailout: function(state, env0, env1, env2, env3, env4) {
   switch (state) {
     case 1:
-      hash = env0;
+      var key = env0;
+      hash = env1;
+      break;
+    case 2:
+      numberOfProbes = env0;
+      hash = env1;
+      key = env2;
+      insertionIndex = env3;
+      t1 = env4;
+      break;
+    case 3:
+      key = env0;
+      numberOfProbes0 = env1;
+      insertionIndex = env2;
+      hash = env3;
       break;
   }
   switch (state) {
     case 0:
-      var hash = $._firstProbe($.hashCode(key), $.get$length(this._lib_keys));
+      var hash = $._firstProbe($.hashCode(key), $.get$length(this._keys));
     case 1:
       state = 0;
       var numberOfProbes = 1;
-      var hash0 = hash;
       var insertionIndex = -1;
+    case 2:
+    case 3:
       L0: while (true) {
-        if (!true) break L0;
-        var numberOfProbes0 = numberOfProbes;
-        var hash1 = hash0;
-        var insertionIndex0 = insertionIndex;
-        var existingKey = $.index(this._lib_keys, hash0);
-        if (existingKey === (void 0)) {
-          if ($.ltB(insertionIndex, 0)) {
-            return hash0;
-          }
-          return insertionIndex;
-        } else {
-          if ($.eqB(existingKey, key)) {
-            return hash0;
-          } else {
-            insertionIndex0 = insertionIndex;
-            if ($.ltB(insertionIndex, 0) && $.CTC7 === existingKey) {
-              insertionIndex0 = hash0;
+        switch (state) {
+          case 0:
+            if (!true) break L0;
+            var t1 = this._keys;
+          case 2:
+            state = 0;
+            var existingKey = $.index(t1, hash);
+            if (existingKey == null) {
+              if ($.ltB(insertionIndex, 0)) return hash;
+              return insertionIndex;
             }
-            var numberOfProbes1 = numberOfProbes + 1;
-          }
+            if ($.eqB(existingKey, key)) return hash;
+            if ($.ltB(insertionIndex, 0) && $.CTC5 === existingKey) insertionIndex = hash;
+            var numberOfProbes0 = numberOfProbes + 1;
+            hash = $._nextProbe(hash, numberOfProbes, $.get$length(this._keys));
+          case 3:
+            state = 0;
+            numberOfProbes = numberOfProbes0;
         }
-        var hash2 = $._nextProbe(hash0, numberOfProbes, $.get$length(this._lib_keys));
-        numberOfProbes0 = numberOfProbes1;
-        hash1 = hash2;
-        numberOfProbes = numberOfProbes0;
-        hash0 = hash1;
-        insertionIndex = insertionIndex0;
       }
   }
  },
  HashMapImplementation$0: function() {
-  this._lib_numberOfEntries = 0;
-  this._lib_numberOfDeleted = 0;
-  this._lib_loadLimit = $._computeLoadLimit(8);
-  this._lib_keys = $.List(8);
-  var t0 = $.List(8);
-  $.setRuntimeTypeInfo(t0, ({E: 'V'}));
-  this._lib_values = t0;
+  this._numberOfEntries = 0;
+  this._numberOfDeleted = 0;
+  this._loadLimit = $._computeLoadLimit(8);
+  this._keys = $.List(8);
+  var t1 = $.List(8);
+  $.setRuntimeTypeInfo(t1, ({E: 'V'}));
+  this._values = t1;
  },
- is$Map: function() { return true; },
-});
+ is$Map: function() { return true; }
+};
 
-Isolate.$defineClass("HashSetImplementation", "Object", ["_lib_backingMap?"], {
+$$.HashSetImplementation = {"":
+ ["_backingMap?"],
+ super: "Object",
  toString$0: function() {
   return $.collectionToString(this);
  },
  iterator$0: function() {
-  var t0 = $.HashSetIterator$1(this);
-  $.setRuntimeTypeInfo(t0, ({E: 'E'}));
-  return t0;
+  var t1 = $.HashSetIterator$1(this);
+  $.setRuntimeTypeInfo(t1, ({E: 'E'}));
+  return t1;
  },
  get$length: function() {
-  return $.get$length(this._lib_backingMap);
+  return $.get$length(this._backingMap);
  },
  isEmpty$0: function() {
-  return $.isEmpty(this._lib_backingMap);
+  return $.isEmpty(this._backingMap);
  },
  filter$1: function(f) {
-  var t0 = ({});
-  t0.f_1 = f;
+  var t1 = ({});
+  t1.f_11 = f;
   var result = $.HashSetImplementation$0();
   $.setRuntimeTypeInfo(result, ({E: 'E'}));
-  t0.result_2 = result;
-  $.forEach(this._lib_backingMap, new $.Closure12(t0));
-  return t0.result_2;
+  t1.result_2 = result;
+  $.forEach(this._backingMap, new $.Closure10(t1));
+  return t1.result_2;
  },
  forEach$1: function(f) {
-  var t0 = ({});
-  t0.f_1 = f;
-  $.forEach(this._lib_backingMap, new $.Closure11(t0));
+  var t1 = ({});
+  t1.f_10 = f;
+  $.forEach(this._backingMap, new $.Closure9(t1));
  },
  addAll$1: function(collection) {
-  $.forEach(collection, new $.Closure10(this));
+  $.forEach(collection, new $.Closure8(this));
  },
  contains$1: function(value) {
-  return this._lib_backingMap.containsKey$1(value);
+  return this._backingMap.containsKey$1(value);
  },
  add$1: function(value) {
-  $.indexSet(this._lib_backingMap, value, value);
+  var t1 = this._backingMap;
+  if (typeof t1 !== 'object' || t1 === null || ((t1.constructor !== Array || !!t1.immutable$list) && !t1.is$JavaScriptIndexingBehavior())) return this.add$1$bailout(1, t1, value);
+  if (value !== (value | 0)) throw $.iae(value);
+  var t2 = t1.length;
+  if (value < 0 || value >= t2) throw $.ioore(value);
+  t1[value] = value;
+ },
+ add$1$bailout: function(state, t1, value) {
+  $.indexSet(t1, value, value);
  },
  clear$0: function() {
-  $.clear(this._lib_backingMap);
+  $.clear(this._backingMap);
  },
  HashSetImplementation$0: function() {
-  this._lib_backingMap = $.HashMapImplementation$0();
+  this._backingMap = $.HashMapImplementation$0();
  },
- is$Collection: function() { return true; },
-});
+ is$Collection: function() { return true; }
+};
 
-Isolate.$defineClass("HashSetIterator", "Object", ["_lib_nextValidIndex", "_lib_entries"], {
- _lib_advance$0: function() {
-  var length$ = $.get$length(this._lib_entries);
-  if (typeof length$ !== 'number') return this._lib_advance$0$bailout(1, length$);
-  var entry = (void 0);
+$$.HashSetIterator = {"":
+ ["_nextValidIndex", "_entries"],
+ super: "Object",
+ _advance$0: function() {
+  var t1 = this._entries;
+  if (typeof t1 !== 'string' && (typeof t1 !== 'object' || t1 === null || (t1.constructor !== Array && !t1.is$JavaScriptIndexingBehavior()))) return this._advance$0$bailout(1, t1);
+  var length$ = t1.length;
+  var entry = null;
   do {
-    var t0 = $.add(this._lib_nextValidIndex, 1);
-    this._lib_nextValidIndex = t0;
-    if ($.geB(t0, length$)) {
-      break;
-    }
-    entry = $.index(this._lib_entries, this._lib_nextValidIndex);
-  } while (entry === (void 0) || entry === $.CTC7);
+    var t2 = this._nextValidIndex + 1;
+    this._nextValidIndex = t2;
+    if ($.geB(t2, length$)) break;
+    t2 = this._nextValidIndex;
+    if (t2 !== (t2 | 0)) throw $.iae(t2);
+    var t3 = t1.length;
+    if (t2 < 0 || t2 >= t3) throw $.ioore(t2);
+    entry = t1[t2];
+  } while ((entry == null || entry === $.CTC5));
  },
- _lib_advance$0$bailout: function(state, env0) {
+ _advance$0$bailout: function(state, t1) {
+  var length$ = $.get$length(t1);
+  var entry = null;
+  do {
+    var t2 = $.add(this._nextValidIndex, 1);
+    this._nextValidIndex = t2;
+    if ($.geB(t2, length$)) break;
+    entry = $.index(t1, this._nextValidIndex);
+  } while ((entry == null || entry === $.CTC5));
+ },
+ next$0: function() {
+  if (this.hasNext$0() !== true) throw $.captureStackTrace($.CTC0);
+  var t1 = this._entries;
+  if (typeof t1 !== 'string' && (typeof t1 !== 'object' || t1 === null || (t1.constructor !== Array && !t1.is$JavaScriptIndexingBehavior()))) return this.next$0$bailout(1, t1);
+  var t2 = this._nextValidIndex;
+  if (t2 !== (t2 | 0)) throw $.iae(t2);
+  var t3 = t1.length;
+  if (t2 < 0 || t2 >= t3) throw $.ioore(t2);
+  t2 = t1[t2];
+  this._advance$0();
+  return t2;
+ },
+ next$0$bailout: function(state, t1) {
+  var res = $.index(t1, this._nextValidIndex);
+  this._advance$0();
+  return res;
+ },
+ hasNext$0: function() {
+  var t1 = this._nextValidIndex;
+  if (typeof t1 !== 'number') return this.hasNext$0$bailout(1, t1, 0);
+  var t2 = this._entries;
+  if (typeof t2 !== 'string' && (typeof t2 !== 'object' || t2 === null || (t2.constructor !== Array && !t2.is$JavaScriptIndexingBehavior()))) return this.hasNext$0$bailout(2, t1, t2);
+  var t3 = t2.length;
+  if (t1 >= t3) return false;
+  if (t1 !== (t1 | 0)) throw $.iae(t1);
+  if (t1 < 0 || t1 >= t3) throw $.ioore(t1);
+  t1 = t2[t1];
+  t1 === $.CTC5 && this._advance$0();
+  t1 = this._nextValidIndex;
+  if (typeof t1 !== 'number') return this.hasNext$0$bailout(3, t1, t2);
+  return t1 < t2.length;
+ },
+ hasNext$0$bailout: function(state, env0, env1) {
   switch (state) {
     case 1:
-      length$ = env0;
+      t1 = env0;
+      break;
+    case 2:
+      t1 = env0;
+      t2 = env1;
+      break;
+    case 3:
+      t1 = env0;
+      t2 = env1;
       break;
   }
   switch (state) {
     case 0:
-      var length$ = $.get$length(this._lib_entries);
+      var t1 = this._nextValidIndex;
     case 1:
       state = 0;
-      var entry = (void 0);
-      L0: while (true) {
-        var t0 = $.add(this._lib_nextValidIndex, 1);
-        this._lib_nextValidIndex = t0;
-        if ($.geB(t0, length$)) {
-          break;
-        }
-        entry = $.index(this._lib_entries, this._lib_nextValidIndex);
-        if (!(entry === (void 0) || entry === $.CTC7)) break L0;
-      }
+      var t2 = this._entries;
+    case 2:
+      state = 0;
+      if ($.geB(t1, $.get$length(t2))) return false;
+      t1 = $.index(t2, this._nextValidIndex);
+      t1 === $.CTC5 && this._advance$0();
+      t1 = this._nextValidIndex;
+    case 3:
+      state = 0;
+      return $.lt(t1, $.get$length(t2));
   }
- },
- next$0: function() {
-  if (this.hasNext$0() !== true) {
-    throw $.captureStackTrace($.CTC2);
-  }
-  var res = $.index(this._lib_entries, this._lib_nextValidIndex);
-  this._lib_advance$0();
-  return res;
- },
- hasNext$0: function() {
-  if ($.geB(this._lib_nextValidIndex, $.get$length(this._lib_entries))) {
-    return false;
-  }
-  if ($.index(this._lib_entries, this._lib_nextValidIndex) === $.CTC7) {
-    this._lib_advance$0();
-  }
-  return $.lt(this._lib_nextValidIndex, $.get$length(this._lib_entries));
  },
  HashSetIterator$1: function(set_) {
-  this._lib_advance$0();
- },
-});
+  this._advance$0();
+ }
+};
 
-Isolate.$defineClass("_DeletedKeySentinel", "Object", [], {
-});
+$$._DeletedKeySentinel = {"":
+ [],
+ super: "Object"
+};
 
-Isolate.$defineClass("StopwatchImplementation", "Object", ["_lib_stop", "_lib_start"], {
+$$.StopwatchImplementation = {"":
+ ["_stop", "_start"],
+ super: "Object",
  frequency$0: function() {
   return $.frequency();
  },
@@ -416,98 +447,119 @@ Isolate.$defineClass("StopwatchImplementation", "Object", ["_lib_stop", "_lib_st
   return $.tdiv($.mul(this.elapsed$0(), 1000), this.frequency$0());
  },
  elapsed$0: function() {
-  if (this._lib_start === (void 0)) {
-    return 0;
-  }
-  if (this._lib_stop === (void 0)) {
-    var t0 = $.sub($.now(), this._lib_start);
-  } else {
-    t0 = $.sub(this._lib_stop, this._lib_start);
-  }
-  return t0;
+  var t1 = this._start;
+  if (t1 == null) return 0;
+  var t2 = this._stop;
+  return t2 == null ? $.sub($.now(), this._start) : $.sub(t2, t1);
  },
  reset$0: function() {
-  if (this._lib_start === (void 0)) {
-    return;
-  }
-  this._lib_start = $.now();
-  if (this._lib_stop !== (void 0)) {
-    this._lib_stop = this._lib_start;
-  }
+  var t1 = this._start;
+  if (t1 == null) return;
+  this._start = $.now();
+  t1 = this._stop;
+  if (!(t1 == null)) this._stop = this._start;
  },
  start$0: function() {
-  if (this._lib_start === (void 0)) {
-    this._lib_start = $.now();
-  } else {
-    if (this._lib_stop === (void 0)) {
-      return;
-    }
-    this._lib_start = $.sub($.now(), $.sub(this._lib_stop, this._lib_start));
-    this._lib_stop = (void 0);
+  var t1 = this._start;
+  if (t1 == null) this._start = $.now();
+  else {
+    t1 = this._stop;
+    if (t1 == null) return;
+    this._start = $.sub($.now(), $.sub(this._stop, this._start));
+    this._stop = null;
   }
- },
-});
+ }
+};
 
-Isolate.$defineClass("StringBufferImpl", "Object", ["_lib_length", "_lib_buffer"], {
+$$.StringBufferImpl = {"":
+ ["_length", "_buffer"],
+ super: "Object",
  toString$0: function() {
-  if ($.get$length(this._lib_buffer) === 0) {
-    return '';
-  }
-  if ($.get$length(this._lib_buffer) === 1) {
-    return $.index(this._lib_buffer, 0);
-  }
-  var result = $.concatAll(this._lib_buffer);
-  $.clear(this._lib_buffer);
-  $.add$1(this._lib_buffer, result);
+  var t1 = $.get$length(this._buffer);
+  if (t1 === 0) return '';
+  t1 = $.get$length(this._buffer);
+  if (t1 === 1) return $.index(this._buffer, 0);
+  var result = $.concatAll(this._buffer);
+  $.clear(this._buffer);
+  $.add$1(this._buffer, result);
   return result;
  },
  clear$0: function() {
-  var t0 = $.List((void 0));
-  $.setRuntimeTypeInfo(t0, ({E: 'String'}));
-  this._lib_buffer = t0;
-  this._lib_length = 0;
+  var t1 = $.List(null);
+  $.setRuntimeTypeInfo(t1, ({E: 'String'}));
+  this._buffer = t1;
+  this._length = 0;
   return this;
  },
  addAll$1: function(objects) {
-  for (var t0 = $.iterator(objects); t0.hasNext$0() === true; ) {
-    this.add$1(t0.next$0());
+  for (var t1 = $.iterator(objects); t1.hasNext$0() === true; ) {
+    this.add$1(t1.next$0());
   }
   return this;
  },
  add$1: function(obj) {
   var str = $.toString(obj);
-  if (str === (void 0) || $.isEmpty(str) === true) {
-    return this;
-  }
-  $.add$1(this._lib_buffer, str);
-  this._lib_length = $.add(this._lib_length, $.get$length(str));
+  if (str == null || $.isEmpty(str) === true) return this;
+  $.add$1(this._buffer, str);
+  var t1 = this._length;
+  if (typeof t1 !== 'number') return this.add$1$bailout(1, str, t1);
+  var t2 = $.get$length(str);
+  if (typeof t2 !== 'number') return this.add$1$bailout(2, t1, t2);
+  this._length = t1 + t2;
   return this;
  },
+ add$1$bailout: function(state, env0, env1) {
+  switch (state) {
+    case 1:
+      str = env0;
+      t1 = env1;
+      break;
+    case 2:
+      t1 = env0;
+      t2 = env1;
+      break;
+  }
+  switch (state) {
+    case 0:
+      var str = $.toString(obj);
+      if (str == null || $.isEmpty(str) === true) return this;
+      $.add$1(this._buffer, str);
+      var t1 = this._length;
+    case 1:
+      state = 0;
+      var t2 = $.get$length(str);
+    case 2:
+      state = 0;
+      this._length = $.add(t1, t2);
+      return this;
+  }
+ },
  isEmpty$0: function() {
-  return this._lib_length === 0;
+  var t1 = this._length;
+  return t1 === 0;
  },
  get$length: function() {
-  return this._lib_length;
+  return this._length;
  },
  StringBufferImpl$1: function(content$) {
   this.clear$0();
   this.add$1(content$);
- },
-});
+ }
+};
 
-Isolate.$defineClass("JSSyntaxRegExp", "Object", ["ignoreCase?", "multiLine?", "pattern?"], {
+$$.JSSyntaxRegExp = {"":
+ ["ignoreCase?", "multiLine?", "pattern?"],
+ super: "Object",
  allMatches$1: function(str) {
   $.checkString(str);
-  return $._lib_AllMatchesIterable$2(this, str);
+  return $._AllMatchesIterable$2(this, str);
  },
  hasMatch$1: function(str) {
   return $.regExpTest(this, $.checkString(str));
  },
  firstMatch$1: function(str) {
   var m = $.regExpExec(this, $.checkString(str));
-  if (m === (void 0)) {
-    return;
-  }
+  if (m == null) return;
   var matchStart = $.regExpMatchStart(m);
   var matchEnd = $.add(matchStart, $.get$length($.index(m, 0)));
   return $.MatchImplementation$5(this.pattern, str, matchStart, matchEnd, m);
@@ -515,211 +567,340 @@ Isolate.$defineClass("JSSyntaxRegExp", "Object", ["ignoreCase?", "multiLine?", "
  JSSyntaxRegExp$_globalVersionOf$1: function(other) {
   $.regExpAttachGlobalNative(this);
  },
- is$JSSyntaxRegExp: true,
-});
+ is$JSSyntaxRegExp: true
+};
 
-Isolate.$defineClass("MatchImplementation", "Object", ["_lib_groups", "_lib_end", "_lib_start", "str", "pattern?"], {
+$$.MatchImplementation = {"":
+ ["_groups", "_end", "_start", "str", "pattern?"],
+ super: "Object",
  operator$index$1: function(index) {
   return this.group$1(index);
  },
  group$1: function(index) {
-  return $.index(this._lib_groups, index);
+  return $.index(this._groups, index);
  },
  start$0: function() {
-  return this._lib_start;
- },
-});
+  return this._start;
+ }
+};
 
-Isolate.$defineClass("_AllMatchesIterable", "Object", ["_lib_str", "_lib_re"], {
+$$._AllMatchesIterable = {"":
+ ["_str", "_re"],
+ super: "Object",
  iterator$0: function() {
-  return $._lib_AllMatchesIterator$2(this._lib_re, this._lib_str);
- },
-});
+  return $._AllMatchesIterator$2(this._re, this._str);
+ }
+};
 
-Isolate.$defineClass("_AllMatchesIterator", "Object", ["_lib_done", "_lib_next", "_lib_str", "_lib_re"], {
+$$._AllMatchesIterator = {"":
+ ["_done", "_next", "_str", "_re"],
+ super: "Object",
  hasNext$0: function() {
-  if (this._lib_done === true) {
+  if (this._done === true) return false;
+  if (!$.eqNullB(this._next)) return true;
+  this._next = this._re.firstMatch$1(this._str);
+  if ($.eqNullB(this._next)) {
+    this._done = true;
     return false;
-  } else {
-    if (!$.eqNullB(this._lib_next)) {
-      return true;
-    }
   }
-  this._lib_next = this._lib_re.firstMatch$1(this._lib_str);
-  if ($.eqNullB(this._lib_next)) {
-    this._lib_done = true;
-    return false;
-  } else {
-    return true;
-  }
+  return true;
  },
  next$0: function() {
-  if (this.hasNext$0() !== true) {
-    throw $.captureStackTrace($.CTC2);
-  }
-  var next = this._lib_next;
-  this._lib_next = (void 0);
+  if (this.hasNext$0() !== true) throw $.captureStackTrace($.CTC0);
+  var next = this._next;
+  this._next = null;
   return next;
- },
-});
+ }
+};
 
-Isolate.$defineClass("ListIterator", "Object", ["list", "i"], {
+$$.ListIterator = {"":
+ ["list", "i"],
+ super: "Object",
  next$0: function() {
-  if (this.hasNext$0() !== true) {
-    throw $.captureStackTrace($.NoMoreElementsException$0());
-  }
+  if (this.hasNext$0() !== true) throw $.captureStackTrace($.NoMoreElementsException$0());
   var value = (this.list[this.i]);
-  this.i = $.add(this.i, 1);
+  var t1 = this.i;
+  if (typeof t1 !== 'number') return this.next$0$bailout(1, t1, value);
+  this.i = t1 + 1;
+  return value;
+ },
+ next$0$bailout: function(state, t1, value) {
+  this.i = $.add(t1, 1);
   return value;
  },
  hasNext$0: function() {
-  return $.lt(this.i, (this.list.length));
+  var t1 = this.i;
+  if (typeof t1 !== 'number') return this.hasNext$0$bailout(1, t1);
+  return t1 < (this.list.length);
  },
-});
+ hasNext$0$bailout: function(state, t1) {
+  return $.lt(t1, (this.list.length));
+ }
+};
 
-Isolate.$defineClass("Closure13", "Object", [], {
+$$.Closure11 = {"":
+ [],
+ super: "Object",
  toString$0: function() {
   return 'Closure';
- },
-});
+ }
+};
 
-Isolate.$defineClass("MetaInfo", "Object", ["set?", "tags", "tag?"], {
-});
+$$.MetaInfo = {"":
+ ["set?", "tags", "tag?"],
+ super: "Object"
+};
 
-Isolate.$defineClass("StringMatch", "Object", ["pattern?", "str", "_lib4_start"], {
+$$.StringMatch = {"":
+ ["pattern?", "str", "_lib0_start"],
+ super: "Object",
  group$1: function(group_) {
-  if (!$.eqB(group_, 0)) {
-    throw $.captureStackTrace($.IndexOutOfRangeException$1(group_));
-  }
+  if (!$.eqB(group_, 0)) throw $.captureStackTrace($.IndexOutOfRangeException$1(group_));
   return this.pattern;
  },
  operator$index$1: function(g) {
   return this.group$1(g);
  },
  start$0: function() {
-  return this._lib4_start;
- },
-});
+  return this._lib0_start;
+ }
+};
 
-Isolate.$defineClass("Object", "", [], {
+$$.Object = {"":
+ [],
+ super: "",
  toString$0: function() {
   return $.objectToString(this);
- },
-});
+ }
+};
 
-Isolate.$defineClass("IndexOutOfRangeException", "Object", ["_lib2_index"], {
+$$.IndexOutOfRangeException = {"":
+ ["_index"],
+ super: "Object",
  toString$0: function() {
-  return 'IndexOutOfRangeException: ' + $.stringToString(this._lib2_index);
- },
-});
+  return 'IndexOutOfRangeException: ' + $.S(this._index);
+ }
+};
 
-Isolate.$defineClass("NoSuchMethodException", "Object", ["_lib2_existingArgumentNames", "_lib2_arguments", "_lib2_functionName", "_lib2_receiver"], {
+$$.NoSuchMethodException = {"":
+ ["_existingArgumentNames", "_arguments", "_functionName", "_receiver"],
+ super: "Object",
  toString$0: function() {
   var sb = $.StringBufferImpl$1('');
-  for (var i = 0; $.ltB(i, $.get$length(this._lib2_arguments)); i = i + 1) {
-    if (i > 0) {
-      sb.add$1(', ');
-    }
-    sb.add$1($.index(this._lib2_arguments, i));
+  var t1 = this._arguments;
+  if (typeof t1 !== 'string' && (typeof t1 !== 'object' || t1 === null || (t1.constructor !== Array && !t1.is$JavaScriptIndexingBehavior()))) return this.toString$0$bailout(1, sb, t1);
+  var i = 0;
+  for (; i < t1.length; ++i) {
+    i > 0 && sb.add$1(', ');
+    var t2 = t1.length;
+    if (i < 0 || i >= t2) throw $.ioore(i);
+    sb.add$1(t1[i]);
   }
-  if (this._lib2_existingArgumentNames === (void 0)) {
-    return 'NoSuchMethodException : method not found: \'' + $.stringToString(this._lib2_functionName) + '\'\nReceiver: ' + $.stringToString(this._lib2_receiver) + '\nArguments: [' + $.stringToString(sb) + ']';
-  } else {
-    var actualParameters = sb.toString$0();
-    var sb0 = $.StringBufferImpl$1('');
-    for (var i0 = 0; $.ltB(i0, $.get$length(this._lib2_existingArgumentNames)); i0 = i0 + 1) {
-      if (i0 > 0) {
-        sb0.add$1(', ');
-      }
-      sb0.add$1($.index(this._lib2_existingArgumentNames, i0));
-    }
-    var formalParameters = sb0.toString$0();
-    return 'NoSuchMethodException: incorrect number of arguments passed to method named \'' + $.stringToString(this._lib2_functionName) + '\'\nReceiver: ' + $.stringToString(this._lib2_receiver) + '\nTried calling: ' + $.stringToString(this._lib2_functionName) + '(' + $.stringToString(actualParameters) + ')\nFound: ' + $.stringToString(this._lib2_functionName) + '(' + $.stringToString(formalParameters) + ')';
+  t1 = this._existingArgumentNames;
+  if (typeof t1 !== 'string' && (typeof t1 !== 'object' || t1 === null || (t1.constructor !== Array && !t1.is$JavaScriptIndexingBehavior()))) return this.toString$0$bailout(2, t1, sb);
+  var actualParameters = sb.toString$0();
+  sb = $.StringBufferImpl$1('');
+  for (i = 0; i < t1.length; ++i) {
+    i > 0 && sb.add$1(', ');
+    t2 = t1.length;
+    if (i < 0 || i >= t2) throw $.ioore(i);
+    sb.add$1(t1[i]);
   }
+  var formalParameters = sb.toString$0();
+  t1 = this._functionName;
+  return 'NoSuchMethodException: incorrect number of arguments passed to method named \'' + $.S(t1) + '\'\nReceiver: ' + $.S(this._receiver) + '\n' + 'Tried calling: ' + $.S(t1) + '(' + $.S(actualParameters) + ')\n' + 'Found: ' + $.S(t1) + '(' + $.S(formalParameters) + ')';
  },
-});
+ toString$0$bailout: function(state, env0, env1) {
+  switch (state) {
+    case 1:
+      sb = env0;
+      t1 = env1;
+      break;
+    case 2:
+      t1 = env0;
+      sb = env1;
+      break;
+  }
+  switch (state) {
+    case 0:
+      var sb = $.StringBufferImpl$1('');
+      var t1 = this._arguments;
+    case 1:
+      state = 0;
+      var i = 0;
+      for (; $.ltB(i, $.get$length(t1)); ++i) {
+        i > 0 && sb.add$1(', ');
+        sb.add$1($.index(t1, i));
+      }
+      t1 = this._existingArgumentNames;
+    case 2:
+      state = 0;
+      if (t1 == null) return 'NoSuchMethodException : method not found: \'' + $.S(this._functionName) + '\'\n' + 'Receiver: ' + $.S(this._receiver) + '\n' + 'Arguments: [' + $.S(sb) + ']';
+      var actualParameters = sb.toString$0();
+      sb = $.StringBufferImpl$1('');
+      for (i = 0; $.ltB(i, $.get$length(t1)); ++i) {
+        i > 0 && sb.add$1(', ');
+        sb.add$1($.index(t1, i));
+      }
+      var formalParameters = sb.toString$0();
+      t1 = this._functionName;
+      return 'NoSuchMethodException: incorrect number of arguments passed to method named \'' + $.S(t1) + '\'\nReceiver: ' + $.S(this._receiver) + '\n' + 'Tried calling: ' + $.S(t1) + '(' + $.S(actualParameters) + ')\n' + 'Found: ' + $.S(t1) + '(' + $.S(formalParameters) + ')';
+  }
+ }
+};
 
-Isolate.$defineClass("ObjectNotClosureException", "Object", [], {
+$$.ObjectNotClosureException = {"":
+ [],
+ super: "Object",
  toString$0: function() {
   return 'Object is not closure';
- },
-});
+ }
+};
 
-Isolate.$defineClass("IllegalArgumentException", "Object", ["_lib2_arg"], {
+$$.IllegalArgumentException = {"":
+ ["_arg"],
+ super: "Object",
  toString$0: function() {
-  return 'Illegal argument(s): ' + $.stringToString(this._lib2_arg);
- },
-});
+  return 'Illegal argument(s): ' + $.S(this._arg);
+ }
+};
 
-Isolate.$defineClass("StackOverflowException", "Object", [], {
+$$.StackOverflowException = {"":
+ [],
+ super: "Object",
  toString$0: function() {
   return 'Stack Overflow';
- },
-});
+ }
+};
 
-Isolate.$defineClass("NullPointerException", "Object", ["arguments", "functionName"], {
+$$.BadNumberFormatException = {"":
+ ["_s"],
+ super: "Object",
+ toString$0: function() {
+  return 'BadNumberFormatException: \'' + $.S(this._s) + '\'';
+ }
+};
+
+$$.NullPointerException = {"":
+ ["arguments", "functionName"],
+ super: "Object",
  get$exceptionName: function() {
   return 'NullPointerException';
  },
  toString$0: function() {
-  if ($.eqNullB(this.functionName)) {
-    return this.get$exceptionName();
-  } else {
-    return '' + $.stringToString(this.get$exceptionName()) + ' : method: \'' + $.stringToString(this.functionName) + '\'\nReceiver: null\nArguments: ' + $.stringToString(this.arguments);
-  }
- },
-});
+  var t1 = this.functionName;
+  if ($.eqNullB(t1)) return this.get$exceptionName();
+  return $.S(this.get$exceptionName()) + ' : method: \'' + $.S(t1) + '\'\n' + 'Receiver: null\n' + 'Arguments: ' + $.S(this.arguments);
+ }
+};
 
-Isolate.$defineClass("NoMoreElementsException", "Object", [], {
+$$.NoMoreElementsException = {"":
+ [],
+ super: "Object",
  toString$0: function() {
   return 'NoMoreElementsException';
- },
-});
+ }
+};
 
-Isolate.$defineClass("UnsupportedOperationException", "Object", ["_lib2_message"], {
+$$.UnsupportedOperationException = {"":
+ ["_message"],
+ super: "Object",
  toString$0: function() {
-  return 'UnsupportedOperationException: ' + $.stringToString(this._lib2_message);
- },
-});
+  return 'UnsupportedOperationException: ' + $.S(this._message);
+ }
+};
 
-Isolate.$defineClass("IllegalJSRegExpException", "Object", ["_lib2_errmsg", "_lib2_pattern"], {
+$$.IllegalJSRegExpException = {"":
+ ["_errmsg", "_pattern"],
+ super: "Object",
  toString$0: function() {
-  return 'IllegalJSRegExpException: \'' + $.stringToString(this._lib2_pattern) + '\' \'' + $.stringToString(this._lib2_errmsg) + '\'';
- },
-});
+  return 'IllegalJSRegExpException: \'' + $.S(this._pattern) + '\' \'' + $.S(this._errmsg) + '\'';
+ }
+};
 
-Isolate.$defineClass("DartWebGLShaderLab", "Object", ["viewY?", "viewX?", "sizeY", "sizeX", "timer", "animation", "mouseY!", "mouseX!", "time", "fps", "frames", "it", "delay", "halted=", "texture_noise_l", "texture_noise_n", "texture_blur", "texture_helper", "texture_main2_n", "texture_main2_l", "texture_main_n", "texture_main_l", "FBO_noise", "FBO_blur", "FBO_helper", "FBO_main2", "FBO_main", "prog_blur_vertical", "prog_blur_horizontal", "prog_composite", "prog_advance", "c", "gl", "watch"], {
+$$.DartWebGLShaderLab = {"":
+ ["viewY?", "viewX?", "sizeY", "sizeX", "timer", "animation", "mouseY!", "mouseX!", "time", "fps", "frames", "it", "delay", "halted=", "texture_noise_l", "texture_noise_n", "texture_blur", "texture_helper", "texture_main2_n", "texture_main2_l", "texture_main_n", "texture_main_l", "FBO_noise", "FBO_blur", "FBO_helper", "FBO_main2", "FBO_main", "prog_blur_vertical", "prog_blur_horizontal", "prog_composite", "prog_advance", "c", "gl", "watch"],
+ super: "Object",
  anim$1: function(i) {
-  $.document().get$window().webkitRequestAnimationFrame$1(this.get$anim());
-  if (this.halted !== true) {
-    this.advance$0();
-  }
+  $.window().requestAnimationFrame$1(this.get$anim());
+  this.halted !== true && this.advance$0();
   this.composite$0();
-  if ($.geB(this.watch.elapsedInMs$0(), 1000)) {
-    this.fps = $.round($.mul(1000, $.div($.toDouble(this.frames), $.toDouble(this.watch.elapsedInMs$0()))));
-    var t0 = 'fps=' + $.stringToString(this.fps);
-    $.document().query$1('#fps').set$innerHTML(t0);
+  var t1 = this.watch.elapsedInMs$0();
+  if (typeof t1 !== 'number') return this.anim$1$bailout(1, t1, 0);
+  if (t1 >= 1000) {
+    t1 = $.toDouble(this.frames);
+    if (typeof t1 !== 'number') return this.anim$1$bailout(2, t1, 0);
+    var t2 = $.toDouble(this.watch.elapsedInMs$0());
+    if (typeof t2 !== 'number') return this.anim$1$bailout(3, t2, t1);
+    this.fps = $.round(1000 * (t1 / t2));
+    t2 = 'fps=' + $.S(this.fps);
+    $.document().query$1('#fps').set$innerHTML(t2);
     this.frames = 0;
     this.watch.reset$0();
   }
  },
- get$anim: function() { return new $.Closure14(this); },
+ anim$1$bailout: function(state, env0, env1) {
+  switch (state) {
+    case 1:
+      t1 = env0;
+      break;
+    case 2:
+      t1 = env0;
+      break;
+    case 3:
+      t2 = env0;
+      t1 = env1;
+      break;
+  }
+  switch (state) {
+    case 0:
+      $.window().requestAnimationFrame$1(this.get$anim());
+      this.halted !== true && this.advance$0();
+      this.composite$0();
+      var t1 = this.watch.elapsedInMs$0();
+    case 1:
+      state = 0;
+    case 2:
+    case 3:
+      if (state == 2 || state == 3 || (state == 0 && $.geB(t1, 1000))) {
+        switch (state) {
+          case 0:
+            t1 = $.toDouble(this.frames);
+          case 2:
+            state = 0;
+            var t2 = $.toDouble(this.watch.elapsedInMs$0());
+          case 3:
+            state = 0;
+            t2 = $.div(t1, t2);
+            if (typeof t2 !== 'number') throw $.iae(t2);
+            this.fps = $.round(1000 * t2);
+            t2 = 'fps=' + $.S(this.fps);
+            $.document().query$1('#fps').set$innerHTML(t2);
+            this.frames = 0;
+            this.watch.reset$0();
+        }
+      }
+  }
+ },
+ get$anim: function() { return new $.Closure12(this, 'anim$1'); },
  composite$0: function() {
   this.gl.viewport$4(0, 0, this.viewX, this.viewY);
   this.gl.useProgram$1(this.prog_composite);
   this.setUniforms$1(this.prog_composite);
-  if ($.ltB(this.it, 0)) {
-    this.gl.activeTexture$1(33984);
+  var t1 = $.ltB(this.it, 0);
+  var t2 = this.gl;
+  if (t1) {
+    t2.activeTexture$1(33984);
     this.gl.bindTexture$2(3553, this.texture_main_l);
     this.gl.activeTexture$1(33985);
     this.gl.bindTexture$2(3553, this.texture_main_n);
   } else {
-    this.gl.activeTexture$1(33984);
+    t2.activeTexture$1(33984);
     this.gl.bindTexture$2(3553, this.texture_main2_l);
     this.gl.activeTexture$1(33985);
     this.gl.bindTexture$2(3553, this.texture_main2_n);
   }
-  this.gl.bindFramebuffer$2(36160, (void 0));
+  this.gl.bindFramebuffer$2(36160, null);
   this.gl.drawArrays$3(5, 0, 4);
   this.gl.flush$0();
   this.frames = $.add(this.frames, 1);
@@ -728,14 +909,16 @@ Isolate.$defineClass("DartWebGLShaderLab", "Object", ["viewY?", "viewX?", "sizeY
   this.gl.viewport$4(0, 0, this.sizeX, this.sizeY);
   this.gl.useProgram$1(this.prog_advance);
   this.setUniforms$1(this.prog_advance);
-  if ($.gtB(this.it, 0)) {
-    this.gl.activeTexture$1(33984);
+  var t1 = $.gtB(this.it, 0);
+  var t2 = this.gl;
+  if (t1) {
+    t2.activeTexture$1(33984);
     this.gl.bindTexture$2(3553, this.texture_main_l);
     this.gl.activeTexture$1(33985);
     this.gl.bindTexture$2(3553, this.texture_main_n);
     this.gl.bindFramebuffer$2(36160, this.FBO_main2);
   } else {
-    this.gl.activeTexture$1(33984);
+    t2.activeTexture$1(33984);
     this.gl.bindTexture$2(3553, this.texture_main2_l);
     this.gl.activeTexture$1(33985);
     this.gl.bindTexture$2(3553, this.texture_main2_n);
@@ -747,19 +930,24 @@ Isolate.$defineClass("DartWebGLShaderLab", "Object", ["viewY?", "viewX?", "sizeY
   this.it = $.neg(this.it);
  },
  calculateBlurTexture$0: function() {
-  this.gl.viewport$4(0, 0, this.sizeX, this.sizeY);
+  var t1 = this.gl;
+  var t2 = this.sizeX;
+  var t3 = this.sizeY;
+  t1.viewport$4(0, 0, t2, t3);
   this.gl.useProgram$1(this.prog_blur_horizontal);
   this.gl.activeTexture$1(33984);
-  if ($.ltB(this.it, 0)) {
-    this.gl.bindTexture$2(3553, this.texture_main2_l);
+  t1 = $.ltB(this.it, 0);
+  var t4 = this.gl;
+  if (t1) {
+    t4.bindTexture$2(3553, this.texture_main2_l);
     this.gl.bindFramebuffer$2(36160, this.FBO_helper);
   } else {
-    this.gl.bindTexture$2(3553, this.texture_main_l);
+    t4.bindTexture$2(3553, this.texture_main_l);
     this.gl.bindFramebuffer$2(36160, this.FBO_helper);
   }
   this.gl.drawArrays$3(5, 0, 4);
   this.gl.flush$0();
-  this.gl.viewport$4(0, 0, this.sizeX, this.sizeY);
+  this.gl.viewport$4(0, 0, t2, t3);
   this.gl.useProgram$1(this.prog_blur_vertical);
   this.gl.activeTexture$1(33984);
   this.gl.bindTexture$2(3553, this.texture_helper);
@@ -770,53 +958,79 @@ Isolate.$defineClass("DartWebGLShaderLab", "Object", ["viewY?", "viewX?", "sizeY
   this.gl.flush$0();
  },
  setUniforms$1: function(program) {
-  this.gl.uniform2f$3(this.gl.getUniformLocation$2(program, 'pixelSize'), $.div(1.0, this.sizeX), $.div(1.0, this.sizeY));
-  this.gl.uniform4f$5(this.gl.getUniformLocation$2(program, 'rnd'), $.random(), $.random(), $.random(), $.random());
-  this.gl.uniform1f$2(this.gl.getUniformLocation$2(program, 'fps'), this.fps);
-  this.gl.uniform1f$2(this.gl.getUniformLocation$2(program, 'time'), this.time);
-  this.gl.uniform2f$3(this.gl.getUniformLocation$2(program, 'aspect'), $.max(1, $.div(this.viewX, this.viewY)), $.max(1, $.div(this.viewY, this.viewX)));
-  this.gl.uniform2f$3(this.gl.getUniformLocation$2(program, 'mouse'), this.mouseX, this.mouseY);
-  this.gl.uniform1i$2(this.gl.getUniformLocation$2(program, 'sampler_prev'), 0);
-  this.gl.uniform1i$2(this.gl.getUniformLocation$2(program, 'sampler_prev_n'), 1);
-  this.gl.uniform1i$2(this.gl.getUniformLocation$2(program, 'sampler_blur'), 2);
-  this.gl.uniform1i$2(this.gl.getUniformLocation$2(program, 'sampler_noise'), 3);
-  this.gl.uniform1i$2(this.gl.getUniformLocation$2(program, 'sampler_noise_n'), 4);
+  var t1 = this.gl;
+  var t2 = t1.getUniformLocation$2(program, 'pixelSize');
+  var t3 = this.sizeX;
+  if (typeof t3 !== 'number') throw $.iae(t3);
+  t3 = 1.0 / t3;
+  var t4 = this.sizeY;
+  if (typeof t4 !== 'number') throw $.iae(t4);
+  t1.uniform2f$3(t2, t3, 1.0 / t4);
+  t3 = this.gl;
+  t3.uniform4f$5(t3.getUniformLocation$2(program, 'rnd'), $.random(), $.random(), $.random(), $.random());
+  t3 = this.gl;
+  t3.uniform1f$2(t3.getUniformLocation$2(program, 'fps'), this.fps);
+  t3 = this.gl;
+  t3.uniform1f$2(t3.getUniformLocation$2(program, 'time'), this.time);
+  t3 = this.gl;
+  t2 = t3.getUniformLocation$2(program, 'aspect');
+  t1 = this.viewX;
+  t4 = this.viewY;
+  t3.uniform2f$3(t2, $.max(1, t1 / t4), $.max(1, t4 / t1));
+  t2 = this.gl;
+  t2.uniform2f$3(t2.getUniformLocation$2(program, 'mouse'), this.mouseX, this.mouseY);
+  t2 = this.gl;
+  t2.uniform1i$2(t2.getUniformLocation$2(program, 'sampler_prev'), 0);
+  t2 = this.gl;
+  t2.uniform1i$2(t2.getUniformLocation$2(program, 'sampler_prev_n'), 1);
+  t2 = this.gl;
+  t2.uniform1i$2(t2.getUniformLocation$2(program, 'sampler_blur'), 2);
+  t2 = this.gl;
+  t2.uniform1i$2(t2.getUniformLocation$2(program, 'sampler_noise'), 3);
+  t2 = this.gl;
+  t2.uniform1i$2(t2.getUniformLocation$2(program, 'sampler_noise_n'), 4);
  },
  run$0: function() {
   this.c = $.document().query$1('#c');
   this.gl = $.getWebGLContext(this.c);
-  var t0 = this.c;
-  var t1 = typeof t0 === 'object' && t0.is$CanvasElement();
-  var t2 = !t1;
+  var t1 = this.c;
+  if (typeof t1 === 'object' && t1 !== null && t1.is$CanvasElement()) {
+    t1 = this.gl;
+    t1 = !((typeof t1 === 'object' && t1 !== null) && t1.is$WebGLRenderingContext());
+  } else t1 = true;
   if (t1) {
-    var t3 = this.gl;
-    t2 = !((typeof t3 === 'object') && t3.is$WebGLRenderingContext());
-  }
-  if (t2) {
     $.print('failed to load canvas');
     return;
   }
   $.add$1($.document().get$on().get$mouseMove(), new $.Closure(this));
-  $.add$1($.document().get$on().get$click(), new $.Closure2(this));
-  var t4 = this.viewX;
-  this.c.set$width(t4);
-  var t5 = this.viewY;
-  this.c.set$height(t5);
+  $.add$1($.document().get$on().get$click(), new $.Closure0(this));
+  t1 = this.viewX;
+  this.c.set$width(t1);
+  t1 = this.viewY;
+  this.c.set$height(t1);
   this.prog_advance = this.gl.createProgram$0();
-  this.gl.attachShader$2(this.prog_advance, this.getShader$2(this.gl, '#shader-vs'));
-  this.gl.attachShader$2(this.prog_advance, this.getShader$2(this.gl, '#shader-fs-advance'));
+  t1 = this.gl;
+  t1.attachShader$2(this.prog_advance, this.getShader$2(t1, '#shader-vs'));
+  t1 = this.gl;
+  t1.attachShader$2(this.prog_advance, this.getShader$2(t1, '#shader-fs-advance'));
   this.gl.linkProgram$1(this.prog_advance);
   this.prog_composite = this.gl.createProgram$0();
-  this.gl.attachShader$2(this.prog_composite, this.getShader$2(this.gl, '#shader-vs'));
-  this.gl.attachShader$2(this.prog_composite, this.getShader$2(this.gl, '#shader-fs-composite'));
+  t1 = this.gl;
+  t1.attachShader$2(this.prog_composite, this.getShader$2(t1, '#shader-vs'));
+  t1 = this.gl;
+  t1.attachShader$2(this.prog_composite, this.getShader$2(t1, '#shader-fs-composite'));
   this.gl.linkProgram$1(this.prog_composite);
   this.prog_blur_horizontal = this.gl.createProgram$0();
-  this.gl.attachShader$2(this.prog_blur_horizontal, this.getShader$2(this.gl, '#shader-vs'));
-  this.gl.attachShader$2(this.prog_blur_horizontal, this.getShader$2(this.gl, '#shader-fs-blur-horizontal'));
+  t1 = this.gl;
+  t1.attachShader$2(this.prog_blur_horizontal, this.getShader$2(t1, '#shader-vs'));
+  t1 = this.gl;
+  t1.attachShader$2(this.prog_blur_horizontal, this.getShader$2(t1, '#shader-fs-blur-horizontal'));
   this.gl.linkProgram$1(this.prog_blur_horizontal);
   this.prog_blur_vertical = this.gl.createProgram$0();
-  this.gl.attachShader$2(this.prog_blur_vertical, this.getShader$2(this.gl, '#shader-vs'));
-  this.gl.attachShader$2(this.prog_blur_vertical, this.getShader$2(this.gl, '#shader-fs-blur-vertical'));
+  t1 = this.gl;
+  t1.attachShader$2(this.prog_blur_vertical, this.getShader$2(t1, '#shader-vs'));
+  t1 = this.gl;
+  t1.attachShader$2(this.prog_blur_vertical, this.getShader$2(t1, '#shader-fs-blur-vertical'));
   this.gl.linkProgram$1(this.prog_blur_vertical);
   var posBuffer = this.gl.createBuffer$0();
   this.gl.bindBuffer$2(34962, posBuffer);
@@ -832,72 +1046,97 @@ Isolate.$defineClass("DartWebGLShaderLab", "Object", ["viewY?", "viewX?", "sizeY
   this.gl.bufferSubData$3(34962, texCoordOffset, texCoords);
   this.gl.vertexAttribPointer$6(aPosLoc, 3, 5126, false, 0, 0);
   this.gl.vertexAttribPointer$6(aTexLoc, 2, 5126, false, 0, texCoordOffset);
-  var noisepixels = [];
-  var pixels = [];
-  for (var i = 0; $.ltB(i, this.sizeX); i = i + 1) {
-    for (var j = 0; $.ltB(j, this.sizeY); j = j + 1) {
-      $.add$1(noisepixels, $.mul($.random(), 255));
-      $.add$1(noisepixels, $.mul($.random(), 255));
-      $.add$1(noisepixels, $.mul($.random(), 255));
-      $.add$1(noisepixels, 255);
-      $.add$1(pixels, 0);
-      $.add$1(pixels, 0);
-      $.add$1(pixels, 0);
-      $.add$1(pixels, 255);
-    }
+  t1 = this.sizeX;
+  var t2 = this.sizeY;
+  var requiredSize = t1 * t2 * 4;
+  var noisepixels = $.Uint8Array(requiredSize);
+  if (typeof noisepixels !== 'object' || noisepixels === null || ((noisepixels.constructor !== Array || !!noisepixels.immutable$list) && !noisepixels.is$JavaScriptIndexingBehavior())) return this.run$0$bailout(1, requiredSize, t1, noisepixels, t2, 0);
+  var pixels = $.Uint8Array(requiredSize);
+  if (typeof pixels !== 'object' || pixels === null || ((pixels.constructor !== Array || !!pixels.immutable$list) && !pixels.is$JavaScriptIndexingBehavior())) return this.run$0$bailout(2, requiredSize, t1, noisepixels, t2, pixels);
+  for (var i = 0; i < requiredSize; i += 4) {
+    var t3 = $.toInt($.mul($.random(), 255));
+    var t4 = noisepixels.length;
+    if (i < 0 || i >= t4) throw $.ioore(i);
+    noisepixels[i] = t3;
+    t3 = i + 1;
+    var t5 = $.toInt($.mul($.random(), 255));
+    var t6 = noisepixels.length;
+    if (t3 < 0 || t3 >= t6) throw $.ioore(t3);
+    noisepixels[t3] = t5;
+    t5 = i + 2;
+    var t7 = $.toInt($.mul($.random(), 255));
+    var t8 = noisepixels.length;
+    if (t5 < 0 || t5 >= t8) throw $.ioore(t5);
+    noisepixels[t5] = t7;
+    t7 = i + 3;
+    var t9 = noisepixels.length;
+    if (t7 < 0 || t7 >= t9) throw $.ioore(t7);
+    noisepixels[t7] = 255;
+    var t10 = pixels.length;
+    if (i < 0 || i >= t10) throw $.ioore(i);
+    pixels[i] = 0;
+    var t11 = pixels.length;
+    if (t3 < 0 || t3 >= t11) throw $.ioore(t3);
+    pixels[t3] = 0;
+    t3 = pixels.length;
+    if (t5 < 0 || t5 >= t3) throw $.ioore(t5);
+    pixels[t5] = 0;
+    t5 = pixels.length;
+    if (t7 < 0 || t7 >= t5) throw $.ioore(t7);
+    pixels[t7] = 255;
   }
   var rawData = $.Uint8Array$fromList(noisepixels);
   this.texture_main_l = this.gl.createTexture$0();
   this.gl.bindTexture$2(3553, this.texture_main_l);
   this.gl.pixelStorei$2(3317, 1);
-  this.gl.texImage2D$9(3553, 0, 6408, this.sizeX, this.sizeY, 0, 6408, 5121, rawData);
+  this.gl.texImage2D$9(3553, 0, 6408, t1, t2, 0, 6408, 5121, rawData);
   this.gl.texParameteri$3(3553, 10241, 9729);
   this.gl.texParameteri$3(3553, 10240, 9729);
   this.texture_main_n = this.gl.createTexture$0();
   this.gl.bindTexture$2(3553, this.texture_main_n);
   this.gl.pixelStorei$2(3317, 1);
-  this.gl.texImage2D$9(3553, 0, 6408, this.sizeX, this.sizeY, 0, 6408, 5121, rawData);
+  this.gl.texImage2D$9(3553, 0, 6408, t1, t2, 0, 6408, 5121, rawData);
   this.gl.texParameteri$3(3553, 10241, 9728);
   this.gl.texParameteri$3(3553, 10240, 9728);
   $.Uint8Array$fromList(noisepixels);
-  var rawData0 = $.Uint8Array$fromList(noisepixels);
+  rawData = $.Uint8Array$fromList(noisepixels);
   this.texture_main2_l = this.gl.createTexture$0();
   this.gl.bindTexture$2(3553, this.texture_main2_l);
   this.gl.pixelStorei$2(3317, 1);
-  this.gl.texImage2D$9(3553, 0, 6408, this.sizeX, this.sizeY, 0, 6408, 5121, rawData0);
+  this.gl.texImage2D$9(3553, 0, 6408, t1, t2, 0, 6408, 5121, rawData);
   this.gl.texParameteri$3(3553, 10241, 9729);
   this.gl.texParameteri$3(3553, 10240, 9729);
   this.texture_main2_n = this.gl.createTexture$0();
   this.gl.bindTexture$2(3553, this.texture_main2_n);
   this.gl.pixelStorei$2(3317, 1);
-  this.gl.texImage2D$9(3553, 0, 6408, this.sizeX, this.sizeY, 0, 6408, 5121, rawData0);
+  this.gl.texImage2D$9(3553, 0, 6408, t1, t2, 0, 6408, 5121, rawData);
   this.gl.texParameteri$3(3553, 10241, 9728);
   this.gl.texParameteri$3(3553, 10240, 9728);
-  var rawData1 = $.Uint8Array$fromList(pixels);
+  rawData = $.Uint8Array$fromList(pixels);
   this.texture_helper = this.gl.createTexture$0();
   this.gl.bindTexture$2(3553, this.texture_helper);
   this.gl.pixelStorei$2(3317, 1);
-  this.gl.texImage2D$9(3553, 0, 6408, this.sizeX, this.sizeY, 0, 6408, 5121, rawData1);
+  this.gl.texImage2D$9(3553, 0, 6408, t1, t2, 0, 6408, 5121, rawData);
   this.gl.texParameteri$3(3553, 10241, 9729);
   this.gl.texParameteri$3(3553, 10240, 9729);
-  var rawData2 = $.Uint8Array$fromList(pixels);
+  rawData = $.Uint8Array$fromList(pixels);
   this.texture_blur = this.gl.createTexture$0();
   this.gl.bindTexture$2(3553, this.texture_blur);
   this.gl.pixelStorei$2(3317, 1);
-  this.gl.texImage2D$9(3553, 0, 6408, this.sizeX, this.sizeY, 0, 6408, 5121, rawData2);
+  this.gl.texImage2D$9(3553, 0, 6408, t1, t2, 0, 6408, 5121, rawData);
   this.gl.texParameteri$3(3553, 10241, 9729);
   this.gl.texParameteri$3(3553, 10240, 9729);
-  var rawData3 = $.Uint8Array$fromList(noisepixels);
+  rawData = $.Uint8Array$fromList(noisepixels);
   this.texture_noise_l = this.gl.createTexture$0();
   this.gl.bindTexture$2(3553, this.texture_noise_l);
   this.gl.pixelStorei$2(3317, 1);
-  this.gl.texImage2D$9(3553, 0, 6408, this.sizeX, this.sizeY, 0, 6408, 5121, rawData3);
+  this.gl.texImage2D$9(3553, 0, 6408, t1, t2, 0, 6408, 5121, rawData);
   this.gl.texParameteri$3(3553, 10241, 9729);
   this.gl.texParameteri$3(3553, 10240, 9729);
   this.texture_noise_n = this.gl.createTexture$0();
   this.gl.bindTexture$2(3553, this.texture_noise_n);
   this.gl.pixelStorei$2(3317, 1);
-  this.gl.texImage2D$9(3553, 0, 6408, this.sizeX, this.sizeY, 0, 6408, 5121, rawData3);
+  this.gl.texImage2D$9(3553, 0, 6408, t1, t2, 0, 6408, 5121, rawData);
   this.gl.texParameteri$3(3553, 10241, 9728);
   this.gl.texParameteri$3(3553, 10240, 9728);
   this.FBO_main = this.gl.createFramebuffer$0();
@@ -918,11 +1157,18 @@ Isolate.$defineClass("DartWebGLShaderLab", "Object", ["viewY?", "viewX?", "sizeY
   this.gl.useProgram$1(this.prog_advance);
   this.setUniforms$1(this.prog_advance);
   this.gl.useProgram$1(this.prog_blur_horizontal);
-  this.gl.uniform2f$3(this.gl.getUniformLocation$2(this.prog_blur_horizontal, 'pixelSize'), $.div(1.0, this.sizeX), $.div(1.0, this.sizeY));
-  this.gl.uniform1i$2(this.gl.getUniformLocation$2(this.prog_blur_horizontal, 'src_tex'), 0);
+  t3 = this.gl;
+  t4 = t3.getUniformLocation$2(this.prog_blur_horizontal, 'pixelSize');
+  t1 = 1.0 / t1;
+  t2 = 1.0 / t2;
+  t3.uniform2f$3(t4, t1, t2);
+  t4 = this.gl;
+  t4.uniform1i$2(t4.getUniformLocation$2(this.prog_blur_horizontal, 'src_tex'), 0);
   this.gl.useProgram$1(this.prog_blur_vertical);
-  this.gl.uniform2f$3(this.gl.getUniformLocation$2(this.prog_blur_vertical, 'pixelSize'), $.div(1.0, this.sizeX), $.div(1.0, this.sizeY));
-  this.gl.uniform1i$2(this.gl.getUniformLocation$2(this.prog_blur_vertical, 'src_tex'), 0);
+  t4 = this.gl;
+  t4.uniform2f$3(t4.getUniformLocation$2(this.prog_blur_vertical, 'pixelSize'), t1, t2);
+  t2 = this.gl;
+  t2.uniform1i$2(t2.getUniformLocation$2(this.prog_blur_vertical, 'src_tex'), 0);
   this.gl.useProgram$1(this.prog_composite);
   this.setUniforms$1(this.prog_composite);
   this.gl.activeTexture$1(33986);
@@ -936,439 +1182,746 @@ Isolate.$defineClass("DartWebGLShaderLab", "Object", ["viewY?", "viewX?", "sizeY
   this.watch.start$0();
   this.anim$1(0);
  },
+ run$0$bailout: function(state, env0, env1, env2, env3, env4) {
+  switch (state) {
+    case 1:
+      requiredSize = env0;
+      t1 = env1;
+      noisepixels = env2;
+      t2 = env3;
+      break;
+    case 2:
+      requiredSize = env0;
+      t1 = env1;
+      noisepixels = env2;
+      t2 = env3;
+      pixels = env4;
+      break;
+  }
+  switch (state) {
+    case 0:
+      this.c = $.document().query$1('#c');
+      this.gl = $.getWebGLContext(this.c);
+      var t1 = this.c;
+      if (typeof t1 === 'object' && t1 !== null && t1.is$CanvasElement()) {
+        t1 = this.gl;
+        t1 = !((typeof t1 === 'object' && t1 !== null) && t1.is$WebGLRenderingContext());
+      } else t1 = true;
+      if (t1) {
+        $.print('failed to load canvas');
+        return;
+      }
+      $.add$1($.document().get$on().get$mouseMove(), new $.Closure(this));
+      $.add$1($.document().get$on().get$click(), new $.Closure0(this));
+      t1 = this.viewX;
+      this.c.set$width(t1);
+      t1 = this.viewY;
+      this.c.set$height(t1);
+      this.prog_advance = this.gl.createProgram$0();
+      t1 = this.gl;
+      t1.attachShader$2(this.prog_advance, this.getShader$2(t1, '#shader-vs'));
+      t1 = this.gl;
+      t1.attachShader$2(this.prog_advance, this.getShader$2(t1, '#shader-fs-advance'));
+      this.gl.linkProgram$1(this.prog_advance);
+      this.prog_composite = this.gl.createProgram$0();
+      t1 = this.gl;
+      t1.attachShader$2(this.prog_composite, this.getShader$2(t1, '#shader-vs'));
+      t1 = this.gl;
+      t1.attachShader$2(this.prog_composite, this.getShader$2(t1, '#shader-fs-composite'));
+      this.gl.linkProgram$1(this.prog_composite);
+      this.prog_blur_horizontal = this.gl.createProgram$0();
+      t1 = this.gl;
+      t1.attachShader$2(this.prog_blur_horizontal, this.getShader$2(t1, '#shader-vs'));
+      t1 = this.gl;
+      t1.attachShader$2(this.prog_blur_horizontal, this.getShader$2(t1, '#shader-fs-blur-horizontal'));
+      this.gl.linkProgram$1(this.prog_blur_horizontal);
+      this.prog_blur_vertical = this.gl.createProgram$0();
+      t1 = this.gl;
+      t1.attachShader$2(this.prog_blur_vertical, this.getShader$2(t1, '#shader-vs'));
+      t1 = this.gl;
+      t1.attachShader$2(this.prog_blur_vertical, this.getShader$2(t1, '#shader-fs-blur-vertical'));
+      this.gl.linkProgram$1(this.prog_blur_vertical);
+      var posBuffer = this.gl.createBuffer$0();
+      this.gl.bindBuffer$2(34962, posBuffer);
+      var vertices = $.Float32Array$fromList([-1, -1, 0, 1, -1, 0, -1, 1, 0, 1, 1, 0]);
+      var aPosLoc = this.gl.getAttribLocation$2(this.prog_advance, 'aPos');
+      this.gl.enableVertexAttribArray$1(aPosLoc);
+      var aTexLoc = this.gl.getAttribLocation$2(this.prog_advance, 'aTexCoord');
+      this.gl.enableVertexAttribArray$1(aTexLoc);
+      var texCoords = $.Float32Array$fromList([0, 0, 1, 0, 0, 1, 1, 1]);
+      var texCoordOffset = vertices.get$byteLength();
+      this.gl.bufferData$3(34962, $.add(texCoordOffset, texCoords.get$byteLength()), 35044);
+      this.gl.bufferSubData$3(34962, 0, vertices);
+      this.gl.bufferSubData$3(34962, texCoordOffset, texCoords);
+      this.gl.vertexAttribPointer$6(aPosLoc, 3, 5126, false, 0, 0);
+      this.gl.vertexAttribPointer$6(aTexLoc, 2, 5126, false, 0, texCoordOffset);
+      t1 = this.sizeX;
+      var t2 = this.sizeY;
+      var requiredSize = t1 * t2 * 4;
+      var noisepixels = $.Uint8Array(requiredSize);
+    case 1:
+      state = 0;
+      var pixels = $.Uint8Array(requiredSize);
+    case 2:
+      state = 0;
+      for (var i = 0; i < requiredSize; i += 4) {
+        $.indexSet(noisepixels, i, $.toInt($.mul($.random(), 255)));
+        var t3 = i + 1;
+        $.indexSet(noisepixels, t3, $.toInt($.mul($.random(), 255)));
+        var t4 = i + 2;
+        $.indexSet(noisepixels, t4, $.toInt($.mul($.random(), 255)));
+        var t5 = i + 3;
+        $.indexSet(noisepixels, t5, 255);
+        $.indexSet(pixels, i, 0);
+        $.indexSet(pixels, t3, 0);
+        $.indexSet(pixels, t4, 0);
+        $.indexSet(pixels, t5, 255);
+      }
+      var rawData = $.Uint8Array$fromList(noisepixels);
+      this.texture_main_l = this.gl.createTexture$0();
+      this.gl.bindTexture$2(3553, this.texture_main_l);
+      this.gl.pixelStorei$2(3317, 1);
+      this.gl.texImage2D$9(3553, 0, 6408, t1, t2, 0, 6408, 5121, rawData);
+      this.gl.texParameteri$3(3553, 10241, 9729);
+      this.gl.texParameteri$3(3553, 10240, 9729);
+      this.texture_main_n = this.gl.createTexture$0();
+      this.gl.bindTexture$2(3553, this.texture_main_n);
+      this.gl.pixelStorei$2(3317, 1);
+      this.gl.texImage2D$9(3553, 0, 6408, t1, t2, 0, 6408, 5121, rawData);
+      this.gl.texParameteri$3(3553, 10241, 9728);
+      this.gl.texParameteri$3(3553, 10240, 9728);
+      $.Uint8Array$fromList(noisepixels);
+      rawData = $.Uint8Array$fromList(noisepixels);
+      this.texture_main2_l = this.gl.createTexture$0();
+      this.gl.bindTexture$2(3553, this.texture_main2_l);
+      this.gl.pixelStorei$2(3317, 1);
+      this.gl.texImage2D$9(3553, 0, 6408, t1, t2, 0, 6408, 5121, rawData);
+      this.gl.texParameteri$3(3553, 10241, 9729);
+      this.gl.texParameteri$3(3553, 10240, 9729);
+      this.texture_main2_n = this.gl.createTexture$0();
+      this.gl.bindTexture$2(3553, this.texture_main2_n);
+      this.gl.pixelStorei$2(3317, 1);
+      this.gl.texImage2D$9(3553, 0, 6408, t1, t2, 0, 6408, 5121, rawData);
+      this.gl.texParameteri$3(3553, 10241, 9728);
+      this.gl.texParameteri$3(3553, 10240, 9728);
+      rawData = $.Uint8Array$fromList(pixels);
+      this.texture_helper = this.gl.createTexture$0();
+      this.gl.bindTexture$2(3553, this.texture_helper);
+      this.gl.pixelStorei$2(3317, 1);
+      this.gl.texImage2D$9(3553, 0, 6408, t1, t2, 0, 6408, 5121, rawData);
+      this.gl.texParameteri$3(3553, 10241, 9729);
+      this.gl.texParameteri$3(3553, 10240, 9729);
+      rawData = $.Uint8Array$fromList(pixels);
+      this.texture_blur = this.gl.createTexture$0();
+      this.gl.bindTexture$2(3553, this.texture_blur);
+      this.gl.pixelStorei$2(3317, 1);
+      this.gl.texImage2D$9(3553, 0, 6408, t1, t2, 0, 6408, 5121, rawData);
+      this.gl.texParameteri$3(3553, 10241, 9729);
+      this.gl.texParameteri$3(3553, 10240, 9729);
+      rawData = $.Uint8Array$fromList(noisepixels);
+      this.texture_noise_l = this.gl.createTexture$0();
+      this.gl.bindTexture$2(3553, this.texture_noise_l);
+      this.gl.pixelStorei$2(3317, 1);
+      this.gl.texImage2D$9(3553, 0, 6408, t1, t2, 0, 6408, 5121, rawData);
+      this.gl.texParameteri$3(3553, 10241, 9729);
+      this.gl.texParameteri$3(3553, 10240, 9729);
+      this.texture_noise_n = this.gl.createTexture$0();
+      this.gl.bindTexture$2(3553, this.texture_noise_n);
+      this.gl.pixelStorei$2(3317, 1);
+      this.gl.texImage2D$9(3553, 0, 6408, t1, t2, 0, 6408, 5121, rawData);
+      this.gl.texParameteri$3(3553, 10241, 9728);
+      this.gl.texParameteri$3(3553, 10240, 9728);
+      this.FBO_main = this.gl.createFramebuffer$0();
+      this.gl.bindFramebuffer$2(36160, this.FBO_main);
+      this.gl.framebufferTexture2D$5(36160, 36064, 3553, this.texture_main_l, 0);
+      this.FBO_main2 = this.gl.createFramebuffer$0();
+      this.gl.bindFramebuffer$2(36160, this.FBO_main2);
+      this.gl.framebufferTexture2D$5(36160, 36064, 3553, this.texture_main2_l, 0);
+      this.FBO_helper = this.gl.createFramebuffer$0();
+      this.gl.bindFramebuffer$2(36160, this.FBO_helper);
+      this.gl.framebufferTexture2D$5(36160, 36064, 3553, this.texture_helper, 0);
+      this.FBO_blur = this.gl.createFramebuffer$0();
+      this.gl.bindFramebuffer$2(36160, this.FBO_blur);
+      this.gl.framebufferTexture2D$5(36160, 36064, 3553, this.texture_blur, 0);
+      this.FBO_noise = this.gl.createFramebuffer$0();
+      this.gl.bindFramebuffer$2(36160, this.FBO_noise);
+      this.gl.framebufferTexture2D$5(36160, 36064, 3553, this.texture_noise_l, 0);
+      this.gl.useProgram$1(this.prog_advance);
+      this.setUniforms$1(this.prog_advance);
+      this.gl.useProgram$1(this.prog_blur_horizontal);
+      t3 = this.gl;
+      t4 = t3.getUniformLocation$2(this.prog_blur_horizontal, 'pixelSize');
+      if (typeof t1 !== 'number') throw $.iae(t1);
+      t1 = 1.0 / t1;
+      if (typeof t2 !== 'number') throw $.iae(t2);
+      t2 = 1.0 / t2;
+      t3.uniform2f$3(t4, t1, t2);
+      t4 = this.gl;
+      t4.uniform1i$2(t4.getUniformLocation$2(this.prog_blur_horizontal, 'src_tex'), 0);
+      this.gl.useProgram$1(this.prog_blur_vertical);
+      t4 = this.gl;
+      t4.uniform2f$3(t4.getUniformLocation$2(this.prog_blur_vertical, 'pixelSize'), t1, t2);
+      t2 = this.gl;
+      t2.uniform1i$2(t2.getUniformLocation$2(this.prog_blur_vertical, 'src_tex'), 0);
+      this.gl.useProgram$1(this.prog_composite);
+      this.setUniforms$1(this.prog_composite);
+      this.gl.activeTexture$1(33986);
+      this.gl.bindTexture$2(3553, this.texture_blur);
+      this.gl.activeTexture$1(33987);
+      this.gl.bindTexture$2(3553, this.texture_noise_l);
+      this.gl.activeTexture$1(33988);
+      this.gl.bindTexture$2(3553, this.texture_noise_n);
+      this.calculateBlurTexture$0();
+      this.watch = $.StopwatchImplementation$0();
+      this.watch.start$0();
+      this.anim$1(0);
+  }
+ },
  getShader$2: function(g, id) {
   return $.createShaderFromScriptElement(g, id);
- },
-});
+ }
+};
 
-Isolate.$defineClass("_AbstractWorkerEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._AbstractWorkerEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_AudioContextEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._AudioContextEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_BatteryManagerEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._BatteryManagerEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_BodyElementEventsImpl", "_ElementEventsImpl", ["_lib3_ptr"], {
-});
+$$._BodyElementEventsImpl = {"":
+ ["_ptr"],
+ super: "_ElementEventsImpl"
+};
 
-Isolate.$defineClass("_DOMApplicationCacheEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._DOMApplicationCacheEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_DedicatedWorkerContextEventsImpl", "_WorkerContextEventsImpl", ["_lib3_ptr"], {
-});
+$$._DedicatedWorkerContextEventsImpl = {"":
+ ["_ptr"],
+ super: "_WorkerContextEventsImpl"
+};
 
-Isolate.$defineClass("_DeprecatedPeerConnectionEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._DeprecatedPeerConnectionEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_DocumentEventsImpl", "_ElementEventsImpl", ["_lib3_ptr"], {
+$$._DocumentEventsImpl = {"":
+ ["_ptr"],
+ super: "_ElementEventsImpl",
  get$reset: function() {
-  return this._lib3_get$1('reset');
+  return this._get$1('reset');
  },
  reset$0: function() { return this.get$reset().$call$0(); },
  get$mouseMove: function() {
-  return this._lib3_get$1('mousemove');
+  return this._get$1('mousemove');
  },
  get$click: function() {
-  return this._lib3_get$1('click');
- },
-});
+  return this._get$1('click');
+ }
+};
 
-Isolate.$defineClass("FilteredElementList", "Object", ["_lib3_childNodes", "_lib3_node"], {
+$$.FilteredElementList = {"":
+ ["_childNodes", "_node"],
+ super: "Object",
  last$0: function() {
-  return $.last(this.get$_lib3_filtered());
+  return $.last(this.get$_filtered());
  },
  indexOf$2: function(element, start) {
-  return $.indexOf$2(this.get$_lib3_filtered(), element, start);
+  return $.indexOf$2(this.get$_filtered(), element, start);
  },
  getRange$2: function(start, rangeLength) {
-  return $.getRange(this.get$_lib3_filtered(), start, rangeLength);
+  return $.getRange(this.get$_filtered(), start, rangeLength);
  },
  iterator$0: function() {
-  return $.iterator(this.get$_lib3_filtered());
+  return $.iterator(this.get$_filtered());
  },
  operator$index$1: function(index) {
-  return $.index(this.get$_lib3_filtered(), index);
+  var t1 = this.get$_filtered();
+  if (typeof t1 !== 'string' && (typeof t1 !== 'object' || t1 === null || (t1.constructor !== Array && !t1.is$JavaScriptIndexingBehavior()))) return this.operator$index$1$bailout(1, index, t1);
+  if (index !== (index | 0)) throw $.iae(index);
+  var t2 = t1.length;
+  if (index < 0 || index >= t2) throw $.ioore(index);
+  return t1[index];
+ },
+ operator$index$1$bailout: function(state, index, t1) {
+  return $.index(t1, index);
  },
  get$length: function() {
-  return $.get$length(this.get$_lib3_filtered());
+  return $.get$length(this.get$_filtered());
  },
  isEmpty$0: function() {
-  return $.isEmpty(this.get$_lib3_filtered());
+  return $.isEmpty(this.get$_filtered());
  },
  filter$1: function(f) {
-  return $.filter(this.get$_lib3_filtered(), f);
+  return $.filter(this.get$_filtered(), f);
  },
  removeLast$0: function() {
   var result = this.last$0();
-  if (!$.eqNullB(result)) {
-    result.remove$0();
-  }
+  !$.eqNullB(result) && result.remove$0();
   return result;
  },
  clear$0: function() {
-  $.clear(this._lib3_childNodes);
+  $.clear(this._childNodes);
  },
  removeRange$2: function(start, rangeLength) {
-  $.forEach($.getRange(this.get$_lib3_filtered(), start, rangeLength), new $.Closure6());
+  $.forEach($.getRange(this.get$_filtered(), start, rangeLength), new $.Closure4());
  },
  addAll$1: function(collection) {
   $.forEach(collection, this.get$add());
  },
  add$1: function(value) {
-  $.add$1(this._lib3_childNodes, value);
+  $.add$1(this._childNodes, value);
  },
- get$add: function() { return new $.Closure15(this); },
+ get$add: function() { return new $.Closure12(this, 'add$1'); },
  set$length: function(newLength) {
   var len = $.get$length(this);
-  if ($.geB(newLength, len)) {
-    return;
-  } else {
-    if ($.ltB(newLength, 0)) {
-      throw $.captureStackTrace($.CTC4);
-    }
-  }
+  if ($.geB(newLength, len)) return;
+  if ($.ltB(newLength, 0)) throw $.captureStackTrace($.CTC2);
   this.removeRange$2($.sub(newLength, 1), $.sub(len, newLength));
  },
  operator$indexSet$2: function(index, value) {
   this.operator$index$1(index).replaceWith$1(value);
  },
  forEach$1: function(f) {
-  $.forEach(this.get$_lib3_filtered(), f);
+  $.forEach(this.get$_filtered(), f);
  },
  get$first: function() {
-  for (var t0 = $.iterator(this._lib3_childNodes); t0.hasNext$0() === true; ) {
-    var t1 = t0.next$0();
-    if (typeof t1 === 'object' && t1.is$Element()) {
-      return t1;
-    }
+  for (var t1 = $.iterator(this._childNodes); t1.hasNext$0() === true; ) {
+    var t2 = t1.next$0();
+    if (typeof t2 === 'object' && t2 !== null && t2.is$Element()) return t2;
   }
   return;
  },
  first$0: function() { return this.get$first().$call$0(); },
- get$_lib3_filtered: function() {
-  return $.List$from($.filter(this._lib3_childNodes, new $.Closure4()));
+ get$_filtered: function() {
+  return $.List$from($.filter(this._childNodes, new $.Closure2()));
  },
- is$List2: function() { return true; },
- is$Collection: function() { return true; },
-});
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+};
 
-Isolate.$defineClass("_ChildrenElementList", "Object", ["_lib3_childElements", "_lib3_element"], {
+$$._ChildrenElementList = {"":
+ ["_childElements", "_element"],
+ super: "Object",
  last$0: function() {
-  return this._lib3_element.get$$$dom_lastElementChild();
+  return this._element.get$$$dom_lastElementChild();
  },
  removeLast$0: function() {
   var result = this.last$0();
-  if (!$.eqNullB(result)) {
-    this._lib3_element.$dom_removeChild$1(result);
-  }
+  !$.eqNullB(result) && this._element.$dom_removeChild$1(result);
   return result;
  },
  clear$0: function() {
-  this._lib3_element.set$text('');
+  this._element.set$text('');
  },
  indexOf$2: function(element, start) {
-  return $.indexOf2(this, element, start, $.get$length(this));
+  return $.indexOf0(this, element, start, $.get$length(this));
  },
  getRange$2: function(start, rangeLength) {
-  return $._lib3_FrozenElementList$_wrap$1($.getRange2(this, start, rangeLength, []));
+  return $._FrozenElementList$_wrap$1($.getRange0(this, start, rangeLength, []));
  },
  addAll$1: function(collection) {
-  for (var t0 = $.iterator(collection); t0.hasNext$0() === true; ) {
-    var t1 = t0.next$0();
-    this._lib3_element.$dom_appendChild$1(t1);
+  for (var t1 = $.iterator(collection), t2 = this._element; t1.hasNext$0() === true; ) {
+    t2.$dom_appendChild$1(t1.next$0());
   }
  },
  iterator$0: function() {
-  return $.iterator(this._lib3_toList$0());
+  return $.iterator(this._toList$0());
  },
  add$1: function(value) {
-  this._lib3_element.$dom_appendChild$1(value);
+  this._element.$dom_appendChild$1(value);
   return value;
  },
  set$length: function(newLength) {
-  throw $.captureStackTrace($.CTC3);
+  throw $.captureStackTrace($.CTC1);
  },
  operator$indexSet$2: function(index, value) {
-  this._lib3_element.$dom_replaceChild$2(value, $.index(this._lib3_childElements, index));
+  this._element.$dom_replaceChild$2(value, $.index(this._childElements, index));
  },
  operator$index$1: function(index) {
-  return $.index(this._lib3_childElements, index);
+  var t1 = this._childElements;
+  if (typeof t1 !== 'string' && (typeof t1 !== 'object' || t1 === null || (t1.constructor !== Array && !t1.is$JavaScriptIndexingBehavior()))) return this.operator$index$1$bailout(1, t1, index);
+  if (index !== (index | 0)) throw $.iae(index);
+  var t2 = t1.length;
+  if (index < 0 || index >= t2) throw $.ioore(index);
+  return t1[index];
+ },
+ operator$index$1$bailout: function(state, t1, index) {
+  return $.index(t1, index);
  },
  get$length: function() {
-  return $.get$length(this._lib3_childElements);
+  return $.get$length(this._childElements);
  },
  isEmpty$0: function() {
-  return $.eqNull(this._lib3_element.get$$$dom_firstElementChild());
+  return $.eqNull(this._element.get$$$dom_firstElementChild());
  },
  filter$1: function(f) {
-  var t0 = ({});
-  t0.f_1 = f;
+  var t1 = ({});
+  t1.f_1 = f;
   var output = [];
-  this.forEach$1(new $.Closure5(t0, output));
-  return $._lib3_FrozenElementList$_wrap$1(output);
+  this.forEach$1(new $.Closure3(t1, output));
+  return $._FrozenElementList$_wrap$1(output);
  },
  forEach$1: function(f) {
-  for (var t0 = $.iterator(this._lib3_childElements); t0.hasNext$0() === true; ) {
-    f.$call$1(t0.next$0());
+  for (var t1 = $.iterator(this._childElements); t1.hasNext$0() === true; ) {
+    f.$call$1(t1.next$0());
   }
  },
  get$first: function() {
-  return this._lib3_element.get$$$dom_firstElementChild();
+  return this._element.get$$$dom_firstElementChild();
  },
  first$0: function() { return this.get$first().$call$0(); },
- _lib3_toList$0: function() {
-  var output = $.List($.get$length(this._lib3_childElements));
-  var len = $.get$length(this._lib3_childElements);
-  if (typeof len !== 'number') return this._lib3_toList$0$bailout(1, output, len);
-  var i = 0;
-  for (; i < len; i = i + 1) {
-    var t0 = $.index(this._lib3_childElements, i);
-    var t1 = output.length;
-    if (i < 0 || i >= t1) throw $.ioore(i);
-    output[i] = t0;
+ _toList$0: function() {
+  var t1 = this._childElements;
+  if (typeof t1 !== 'string' && (typeof t1 !== 'object' || t1 === null || (t1.constructor !== Array && !t1.is$JavaScriptIndexingBehavior()))) return this._toList$0$bailout(1, t1);
+  var output = $.List(t1.length);
+  for (var len = t1.length, i = 0; i < len; ++i) {
+    var t2 = t1.length;
+    if (i < 0 || i >= t2) throw $.ioore(i);
+    var t3 = t1[i];
+    var t4 = output.length;
+    if (i < 0 || i >= t4) throw $.ioore(i);
+    output[i] = t3;
   }
   return output;
  },
- _lib3_toList$0$bailout: function(state, env0, env1) {
-  switch (state) {
-    case 1:
-      output = env0;
-      len = env1;
-      break;
+ _toList$0$bailout: function(state, t1) {
+  var output = $.List($.get$length(t1));
+  for (var len = $.get$length(t1), i = 0; $.ltB(i, len); ++i) {
+    var t2 = $.index(t1, i);
+    var t3 = output.length;
+    if (i < 0 || i >= t3) throw $.ioore(i);
+    output[i] = t2;
   }
-  switch (state) {
-    case 0:
-      var output = $.List($.get$length(this._lib3_childElements));
-      var len = $.get$length(this._lib3_childElements);
-    case 1:
-      state = 0;
-      var i = 0;
-      L0: while (true) {
-        if (!$.ltB(i, len)) break L0;
-        var t0 = $.index(this._lib3_childElements, i);
-        var t1 = output.length;
-        if (i < 0 || i >= t1) throw $.ioore(i);
-        output[i] = t0;
-        i = i + 1;
-      }
-      return output;
-  }
+  return output;
  },
- is$List2: function() { return true; },
- is$Collection: function() { return true; },
-});
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+};
 
-Isolate.$defineClass("_FrozenElementList", "Object", ["_lib3_nodeList"], {
+$$._FrozenElementList = {"":
+ ["_nodeList"],
+ super: "Object",
  last$0: function() {
-  return $.last(this._lib3_nodeList);
+  return $.last(this._nodeList);
  },
  removeLast$0: function() {
-  throw $.captureStackTrace($.CTC3);
+  throw $.captureStackTrace($.CTC1);
  },
  clear$0: function() {
-  throw $.captureStackTrace($.CTC3);
+  throw $.captureStackTrace($.CTC1);
  },
  indexOf$2: function(element, start) {
-  return $.indexOf$2(this._lib3_nodeList, element, start);
+  return $.indexOf$2(this._nodeList, element, start);
  },
  getRange$2: function(start, rangeLength) {
-  return $._lib3_FrozenElementList$_wrap$1($.getRange(this._lib3_nodeList, start, rangeLength));
+  return $._FrozenElementList$_wrap$1($.getRange(this._nodeList, start, rangeLength));
  },
  addAll$1: function(collection) {
-  throw $.captureStackTrace($.CTC3);
+  throw $.captureStackTrace($.CTC1);
  },
  iterator$0: function() {
-  return $._lib3_FrozenElementListIterator$1(this);
+  return $._FrozenElementListIterator$1(this);
  },
  add$1: function(value) {
-  throw $.captureStackTrace($.CTC3);
+  throw $.captureStackTrace($.CTC1);
  },
  set$length: function(newLength) {
-  $.set$length(this._lib3_nodeList, newLength);
+  $.set$length(this._nodeList, newLength);
  },
  operator$indexSet$2: function(index, value) {
-  throw $.captureStackTrace($.CTC3);
+  throw $.captureStackTrace($.CTC1);
  },
  operator$index$1: function(index) {
-  return $.index(this._lib3_nodeList, index);
+  var t1 = this._nodeList;
+  if (typeof t1 !== 'string' && (typeof t1 !== 'object' || t1 === null || (t1.constructor !== Array && !t1.is$JavaScriptIndexingBehavior()))) return this.operator$index$1$bailout(1, t1, index);
+  if (index !== (index | 0)) throw $.iae(index);
+  var t2 = t1.length;
+  if (index < 0 || index >= t2) throw $.ioore(index);
+  return t1[index];
+ },
+ operator$index$1$bailout: function(state, t1, index) {
+  return $.index(t1, index);
  },
  get$length: function() {
-  return $.get$length(this._lib3_nodeList);
+  return $.get$length(this._nodeList);
  },
  isEmpty$0: function() {
-  return $.isEmpty(this._lib3_nodeList);
+  return $.isEmpty(this._nodeList);
  },
  filter$1: function(f) {
-  var out = $._lib3_ElementList$1([]);
-  for (var t0 = this.iterator$0(); t0.hasNext$0() === true; ) {
-    var t1 = t0.next$0();
-    if (f.$call$1(t1) === true) {
-      out.add$1(t1);
-    }
+  var out = $._ElementList$1([]);
+  for (var t1 = this.iterator$0(); t1.hasNext$0() === true; ) {
+    var t2 = t1.next$0();
+    f.$call$1(t2) === true && out.add$1(t2);
   }
   return out;
  },
  forEach$1: function(f) {
-  for (var t0 = this.iterator$0(); t0.hasNext$0() === true; ) {
-    f.$call$1(t0.next$0());
+  for (var t1 = this.iterator$0(); t1.hasNext$0() === true; ) {
+    f.$call$1(t1.next$0());
   }
  },
  get$first: function() {
-  return $.index(this._lib3_nodeList, 0);
+  return $.index(this._nodeList, 0);
  },
  first$0: function() { return this.get$first().$call$0(); },
- is$List2: function() { return true; },
- is$Collection: function() { return true; },
-});
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+};
 
-Isolate.$defineClass("_FrozenElementListIterator", "Object", ["_lib3_index", "_lib3_list"], {
+$$._FrozenElementListIterator = {"":
+ ["_lib_index", "_list"],
+ super: "Object",
  hasNext$0: function() {
-  return $.lt(this._lib3_index, $.get$length(this._lib3_list));
+  var t1 = this._lib_index;
+  if (typeof t1 !== 'number') return this.hasNext$0$bailout(1, t1, 0);
+  var t2 = $.get$length(this._list);
+  if (typeof t2 !== 'number') return this.hasNext$0$bailout(2, t1, t2);
+  return t1 < t2;
+ },
+ hasNext$0$bailout: function(state, env0, env1) {
+  switch (state) {
+    case 1:
+      t1 = env0;
+      break;
+    case 2:
+      t1 = env0;
+      t2 = env1;
+      break;
+  }
+  switch (state) {
+    case 0:
+      var t1 = this._lib_index;
+    case 1:
+      state = 0;
+      var t2 = $.get$length(this._list);
+    case 2:
+      state = 0;
+      return $.lt(t1, t2);
+  }
  },
  next$0: function() {
-  if (this.hasNext$0() !== true) {
-    throw $.captureStackTrace($.CTC2);
-  }
-  var t0 = this._lib3_list;
-  var t1 = this._lib3_index;
-  this._lib3_index = $.add(t1, 1);
-  return $.index(t0, t1);
+  if (this.hasNext$0() !== true) throw $.captureStackTrace($.CTC0);
+  var t1 = this._list;
+  if (typeof t1 !== 'string' && (typeof t1 !== 'object' || t1 === null || (t1.constructor !== Array && !t1.is$JavaScriptIndexingBehavior()))) return this.next$0$bailout(1, t1, 0);
+  var t2 = this._lib_index;
+  if (typeof t2 !== 'number') return this.next$0$bailout(2, t1, t2);
+  this._lib_index = t2 + 1;
+  if (t2 !== (t2 | 0)) throw $.iae(t2);
+  var t3 = t1.length;
+  if (t2 < 0 || t2 >= t3) throw $.ioore(t2);
+  return t1[t2];
  },
-});
+ next$0$bailout: function(state, env0, env1) {
+  switch (state) {
+    case 1:
+      t1 = env0;
+      break;
+    case 2:
+      t1 = env0;
+      t2 = env1;
+      break;
+  }
+  switch (state) {
+    case 0:
+      if (this.hasNext$0() !== true) throw $.captureStackTrace($.CTC0);
+      var t1 = this._list;
+    case 1:
+      state = 0;
+      var t2 = this._lib_index;
+    case 2:
+      state = 0;
+      this._lib_index = $.add(t2, 1);
+      return $.index(t1, t2);
+  }
+ }
+};
 
-Isolate.$defineClass("_ElementList", "_ListWrapper", ["_lib3_list"], {
+$$._ElementList = {"":
+ ["_list"],
+ super: "_ListWrapper",
  getRange$2: function(start, rangeLength) {
-  return $._lib3_ElementList$1($._ListWrapper.prototype.getRange$2.call(this, start, rangeLength));
+  return $._ElementList$1($._ListWrapper.prototype.getRange$2.call(this, start, rangeLength));
  },
  filter$1: function(f) {
-  return $._lib3_ElementList$1($._ListWrapper.prototype.filter$1.call(this, f));
+  return $._ElementList$1($._ListWrapper.prototype.filter$1.call(this, f));
  },
- is$List2: function() { return true; },
- is$Collection: function() { return true; },
-});
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+};
 
-Isolate.$defineClass("_ElementEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
+$$._ElementEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl",
  get$reset: function() {
-  return this._lib3_get$1('reset');
+  return this._get$1('reset');
  },
  reset$0: function() { return this.get$reset().$call$0(); },
  get$mouseMove: function() {
-  return this._lib3_get$1('mousemove');
+  return this._get$1('mousemove');
  },
  get$click: function() {
-  return this._lib3_get$1('click');
- },
-});
+  return this._get$1('click');
+ }
+};
 
-Isolate.$defineClass("_EventSourceEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._EventSourceEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_EventsImpl", "Object", ["_lib3_ptr"], {
- _lib3_get$1: function(type) {
-  return $._lib3_EventListenerListImpl$2(this._lib3_ptr, type);
+$$._EventsImpl = {"":
+ ["_ptr"],
+ super: "Object",
+ _get$1: function(type) {
+  return $._EventListenerListImpl$2(this._ptr, type);
  },
  operator$index$1: function(type) {
-  return this._lib3_get$1($.toLowerCase(type));
- },
-});
+  return this._get$1($.toLowerCase(type));
+ }
+};
 
-Isolate.$defineClass("_EventListenerListImpl", "Object", ["_lib3_type", "_lib3_ptr"], {
- _lib3_add$2: function(listener, useCapture) {
-  this._lib3_ptr.$dom_addEventListener$3(this._lib3_type, listener, useCapture);
+$$._EventListenerListImpl = {"":
+ ["_type", "_ptr"],
+ super: "Object",
+ _add$2: function(listener, useCapture) {
+  this._ptr.$dom_addEventListener$3(this._type, listener, useCapture);
  },
  add$2: function(listener, useCapture) {
-  this._lib3_add$2(listener, useCapture);
+  this._add$2(listener, useCapture);
   return this;
  },
  add$1: function(listener) {
   return this.add$2(listener,false)
-},
-});
+}
+};
 
-Isolate.$defineClass("_FileReaderEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._FileReaderEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_FileWriterEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._FileWriterEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_FrameSetElementEventsImpl", "_ElementEventsImpl", ["_lib3_ptr"], {
-});
+$$._FrameSetElementEventsImpl = {"":
+ ["_ptr"],
+ super: "_ElementEventsImpl"
+};
 
-Isolate.$defineClass("_IDBDatabaseEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._IDBDatabaseEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_IDBRequestEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._IDBRequestEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_IDBTransactionEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._IDBTransactionEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_IDBVersionChangeRequestEventsImpl", "_IDBRequestEventsImpl", ["_lib3_ptr"], {
-});
+$$._IDBVersionChangeRequestEventsImpl = {"":
+ ["_ptr"],
+ super: "_IDBRequestEventsImpl"
+};
 
-Isolate.$defineClass("_InputElementEventsImpl", "_ElementEventsImpl", ["_lib3_ptr"], {
-});
+$$._InputElementEventsImpl = {"":
+ ["_ptr"],
+ super: "_ElementEventsImpl"
+};
 
-Isolate.$defineClass("_JavaScriptAudioNodeEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._JavaScriptAudioNodeEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_MediaElementEventsImpl", "_ElementEventsImpl", ["_lib3_ptr"], {
-});
+$$._MediaElementEventsImpl = {"":
+ ["_ptr"],
+ super: "_ElementEventsImpl"
+};
 
-Isolate.$defineClass("_MediaStreamEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._MediaStreamEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_MessagePortEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._MessagePortEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_ChildNodeListLazy", "Object", ["_lib3_this"], {
+$$._ChildNodeListLazy = {"":
+ ["_this"],
+ super: "Object",
  operator$index$1: function(index) {
-  return $.index(this._lib3_this.get$$$dom_childNodes(), index);
+  var t1 = this._this.get$$$dom_childNodes();
+  if (typeof t1 !== 'string' && (typeof t1 !== 'object' || t1 === null || (t1.constructor !== Array && !t1.is$JavaScriptIndexingBehavior()))) return this.operator$index$1$bailout(1, index, t1);
+  if (index !== (index | 0)) throw $.iae(index);
+  var t2 = t1.length;
+  if (index < 0 || index >= t2) throw $.ioore(index);
+  return t1[index];
+ },
+ operator$index$1$bailout: function(state, index, t1) {
+  return $.index(t1, index);
  },
  get$length: function() {
-  return $.get$length(this._lib3_this.get$$$dom_childNodes());
+  return $.get$length(this._this.get$$$dom_childNodes());
  },
  getRange$2: function(start, rangeLength) {
-  return $._lib3_NodeListWrapper$1($.getRange2(this, start, rangeLength, []));
+  return $._NodeListWrapper$1($.getRange0(this, start, rangeLength, []));
  },
  indexOf$2: function(element, start) {
-  return $.indexOf2(this, element, start, $.get$length(this));
+  return $.indexOf0(this, element, start, $.get$length(this));
  },
  isEmpty$0: function() {
   return $.eq($.get$length(this), 0);
  },
  filter$1: function(f) {
-  return $._lib3_NodeListWrapper$1($.filter3(this, [], f));
+  return $._NodeListWrapper$1($.filter1(this, [], f));
  },
  forEach$1: function(f) {
-  return $.forEach3(this, f);
+  return $.forEach1(this, f);
  },
  iterator$0: function() {
-  return $.iterator(this._lib3_this.get$$$dom_childNodes());
+  return $.iterator(this._this.get$$$dom_childNodes());
  },
  operator$indexSet$2: function(index, value) {
-  this._lib3_this.$dom_replaceChild$2(value, this.operator$index$1(index));
+  this._this.$dom_replaceChild$2(value, this.operator$index$1(index));
  },
  clear$0: function() {
-  this._lib3_this.set$text('');
+  this._this.set$text('');
  },
  removeLast$0: function() {
   var result = this.last$0();
-  if (!$.eqNullB(result)) {
-    this._lib3_this.$dom_removeChild$1(result);
-  }
+  !$.eqNullB(result) && this._this.$dom_removeChild$1(result);
   return result;
  },
  addAll$1: function(collection) {
-  for (var t0 = $.iterator(collection); t0.hasNext$0() === true; ) {
-    var t1 = t0.next$0();
-    this._lib3_this.$dom_appendChild$1(t1);
+  for (var t1 = $.iterator(collection), t2 = this._this; t1.hasNext$0() === true; ) {
+    t2.$dom_appendChild$1(t1.next$0());
   }
  },
  add$1: function(value) {
-  this._lib3_this.$dom_appendChild$1(value);
+  this._this.$dom_appendChild$1(value);
  },
  last$0: function() {
   return this._this.lastChild;;
@@ -1377,319 +1930,474 @@ Isolate.$defineClass("_ChildNodeListLazy", "Object", ["_lib3_this"], {
   return this._this.firstChild;;
  },
  first$0: function() { return this.get$first().$call$0(); },
- is$List2: function() { return true; },
- is$Collection: function() { return true; },
-});
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+};
 
-Isolate.$defineClass("_ListWrapper", "Object", [], {
+$$._ListWrapper = {"":
+ [],
+ super: "Object",
  get$first: function() {
-  return $.index(this._lib3_list, 0);
+  return $.index(this._list, 0);
  },
  first$0: function() { return this.get$first().$call$0(); },
  getRange$2: function(start, rangeLength) {
-  return $.getRange(this._lib3_list, start, rangeLength);
+  return $.getRange(this._list, start, rangeLength);
  },
  last$0: function() {
-  return $.last(this._lib3_list);
+  return $.last(this._list);
  },
  removeLast$0: function() {
-  return $.removeLast(this._lib3_list);
+  return $.removeLast(this._list);
  },
  clear$0: function() {
-  return $.clear(this._lib3_list);
+  return $.clear(this._list);
  },
  indexOf$2: function(element, start) {
-  return $.indexOf$2(this._lib3_list, element, start);
+  return $.indexOf$2(this._list, element, start);
  },
  addAll$1: function(collection) {
-  return $.addAll(this._lib3_list, collection);
+  return $.addAll(this._list, collection);
  },
  add$1: function(value) {
-  return $.add$1(this._lib3_list, value);
+  return $.add$1(this._list, value);
  },
  set$length: function(newLength) {
-  $.set$length(this._lib3_list, newLength);
+  $.set$length(this._list, newLength);
  },
  operator$indexSet$2: function(index, value) {
-  $.indexSet(this._lib3_list, index, value);
+  $.indexSet(this._list, index, value);
  },
  operator$index$1: function(index) {
-  return $.index(this._lib3_list, index);
+  var t1 = this._list;
+  if (typeof t1 !== 'string' && (typeof t1 !== 'object' || t1 === null || (t1.constructor !== Array && !t1.is$JavaScriptIndexingBehavior()))) return this.operator$index$1$bailout(1, t1, index);
+  if (index !== (index | 0)) throw $.iae(index);
+  var t2 = t1.length;
+  if (index < 0 || index >= t2) throw $.ioore(index);
+  return t1[index];
+ },
+ operator$index$1$bailout: function(state, t1, index) {
+  return $.index(t1, index);
  },
  get$length: function() {
-  return $.get$length(this._lib3_list);
+  return $.get$length(this._list);
  },
  isEmpty$0: function() {
-  return $.isEmpty(this._lib3_list);
+  return $.isEmpty(this._list);
  },
  filter$1: function(f) {
-  return $.filter(this._lib3_list, f);
+  return $.filter(this._list, f);
  },
  forEach$1: function(f) {
-  return $.forEach(this._lib3_list, f);
+  return $.forEach(this._list, f);
  },
  iterator$0: function() {
-  return $.iterator(this._lib3_list);
+  return $.iterator(this._list);
  },
- is$List2: function() { return true; },
- is$Collection: function() { return true; },
-});
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+};
 
-Isolate.$defineClass("_NodeListWrapper", "_ListWrapper", ["_lib3_list"], {
+$$._NodeListWrapper = {"":
+ ["_list"],
+ super: "_ListWrapper",
  getRange$2: function(start, rangeLength) {
-  return $._lib3_NodeListWrapper$1($.getRange(this._lib3_list, start, rangeLength));
+  return $._NodeListWrapper$1($.getRange(this._list, start, rangeLength));
  },
  filter$1: function(f) {
-  return $._lib3_NodeListWrapper$1($.filter(this._lib3_list, f));
+  return $._NodeListWrapper$1($.filter(this._list, f));
  },
- is$List2: function() { return true; },
- is$Collection: function() { return true; },
-});
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+};
 
-Isolate.$defineClass("_NotificationEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
+$$._NotificationEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl",
  get$click: function() {
-  return this._lib3_get$1('click');
- },
-});
+  return this._get$1('click');
+ }
+};
 
-Isolate.$defineClass("_PeerConnection00EventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._PeerConnection00EventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_SVGElementInstanceEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
+$$._SVGElementInstanceEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl",
  get$reset: function() {
-  return this._lib3_get$1('reset');
+  return this._get$1('reset');
  },
  reset$0: function() { return this.get$reset().$call$0(); },
  get$mouseMove: function() {
-  return this._lib3_get$1('mousemove');
+  return this._get$1('mousemove');
  },
  get$click: function() {
-  return this._lib3_get$1('click');
- },
-});
+  return this._get$1('click');
+ }
+};
 
-Isolate.$defineClass("_SharedWorkerContextEventsImpl", "_WorkerContextEventsImpl", ["_lib3_ptr"], {
-});
+$$._SharedWorkerContextEventsImpl = {"":
+ ["_ptr"],
+ super: "_WorkerContextEventsImpl"
+};
 
-Isolate.$defineClass("_SpeechRecognitionEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
+$$._SpeechRecognitionEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl",
  get$start: function() {
-  return this._lib3_get$1('start');
+  return this._get$1('start');
  },
- start$0: function() { return this.get$start().$call$0(); },
-});
+ start$0: function() { return this.get$start().$call$0(); }
+};
 
-Isolate.$defineClass("_TextTrackEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._TextTrackEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_TextTrackCueEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._TextTrackCueEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_TextTrackListEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._TextTrackListEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_WebSocketEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._WebSocketEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_WindowEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
+$$._WindowEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl",
  get$reset: function() {
-  return this._lib3_get$1('reset');
+  return this._get$1('reset');
  },
  reset$0: function() { return this.get$reset().$call$0(); },
  get$mouseMove: function() {
-  return this._lib3_get$1('mousemove');
+  return this._get$1('mousemove');
  },
  get$click: function() {
-  return this._lib3_get$1('click');
- },
-});
+  return this._get$1('click');
+ }
+};
 
-Isolate.$defineClass("_WorkerEventsImpl", "_AbstractWorkerEventsImpl", ["_lib3_ptr"], {
-});
+$$._WorkerEventsImpl = {"":
+ ["_ptr"],
+ super: "_AbstractWorkerEventsImpl"
+};
 
-Isolate.$defineClass("_WorkerContextEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._WorkerContextEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_XMLHttpRequestEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._XMLHttpRequestEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_XMLHttpRequestUploadEventsImpl", "_EventsImpl", ["_lib3_ptr"], {
-});
+$$._XMLHttpRequestUploadEventsImpl = {"":
+ ["_ptr"],
+ super: "_EventsImpl"
+};
 
-Isolate.$defineClass("_FixedSizeListIterator", "_VariableSizeListIterator", ["_lib3_length", "_lib3_pos", "_lib3_array"], {
+$$._IDBOpenDBRequestEventsImpl = {"":
+ ["_ptr"],
+ super: "_IDBRequestEventsImpl"
+};
+
+$$._FixedSizeListIterator = {"":
+ ["_lib_length", "_pos", "_array"],
+ super: "_VariableSizeListIterator",
  hasNext$0: function() {
-  return $.gt(this._lib3_length, this._lib3_pos);
+  var t1 = this._lib_length;
+  if (typeof t1 !== 'number') return this.hasNext$0$bailout(1, t1, 0);
+  var t2 = this._pos;
+  if (typeof t2 !== 'number') return this.hasNext$0$bailout(2, t1, t2);
+  return t1 > t2;
  },
-});
+ hasNext$0$bailout: function(state, env0, env1) {
+  switch (state) {
+    case 1:
+      t1 = env0;
+      break;
+    case 2:
+      t1 = env0;
+      t2 = env1;
+      break;
+  }
+  switch (state) {
+    case 0:
+      var t1 = this._lib_length;
+    case 1:
+      state = 0;
+      var t2 = this._pos;
+    case 2:
+      state = 0;
+      return $.gt(t1, t2);
+  }
+ }
+};
 
-Isolate.$defineClass("_VariableSizeListIterator", "Object", [], {
+$$._VariableSizeListIterator = {"":
+ [],
+ super: "Object",
  next$0: function() {
-  if (this.hasNext$0() !== true) {
-    throw $.captureStackTrace($.CTC2);
+  if (this.hasNext$0() !== true) throw $.captureStackTrace($.CTC0);
+  var t1 = this._array;
+  if (typeof t1 !== 'string' && (typeof t1 !== 'object' || t1 === null || (t1.constructor !== Array && !t1.is$JavaScriptIndexingBehavior()))) return this.next$0$bailout(1, t1, 0);
+  var t2 = this._pos;
+  if (typeof t2 !== 'number') return this.next$0$bailout(2, t1, t2);
+  this._pos = t2 + 1;
+  if (t2 !== (t2 | 0)) throw $.iae(t2);
+  var t3 = t1.length;
+  if (t2 < 0 || t2 >= t3) throw $.ioore(t2);
+  return t1[t2];
+ },
+ next$0$bailout: function(state, env0, env1) {
+  switch (state) {
+    case 1:
+      t1 = env0;
+      break;
+    case 2:
+      t1 = env0;
+      t2 = env1;
+      break;
   }
-  var t0 = this._lib3_array;
-  var t1 = this._lib3_pos;
-  this._lib3_pos = $.add(t1, 1);
-  return $.index(t0, t1);
+  switch (state) {
+    case 0:
+      if (this.hasNext$0() !== true) throw $.captureStackTrace($.CTC0);
+      var t1 = this._array;
+    case 1:
+      state = 0;
+      var t2 = this._pos;
+    case 2:
+      state = 0;
+      this._pos = $.add(t2, 1);
+      return $.index(t1, t2);
+  }
  },
  hasNext$0: function() {
-  return $.gt($.get$length(this._lib3_array), this._lib3_pos);
+  var t1 = $.get$length(this._array);
+  if (typeof t1 !== 'number') return this.hasNext$0$bailout(1, t1, 0);
+  var t2 = this._pos;
+  if (typeof t2 !== 'number') return this.hasNext$0$bailout(2, t2, t1);
+  return t1 > t2;
  },
-});
+ hasNext$0$bailout: function(state, env0, env1) {
+  switch (state) {
+    case 1:
+      t1 = env0;
+      break;
+    case 2:
+      t2 = env0;
+      t1 = env1;
+      break;
+  }
+  switch (state) {
+    case 0:
+      var t1 = $.get$length(this._array);
+    case 1:
+      state = 0;
+      var t2 = this._pos;
+    case 2:
+      state = 0;
+      return $.gt(t1, t2);
+  }
+ }
+};
 
-Isolate.$defineClass("Closure", "Closure13", ["this_0"], {
+$$.Closure = {"":
+ ["this_0"],
+ super: "Closure11",
  $call$1: function(event$) {
-  var t0 = $.div(event$.get$pageX(), this.this_0.get$viewX());
-  this.this_0.set$mouseX(t0);
-  var t1 = $.sub(1, $.div(event$.get$pageY(), this.this_0.get$viewY()));
+  var t1 = $.div(event$.get$pageX(), this.this_0.get$viewX());
+  this.this_0.set$mouseX(t1);
+  t1 = $.div(event$.get$pageY(), this.this_0.get$viewY());
+  if (typeof t1 !== 'number') throw $.iae(t1);
+  t1 = 1 - t1;
   this.this_0.set$mouseY(t1);
- },
-});
+ }
+};
 
-Isolate.$defineClass("Closure2", "Closure13", ["this_1"], {
+$$.Closure0 = {"":
+ ["this_1"],
+ super: "Closure11",
  $call$1: function(_) {
-  var t0 = this.this_1.get$halted() !== true;
-  this.this_1.set$halted(t0);
- },
-});
+  var t1 = this.this_1.get$halted() !== true;
+  this.this_1.set$halted(t1);
+ }
+};
 
-Isolate.$defineClass("Closure3", "Closure13", ["box_0"], {
+$$.Closure1 = {"":
+ ["box_0"],
+ super: "Closure11",
  $call$2: function(k, v) {
-  if (this.box_0.first_3 !== true) {
-    $.add$1(this.box_0.result_1, ', ');
-  }
+  var t1 = this.box_0;
+  t1.first_3 !== true && $.add$1(t1.result_1, ', ');
   this.box_0.first_3 = false;
-  $._emitObject(k, this.box_0.result_1, this.box_0.visiting_2);
+  t1 = this.box_0;
+  $._emitObject(k, t1.result_1, t1.visiting_2);
   $.add$1(this.box_0.result_1, ': ');
-  $._emitObject(v, this.box_0.result_1, this.box_0.visiting_2);
- },
-});
+  t1 = this.box_0;
+  $._emitObject(v, t1.result_1, t1.visiting_2);
+ }
+};
 
-Isolate.$defineClass("Closure4", "Closure13", [], {
+$$.Closure2 = {"":
+ [],
+ super: "Closure11",
  $call$1: function(n) {
-  return typeof n === 'object' && n.is$Element();
- },
-});
+  return typeof n === 'object' && n !== null && n.is$Element();
+ }
+};
 
-Isolate.$defineClass("Closure5", "Closure13", ["box_0", "output_2"], {
+$$.Closure3 = {"":
+ ["box_0", "output_2"],
+ super: "Closure11",
  $call$1: function(element) {
-  if (this.box_0.f_1.$call$1(element) === true) {
-    $.add$1(this.output_2, element);
-  }
- },
-});
+  this.box_0.f_1.$call$1(element) === true && $.add$1(this.output_2, element);
+ }
+};
 
-Isolate.$defineClass("Closure6", "Closure13", [], {
+$$.Closure4 = {"":
+ [],
+ super: "Closure11",
  $call$1: function(el) {
   return el.remove$0();
- },
-});
+ }
+};
 
-Isolate.$defineClass("Closure7", "Closure13", ["box_0"], {
+$$.Closure5 = {"":
+ ["box_0"],
+ super: "Closure11",
  $call$0: function() {
   return this.box_0.closure_1.$call$0();
- },
-});
+ }
+};
 
-Isolate.$defineClass("Closure8", "Closure13", ["box_0"], {
+$$.Closure6 = {"":
+ ["box_0"],
+ super: "Closure11",
  $call$0: function() {
-  return this.box_0.closure_1.$call$1(this.box_0.arg1_2);
- },
-});
+  var t1 = this.box_0;
+  return t1.closure_1.$call$1(t1.arg1_2);
+ }
+};
 
-Isolate.$defineClass("Closure9", "Closure13", ["box_0"], {
+$$.Closure7 = {"":
+ ["box_0"],
+ super: "Closure11",
  $call$0: function() {
-  return this.box_0.closure_1.$call$2(this.box_0.arg1_2, this.box_0.arg2_3);
- },
-});
+  var t1 = this.box_0;
+  return t1.closure_1.$call$2(t1.arg1_2, t1.arg2_3);
+ }
+};
 
-Isolate.$defineClass("Closure10", "Closure13", ["this_0"], {
+$$.Closure8 = {"":
+ ["this_0"],
+ super: "Closure11",
  $call$1: function(value) {
   this.this_0.add$1(value);
- },
-});
+ }
+};
 
-Isolate.$defineClass("Closure11", "Closure13", ["box_0"], {
+$$.Closure9 = {"":
+ ["box_0"],
+ super: "Closure11",
  $call$2: function(key, value) {
-  this.box_0.f_1.$call$1(key);
- },
-});
+  this.box_0.f_10.$call$1(key);
+ }
+};
 
-Isolate.$defineClass("Closure12", "Closure13", ["box_0"], {
+$$.Closure10 = {"":
+ ["box_0"],
+ super: "Closure11",
  $call$2: function(key, value) {
-  if (this.box_0.f_1.$call$1(key) === true) {
-    $.add$1(this.box_0.result_2, key);
-  }
- },
-});
+  this.box_0.f_11.$call$1(key) === true && $.add$1(this.box_0.result_2, key);
+ }
+};
 
-Isolate.$defineClass("Closure13", "Object", [], {
+$$.Closure11 = {"":
+ [],
+ super: "Object",
  toString$0: function() {
   return 'Closure';
- },
-});
+ }
+};
 
-Isolate.$defineClass('Closure14', 'Closure13', function BoundClosure(self) { this.self = self; }, {
-$call$1: function(arg0) {
-  return this.self.anim$1(arg0);
-},
+Isolate.$defineClass('Closure12', 'Closure11', ['self', 'target'], {
+$call$1: function(p0) { return this.self[this.target](p0); }
 });
-Isolate.$defineClass('Closure15', 'Closure13', function BoundClosure(self) { this.self = self; }, {
-$call$1: function(arg0) {
-  return this.self.add$1(arg0);
-},
+Isolate.$defineClass('Closure13', 'Closure11', ['self', 'target'], {
+$call$0: function() { return this.self[this.target](); }
 });
-Isolate.$defineClass('Closure16', 'Closure13', function BoundClosure(self) { this.self = self; }, {
-$call$0: function() {
-  return this.self.click$0();
-},
-});
-Isolate.$defineClass('Closure17', 'Closure13', function BoundClosure(self) { this.self = self; }, {
-$call$0: function() {
-  return this.self.click$0();
-},
-});
-$._lib3_ChildNodeListLazy$1 = function(_this) {
+$.mul$slow = function(a, b) {
+  if ($.checkNumbers(a, b) === true) {
+    return a * b;
+  }
+  return a.operator$mul$1(b);
+};
+
+$._ChildNodeListLazy$1 = function(_this) {
   return new $._ChildNodeListLazy(_this);
 };
 
-$._lib3_AudioContextEventsImpl$1 = function(_ptr) {
+$._AudioContextEventsImpl$1 = function(_ptr) {
   return new $._AudioContextEventsImpl(_ptr);
 };
 
 $.floor = function(receiver) {
-  if (!(typeof receiver === 'number')) {
-    return receiver.floor$0();
-  }
+  if (!(typeof receiver === 'number')) return receiver.floor$0();
   return Math.floor(receiver);
 };
 
 $.eqB = function(a, b) {
-  return $.eq(a, b) === true;
+  if (a == null) {
+    return b == null;
+  }
+  if (typeof a === "object") {
+    if (!!a.operator$eq$1) {
+      var t1 = a.operator$eq$1(b);
+      return t1 === true;
+    }
+    return a === b;
+  }
+  return a === b;
 };
 
 $._containsRef = function(c, ref) {
-  for (var t0 = $.iterator(c); t0.hasNext$0() === true; ) {
-    if (t0.next$0() === ref) {
-      return true;
-    }
+  for (var t1 = $.iterator(c); t1.hasNext$0() === true; ) {
+    var t2 = t1.next$0();
+    if (t2 == null ? ref == null : t2 === ref) return true;
   }
   return false;
 };
 
-$._lib3_NodeListWrapper$1 = function(list) {
+$._NodeListWrapper$1 = function(list) {
   return new $._NodeListWrapper(list);
 };
 
-$.forEach = function(receiver, f) {
-  if ($.isJsArray(receiver) !== true) {
-    return receiver.forEach$1(f);
-  } else {
-    return $.forEach2(receiver, f);
-  }
+$.isJsArray = function(value) {
+  return !(value == null) && (value.constructor === Array);
 };
 
-$.isJsArray = function(value) {
-  return value !== (void 0) && (value.constructor === Array);
+$.indexSet$slow = function(a, index, value) {
+  if ($.isJsArray(a) === true) {
+    if (!((typeof index === 'number') && (index === (index | 0)))) throw $.captureStackTrace($.IllegalArgumentException$1(index));
+    if (index < 0 || $.geB(index, $.get$length(a))) throw $.captureStackTrace($.IndexOutOfRangeException$1(index));
+    $.checkMutable(a, 'indexed set');
+    a[index] = value;
+    return;
+  }
+  a.operator$indexSet$2(index, value);
 };
 
 $._nextProbe = function(currentProbe, numberOfProbes, length$) {
@@ -1697,9 +2405,7 @@ $._nextProbe = function(currentProbe, numberOfProbes, length$) {
 };
 
 $.allMatches = function(receiver, str) {
-  if (!(typeof receiver === 'string')) {
-    return receiver.allMatches$1(str);
-  }
+  if (!(typeof receiver === 'string')) return receiver.allMatches$1(str);
   $.checkString(str);
   return $.allMatchesInStringUnchecked(receiver, str);
 };
@@ -1715,9 +2421,15 @@ $.substringUnchecked = function(receiver, startIndex, endIndex) {
 $.get$length = function(receiver) {
   if (typeof receiver === 'string' || $.isJsArray(receiver) === true) {
     return receiver.length;
-  } else {
-    return receiver.get$length();
   }
+  return receiver.get$length();
+};
+
+$.ge$slow = function(a, b) {
+  if ($.checkNumbers(a, b) === true) {
+    return a >= b;
+  }
+  return a.operator$ge$1(b);
 };
 
 $.ensureNative = function(list) {
@@ -1728,33 +2440,36 @@ $.IllegalJSRegExpException$2 = function(_pattern, _errmsg) {
   return new $.IllegalJSRegExpException(_errmsg, _pattern);
 };
 
+$._IDBOpenDBRequestEventsImpl$1 = function(_ptr) {
+  return new $._IDBOpenDBRequestEventsImpl(_ptr);
+};
+
 $.typeNameInIE = function(obj) {
   var name$ = $.constructorNameFallback(obj);
-  if ($.eqB(name$, 'Window')) {
-    return 'DOMWindow';
-  }
+  if ($.eqB(name$, 'Window')) return 'DOMWindow';
   if ($.eqB(name$, 'Document')) {
-    if (!!obj.xmlVersion) {
-      return 'Document';
-    }
+    if (!!obj.xmlVersion) return 'Document';
     return 'HTMLDocument';
   }
-  if ($.eqB(name$, 'HTMLTableDataCellElement')) {
-    return 'HTMLTableCellElement';
-  }
-  if ($.eqB(name$, 'HTMLTableHeaderCellElement')) {
-    return 'HTMLTableCellElement';
-  }
-  if ($.eqB(name$, 'MSStyleCSSProperties')) {
-    return 'CSSStyleDeclaration';
-  }
-  if ($.eqB(name$, 'CanvasPixelArray')) {
-    return 'Uint8ClampedArray';
-  }
-  if ($.eqB(name$, 'HTMLPhraseElement')) {
-    return 'HTMLElement';
-  }
+  if ($.eqB(name$, 'HTMLTableDataCellElement')) return 'HTMLTableCellElement';
+  if ($.eqB(name$, 'HTMLTableHeaderCellElement')) return 'HTMLTableCellElement';
+  if ($.eqB(name$, 'MSStyleCSSProperties')) return 'CSSStyleDeclaration';
+  if ($.eqB(name$, 'CanvasPixelArray')) return 'Uint8ClampedArray';
+  if ($.eqB(name$, 'HTMLPhraseElement')) return 'HTMLElement';
+  if ($.eqB(name$, 'MouseWheelEvent')) return 'WheelEvent';
   return name$;
+};
+
+$.constructorNameFallback = function(obj) {
+  var constructor$ = (obj.constructor);
+  var t1 = (typeof(constructor$));
+  if (t1 === 'function') {
+    var name$ = (constructor$.name);
+    t1 = (typeof(name$));
+    if (t1 === 'string' && $.isEmpty(name$) !== true && !(name$ === 'Object')) return name$;
+  }
+  var string = (Object.prototype.toString.call(obj));
+  return $.substring$2(string, 8, string.length - 1);
 };
 
 $.regExpMatchStart = function(m) {
@@ -1762,22 +2477,8 @@ $.regExpMatchStart = function(m) {
 };
 
 $.clear = function(receiver) {
-  if ($.isJsArray(receiver) !== true) {
-    return receiver.clear$0();
-  }
+  if ($.isJsArray(receiver) !== true) return receiver.clear$0();
   $.set$length(receiver, 0);
-};
-
-$.constructorNameFallback = function(obj) {
-  var constructor$ = (obj.constructor);
-  if ((typeof(constructor$)) === 'function') {
-    var name$ = (constructor$.name);
-    if ((typeof(name$)) === 'string' && $.isEmpty(name$) !== true && name$ !== 'Object') {
-      return name$;
-    }
-  }
-  var string = (Object.prototype.toString.call(obj));
-  return $.substring$2(string, 8, string.length - 1);
 };
 
 $.NullPointerException$2 = function(functionName, arguments$) {
@@ -1785,69 +2486,63 @@ $.NullPointerException$2 = function(functionName, arguments$) {
 };
 
 $.max = function(a, b) {
-  if ($.ltB($.compareTo(a, b), 0)) {
-    var t0 = b;
-  } else {
-    t0 = a;
-  }
-  return t0;
+  return $.ltB($.compareTo(a, b), 0) ? b : a;
 };
 
 $.tdiv = function(a, b) {
   if ($.checkNumbers(a, b) === true) {
-    return $.truncate($.div(a, b));
+    return $.truncate((a) / (b));
   }
   return a.operator$tdiv$1(b);
 };
 
 $.printString = function(string) {
-  if (typeof console == "object") {
-    console.log(string);
-  } else {
-    write(string);
-    write("\n");
+  if (typeof dartPrint == "function") dartPrint(string);
+  else {
+    if (typeof console == "object") console.log(string);
+    else {
+      write(string);
+      write("\n");
+    }
   }
 };
 
 $.JSSyntaxRegExp$_globalVersionOf$1 = function(other) {
-  var t0 = other.get$pattern();
-  var t1 = other.get$multiLine();
-  var t2 = new $.JSSyntaxRegExp(other.get$ignoreCase(), t1, t0);
-  t2.JSSyntaxRegExp$_globalVersionOf$1(other);
-  return t2;
+  var t1 = other.get$pattern();
+  var t2 = other.get$multiLine();
+  t1 = new $.JSSyntaxRegExp(other.get$ignoreCase(), t2, t1);
+  t1.JSSyntaxRegExp$_globalVersionOf$1(other);
+  return t1;
 };
 
 $.typeNameInChrome = function(obj) {
   var name$ = (obj.constructor.name);
-  if (name$ === 'Window') {
-    return 'DOMWindow';
-  }
-  if (name$ === 'CanvasPixelArray') {
-    return 'Uint8ClampedArray';
-  }
+  if (name$ === 'Window') return 'DOMWindow';
+  if (name$ === 'CanvasPixelArray') return 'Uint8ClampedArray';
   return name$;
 };
 
 $.shr = function(a, b) {
   if ($.checkNumbers(a, b) === true) {
-    if ($.ltB(b, 0)) {
-      throw $.captureStackTrace($.IllegalArgumentException$1(b));
+    a = (a);
+    b = (b);
+    if (b < 0) throw $.captureStackTrace($.IllegalArgumentException$1(b));
+    if (a > 0) {
+      if (b > 31) return 0;
+      return a >>> b;
     }
-    return a >>> b;
+    if (b > 31) b = 31;
+    return (a >> b) >>> 0;
   }
   return a.operator$shr$1(b);
 };
 
 $.eqNull = function(a) {
+  if (a == null) return true;
   if (typeof a === "object") {
-    if (!!a.operator$eq$1) {
-      return a.operator$eq$1((void 0));
-    } else {
-      return false;
-    }
-  } else {
-    return typeof a === "undefined";
+    if (!!a.operator$eq$1) return a.operator$eq$1(null);
   }
+  return false;
 };
 
 $.and = function(a, b) {
@@ -1858,44 +2553,29 @@ $.and = function(a, b) {
 };
 
 $.substring$2 = function(receiver, startIndex, endIndex) {
-  if (!(typeof receiver === 'string')) {
-    return receiver.substring$2(startIndex, endIndex);
-  }
+  if (!(typeof receiver === 'string')) return receiver.substring$2(startIndex, endIndex);
   $.checkNum(startIndex);
   var length$ = receiver.length;
-  var endIndex0 = endIndex;
-  if (endIndex === (void 0)) {
-    endIndex0 = length$;
-  }
-  $.checkNum(endIndex0);
-  if ($.ltB(startIndex, 0)) {
-    throw $.captureStackTrace($.IndexOutOfRangeException$1(startIndex));
-  }
-  if ($.gtB(startIndex, endIndex0)) {
-    throw $.captureStackTrace($.IndexOutOfRangeException$1(startIndex));
-  }
-  if ($.gtB(endIndex0, length$)) {
-    throw $.captureStackTrace($.IndexOutOfRangeException$1(endIndex0));
-  }
-  return $.substringUnchecked(receiver, startIndex, endIndex0);
+  if (endIndex == null) endIndex = length$;
+  $.checkNum(endIndex);
+  if ($.ltB(startIndex, 0)) throw $.captureStackTrace($.IndexOutOfRangeException$1(startIndex));
+  if ($.gtB(startIndex, endIndex)) throw $.captureStackTrace($.IndexOutOfRangeException$1(startIndex));
+  if ($.gtB(endIndex, length$)) throw $.captureStackTrace($.IndexOutOfRangeException$1(endIndex));
+  return $.substringUnchecked(receiver, startIndex, endIndex);
 };
 
 $.indexSet = function(a, index, value) {
-  if ($.isJsArray(a) === true) {
-    if (!((typeof index === 'number') && (index === (index | 0)))) {
-      throw $.captureStackTrace($.IllegalArgumentException$1(index));
+  if (a.constructor === Array && !a.immutable$list) {
+    var key = (index >>> 0);
+    if (key === index && key < (a.length)) {
+      a[key] = value;
+      return;
     }
-    if (index < 0 || $.geB(index, $.get$length(a))) {
-      throw $.captureStackTrace($.IndexOutOfRangeException$1(index));
-    }
-    $.checkMutable(a, 'indexed set');
-    a[index] = value;
-    return;
   }
-  a.operator$indexSet$2(index, value);
+  $.indexSet$slow(a, index, value);
 };
 
-$._lib3_DOMApplicationCacheEventsImpl$1 = function(_ptr) {
+$._DOMApplicationCacheEventsImpl$1 = function(_ptr) {
   return new $._DOMApplicationCacheEventsImpl(_ptr);
 };
 
@@ -1908,114 +2588,95 @@ $.ExceptionImplementation$1 = function(msg) {
 };
 
 $.invokeClosure = function(closure, isolate, numberOfArguments, arg1, arg2) {
-  var t0 = ({});
-  t0.arg2_3 = arg2;
-  t0.arg1_2 = arg1;
-  t0.closure_1 = closure;
+  var t1 = ({});
+  t1.arg2_3 = arg2;
+  t1.arg1_2 = arg1;
+  t1.closure_1 = closure;
   if ($.eqB(numberOfArguments, 0)) {
-    return new $.Closure7(t0).$call$0();
-  } else {
-    if ($.eqB(numberOfArguments, 1)) {
-      return new $.Closure8(t0).$call$0();
-    } else {
-      if ($.eqB(numberOfArguments, 2)) {
-        return new $.Closure9(t0).$call$0();
-      } else {
-        throw $.captureStackTrace($.ExceptionImplementation$1('Unsupported number of arguments for wrapped closure'));
-      }
-    }
+    return new $.Closure5(t1).$call$0();
   }
+  if ($.eqB(numberOfArguments, 1)) {
+    return new $.Closure6(t1).$call$0();
+  }
+  if ($.eqB(numberOfArguments, 2)) {
+    return new $.Closure7(t1).$call$0();
+  }
+  throw $.captureStackTrace($.ExceptionImplementation$1('Unsupported number of arguments for wrapped closure'));
+};
+
+$.stringJoinUnchecked = function(array, separator) {
+  return array.join(separator);
 };
 
 $.gt = function(a, b) {
-  if ($.checkNumbers(a, b) === true) {
-    return a > b;
-  }
-  return a.operator$gt$1(b);
+  return typeof a === 'number' && typeof b === 'number' ? (a > b) : $.gt$slow(a, b);
 };
 
 $.createShaderFromScriptElement = function(gl, id) {
   var shaderScript = $.document().query$1(id);
   var shaderSource = shaderScript.get$text();
-  if ($.eqB(shaderScript.get$type(), 'x-shader/x-vertex')) {
-    var shaderType = 35633;
-  } else {
-    if ($.eqB(shaderScript.get$type(), 'x-shader/x-fragment')) {
-    } else {
-      throw $.captureStackTrace($.ExceptionImplementation$1('*** Error: unknown shader type'));
-    }
+  if ($.eqB(shaderScript.get$type(), 'x-shader/x-vertex')) var shaderType = 35633;
+  else {
+    if (!$.eqB(shaderScript.get$type(), 'x-shader/x-fragment')) throw $.captureStackTrace($.ExceptionImplementation$1('*** Error: unknown shader type'));
     shaderType = 35632;
   }
   return $.loadShader(gl, shaderSource, shaderType);
 };
 
-$.assert = function(condition) {
-};
-
 $.DartWebGLShaderLab$0 = function() {
-  return new $.DartWebGLShaderLab(1024, 1024, 1024, 1024, (void 0), (void 0), 0.5, 0.5, (void 0), 60, 0, 1, 3, false, (void 0), (void 0), (void 0), (void 0), (void 0), (void 0), (void 0), (void 0), (void 0), (void 0), (void 0), (void 0), (void 0), (void 0), (void 0), (void 0), (void 0), (void 0), (void 0), (void 0));
+  return new $.DartWebGLShaderLab(128, 128, 128, 128, null, null, 0.5, 0.5, null, 60, 0, 1, 3, false, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 };
 
 $.buildDynamicMetadata = function(inputTable) {
-  if (typeof inputTable !== 'string' && (typeof inputTable !== 'object'||inputTable.constructor !== Array)) return $.buildDynamicMetadata$bailout(inputTable,  0);
+  if (typeof inputTable !== 'string' && (typeof inputTable !== 'object' || inputTable === null || (inputTable.constructor !== Array && !inputTable.is$JavaScriptIndexingBehavior()))) return $.buildDynamicMetadata$bailout(1, inputTable, 0, 0, 0, 0, 0, 0);
   var result = [];
-  for (var i = 0; i < inputTable.length; i = i + 1) {
-    var t0 = inputTable.length;
-    if (i < 0 || i >= t0) throw $.ioore(i);
-    var tag = $.index(inputTable[i], 0);
-    var t1 = inputTable.length;
+  for (var i = 0; t1 = inputTable.length, i < t1; ++i) {
     if (i < 0 || i >= t1) throw $.ioore(i);
+    var tag = $.index(inputTable[i], 0);
+    var t2 = inputTable.length;
+    if (i < 0 || i >= t2) throw $.ioore(i);
     var tags = $.index(inputTable[i], 1);
     var set = $.HashSetImplementation$0();
     $.setRuntimeTypeInfo(set, ({E: 'String'}));
     var tagNames = $.split(tags, '|');
-    if (typeof tagNames !== 'string' && (typeof tagNames !== 'object'||tagNames.constructor !== Array)) return $.buildDynamicMetadata$bailout(inputTable, 2, inputTable, result, tag, i, tags, set, tagNames);
-    for (var j = 0; j < tagNames.length; j = j + 1) {
-      var t2 = tagNames.length;
-      if (j < 0 || j >= t2) throw $.ioore(j);
+    if (typeof tagNames !== 'string' && (typeof tagNames !== 'object' || tagNames === null || (tagNames.constructor !== Array && !tagNames.is$JavaScriptIndexingBehavior()))) return $.buildDynamicMetadata$bailout(2, inputTable, result, tagNames, tag, i, tags, set);
+    for (var j = 0; t1 = tagNames.length, j < t1; ++j) {
+      if (j < 0 || j >= t1) throw $.ioore(j);
       set.add$1(tagNames[j]);
     }
     $.add$1(result, $.MetaInfo$3(tag, tags, set));
   }
   return result;
+  var t1;
 };
 
 $.contains$1 = function(receiver, other) {
-  if (!(typeof receiver === 'string')) {
-    return receiver.contains$1(other);
-  }
+  if (!(typeof receiver === 'string')) return receiver.contains$1(other);
   return $.contains$2(receiver, other, 0);
 };
 
-$._lib3_EventSourceEventsImpl$1 = function(_ptr) {
+$._EventSourceEventsImpl$1 = function(_ptr) {
   return new $._EventSourceEventsImpl(_ptr);
 };
 
 $.mul = function(a, b) {
-  if ($.checkNumbers(a, b) === true) {
-    return a * b;
-  }
-  return a.operator$mul$1(b);
+  return typeof a === 'number' && typeof b === 'number' ? (a * b) : $.mul$slow(a, b);
 };
 
-$._lib3_NotificationEventsImpl$1 = function(_ptr) {
+$._NotificationEventsImpl$1 = function(_ptr) {
   return new $._NotificationEventsImpl(_ptr);
 };
 
 $.last = function(receiver) {
-  if ($.isJsArray(receiver) !== true) {
-    return receiver.last$0();
-  }
+  if ($.isJsArray(receiver) !== true) return receiver.last$0();
   return $.index(receiver, $.sub($.get$length(receiver), 1));
 };
 
 $._browserPrefix = function() {
-  if ($._cachedBrowserPrefix === (void 0)) {
-    if ($.isFirefox() === true) {
-      $._cachedBrowserPrefix = '-moz-';
-    } else {
-      $._cachedBrowserPrefix = '-webkit-';
-    }
+  var t1 = $._cachedBrowserPrefix;
+  if (t1 == null) {
+    if ($.isFirefox() === true) $._cachedBrowserPrefix = '-moz-';
+    else $._cachedBrowserPrefix = '-webkit-';
   }
   return $._cachedBrowserPrefix;
 };
@@ -2029,126 +2690,112 @@ $.neg = function(a) {
 
 $._emitCollection = function(c, result, visiting) {
   $.add$1(visiting, c);
-  var isList = typeof c === 'object' && (c.constructor === Array || c.is$List2());
-  if (isList) {
-    var t0 = '[';
-  } else {
-    t0 = '{';
-  }
-  $.add$1(result, t0);
-  for (var t1 = $.iterator(c), first = true; t1.hasNext$0() === true; first = first0) {
-    first0 = first;
+  var isList = typeof c === 'object' && c !== null && (c.constructor === Array || c.is$List0());
+  $.add$1(result, isList ? '[' : '{');
+  for (var t1 = $.iterator(c), first = true; t1.hasNext$0() === true; ) {
     var t2 = t1.next$0();
-    if (!first) {
-      $.add$1(result, ', ');
-    }
+    !first && $.add$1(result, ', ');
     $._emitObject(t2, result, visiting);
-    first0 = false;
+    first = false;
   }
-  if (isList) {
-    var t3 = ']';
-  } else {
-    t3 = '}';
-  }
-  $.add$1(result, t3);
+  $.add$1(result, isList ? ']' : '}');
   $.removeLast(visiting);
 };
 
+$.filter = function(receiver, predicate) {
+  if ($.isJsArray(receiver) !== true) return receiver.filter$1(predicate);
+  return $.filter0(receiver, [], predicate);
+};
+
 $.checkMutable = function(list, reason) {
-  if (!!(list.immutable$list)) {
-    throw $.captureStackTrace($.UnsupportedOperationException$1(reason));
+  if (!!(list.immutable$list)) throw $.captureStackTrace($.UnsupportedOperationException$1(reason));
+};
+
+$.filter0 = function(source, destination, f) {
+  for (var t1 = $.iterator(source); t1.hasNext$0() === true; ) {
+    var t2 = t1.next$0();
+    f.$call$1(t2) === true && $.add$1(destination, t2);
   }
+  return destination;
+};
+
+$.sub$slow = function(a, b) {
+  if ($.checkNumbers(a, b) === true) {
+    return a - b;
+  }
+  return a.operator$sub$1(b);
 };
 
 $.toStringWrapper = function() {
   return $.toString((this.dartException));
 };
 
-$._lib3_PeerConnection00EventsImpl$1 = function(_ptr) {
+$._PeerConnection00EventsImpl$1 = function(_ptr) {
   return new $._PeerConnection00EventsImpl(_ptr);
 };
 
-$._lib3_ElementList$1 = function(list) {
+$._ElementList$1 = function(list) {
   return new $._ElementList(list);
 };
 
-$._lib3_WorkerContextEventsImpl$1 = function(_ptr) {
+$._WorkerContextEventsImpl$1 = function(_ptr) {
   return new $._WorkerContextEventsImpl(_ptr);
 };
 
-$.filter = function(receiver, predicate) {
-  if ($.isJsArray(receiver) !== true) {
-    return receiver.filter$1(predicate);
-  } else {
-    return $.filter2(receiver, [], predicate);
-  }
-};
-
-$._lib3_DocumentEventsImpl$1 = function(_ptr) {
-  return new $._DocumentEventsImpl(_ptr);
-};
-
-$.filter2 = function(source, destination, f) {
-  for (var t0 = $.iterator(source); t0.hasNext$0() === true; ) {
-    var t1 = t0.next$0();
-    if (f.$call$1(t1) === true) {
-      $.add$1(destination, t1);
-    }
+$.filter1 = function(source, destination, f) {
+  for (var t1 = $.iterator(source); t1.hasNext$0() === true; ) {
+    var t2 = t1.next$0();
+    f.$call$1(t2) === true && $.add$1(destination, t2);
   }
   return destination;
+};
+
+$._DocumentEventsImpl$1 = function(_ptr) {
+  return new $._DocumentEventsImpl(_ptr);
 };
 
 $.regExpTest = function(regExp, str) {
   return $.regExpGetNative(regExp).test(str);
 };
 
-$.filter3 = function(source, destination, f) {
-  for (var t0 = $.iterator(source); t0.hasNext$0() === true; ) {
-    var t1 = t0.next$0();
-    if (f.$call$1(t1) === true) {
-      $.add$1(destination, t1);
-    }
-  }
-  return destination;
+$.iterator = function(receiver) {
+  if ($.isJsArray(receiver) === true) return $.ListIterator$1(receiver);
+  return receiver.iterator$0();
 };
 
-$._lib3_EventsImpl$1 = function(_ptr) {
+$._EventsImpl$1 = function(_ptr) {
   return new $._EventsImpl(_ptr);
 };
 
 $.HashSetImplementation$0 = function() {
-  var t0 = new $.HashSetImplementation((void 0));
-  t0.HashSetImplementation$0();
-  return t0;
+  var t1 = new $.HashSetImplementation(null);
+  t1.HashSetImplementation$0();
+  return t1;
 };
 
-$._lib3_IDBRequestEventsImpl$1 = function(_ptr) {
+$._IDBRequestEventsImpl$1 = function(_ptr) {
   return new $._IDBRequestEventsImpl(_ptr);
 };
 
 $.stringSplitUnchecked = function(receiver, pattern) {
   if (typeof pattern === 'string') {
     return receiver.split(pattern);
-  } else {
-    if (typeof pattern === 'object' && !!pattern.is$JSSyntaxRegExp) {
-      return receiver.split($.regExpGetNative(pattern));
-    } else {
-      throw $.captureStackTrace('StringImplementation.split(Pattern) UNIMPLEMENTED');
-    }
   }
+  if (typeof pattern === 'object' && pattern !== null && !!pattern.is$JSSyntaxRegExp) {
+    return receiver.split($.regExpGetNative(pattern));
+  }
+  throw $.captureStackTrace('StringImplementation.split(Pattern) UNIMPLEMENTED');
 };
 
 $.checkGrowable = function(list, reason) {
-  if (!!(list.fixed$length)) {
-    throw $.captureStackTrace($.UnsupportedOperationException$1(reason));
-  }
+  if (!!(list.fixed$length)) throw $.captureStackTrace($.UnsupportedOperationException$1(reason));
 };
 
-$._lib3_SpeechRecognitionEventsImpl$1 = function(_ptr) {
+$._SpeechRecognitionEventsImpl$1 = function(_ptr) {
   return new $._SpeechRecognitionEventsImpl(_ptr);
 };
 
-$._lib3_SVGElementInstanceEventsImpl$1 = function(_ptr) {
+$._SVGElementInstanceEventsImpl$1 = function(_ptr) {
   return new $._SVGElementInstanceEventsImpl(_ptr);
 };
 
@@ -2161,35 +2808,28 @@ $.add$1 = function(receiver, value) {
   return receiver.add$1(value);
 };
 
-$.iterator = function(receiver) {
-  if ($.isJsArray(receiver) === true) {
-    return $.ListIterator$1(receiver);
-  }
-  return receiver.iterator$0();
-};
-
 $.regExpExec = function(regExp, str) {
   var result = ($.regExpGetNative(regExp).exec(str));
-  if (result === null) {
-    return;
-  }
+  if (result === null) return;
   return result;
 };
 
 $.geB = function(a, b) {
-  return $.ge(a, b) === true;
+  if (typeof a === 'number' && typeof b === 'number') var t1 = (a >= b);
+  else {
+    t1 = $.ge$slow(a, b);
+    t1 = t1 === true;
+  }
+  return t1;
 };
 
 $.stringContainsUnchecked = function(receiver, other, startIndex) {
   if (typeof other === 'string') {
-    return $.indexOf$2(receiver, other, startIndex) !== -1;
-  } else {
-    if (typeof other === 'object' && !!other.is$JSSyntaxRegExp) {
-      return other.hasMatch$1($.substring$1(receiver, startIndex));
-    } else {
-      return $.iterator($.allMatches(other, $.substring$1(receiver, startIndex))).hasNext$0();
-    }
+    var t1 = $.indexOf$2(receiver, other, startIndex);
+    return !(t1 === -1);
   }
+  if (typeof other === 'object' && other !== null && !!other.is$JSSyntaxRegExp) return other.hasMatch$1($.substring$1(receiver, startIndex));
+  return $.iterator($.allMatches(other, $.substring$1(receiver, startIndex))).hasNext$0();
 };
 
 $.ObjectNotClosureException$0 = function() {
@@ -2198,22 +2838,6 @@ $.ObjectNotClosureException$0 = function() {
 
 $.window = function() {
   return window;;
-};
-
-$.add = function(a, b) {
-  if ($.checkNumbers(a, b) === true) {
-    return a + b;
-  } else {
-    if (typeof a === 'string') {
-      var b0 = $.toString(b);
-      if (typeof b0 === 'string') {
-        return a + b0;
-      }
-      $.checkNull(b0);
-      throw $.captureStackTrace($.IllegalArgumentException$1(b0));
-    }
-  }
-  return a.operator$add$1(b);
 };
 
 $.Uint8Array$fromList = function(list) {
@@ -2226,15 +2850,9 @@ $.regExpAttachGlobalNative = function(regExp) {
 
 $.isNegative = function(receiver) {
   if (typeof receiver === 'number') {
-    if (receiver === 0) {
-      var t0 = 1 / receiver < 0;
-    } else {
-      t0 = receiver < 0;
-    }
-    return t0;
-  } else {
-    return receiver.isNegative$0();
+    return receiver === 0 ? 1 / receiver < 0 : receiver < 0;
   }
+  return receiver.isNegative$0();
 };
 
 $.regExpMakeNative = function(regExp, global) {
@@ -2243,194 +2861,65 @@ $.regExpMakeNative = function(regExp, global) {
   var ignoreCase = regExp.get$ignoreCase();
   $.checkString(pattern);
   var sb = $.StringBufferImpl$1('');
-  if (multiLine === true) {
-    $.add$1(sb, 'm');
-  }
-  if (ignoreCase === true) {
-    $.add$1(sb, 'i');
-  }
-  if (global === true) {
-    $.add$1(sb, 'g');
-  }
+  multiLine === true && $.add$1(sb, 'm');
+  ignoreCase === true && $.add$1(sb, 'i');
+  global === true && $.add$1(sb, 'g');
   try {
     return new RegExp(pattern, $.toString(sb));
-  }catch (t0) {
-    var t1 = $.unwrapException(t0);
+  } catch (exception) {
+    var t1 = $.unwrapException(exception);
     var e = t1;
     throw $.captureStackTrace($.IllegalJSRegExpException$2(pattern, (String(e))));
   }
 };
 
-$._lib3_FrozenElementListIterator$1 = function(_list) {
+$.BadNumberFormatException$1 = function(_s) {
+  return new $.BadNumberFormatException(_s);
+};
+
+$._FrozenElementListIterator$1 = function(_list) {
   return new $._FrozenElementListIterator(0, _list);
 };
 
 $.mapToString = function(m) {
   var result = $.StringBufferImpl$1('');
-  $._emitMap(m, result, $.List((void 0)));
+  $._emitMap(m, result, $.List(null));
   return result.toString$0();
 };
 
-$._lib3_XMLHttpRequestEventsImpl$1 = function(_ptr) {
+$._XMLHttpRequestEventsImpl$1 = function(_ptr) {
   return new $._XMLHttpRequestEventsImpl(_ptr);
 };
 
-$._lib3_JavaScriptAudioNodeEventsImpl$1 = function(_ptr) {
+$._JavaScriptAudioNodeEventsImpl$1 = function(_ptr) {
   return new $._JavaScriptAudioNodeEventsImpl(_ptr);
 };
 
 $._emitObject = function(o, result, visiting) {
-  if (typeof o === 'object' && (o.constructor === Array || o.is$Collection())) {
+  if (typeof o === 'object' && o !== null && (o.constructor === Array || o.is$Collection())) {
     if ($._containsRef(visiting, o) === true) {
-      if (typeof o === 'object' && (o.constructor === Array || o.is$List2())) {
-        var t0 = '[...]';
-      } else {
-        t0 = '{...}';
-      }
-      $.add$1(result, t0);
-    } else {
-      $._emitCollection(o, result, visiting);
-    }
+      $.add$1(result, typeof o === 'object' && o !== null && (o.constructor === Array || o.is$List0()) ? '[...]' : '{...}');
+    } else $._emitCollection(o, result, visiting);
   } else {
-    if (typeof o === 'object' && o.is$Map()) {
-      if ($._containsRef(visiting, o) === true) {
-        $.add$1(result, '{...}');
-      } else {
-        $._emitMap(o, result, visiting);
-      }
+    if (typeof o === 'object' && o !== null && o.is$Map()) {
+      if ($._containsRef(visiting, o) === true) $.add$1(result, '{...}');
+      else $._emitMap(o, result, visiting);
     } else {
-      if ($.eqNullB(o)) {
-        var t1 = 'null';
-      } else {
-        t1 = o;
-      }
-      $.add$1(result, t1);
+      $.add$1(result, $.eqNullB(o) ? 'null' : o);
     }
   }
 };
 
 $._emitMap = function(m, result, visiting) {
-  var t0 = ({});
-  t0.visiting_2 = visiting;
-  t0.result_1 = result;
-  $.add$1(t0.visiting_2, m);
-  $.add$1(t0.result_1, '{');
-  t0.first_3 = true;
-  $.forEach(m, new $.Closure3(t0));
-  $.add$1(t0.result_1, '}');
-  $.removeLast(t0.visiting_2);
-};
-
-$._lib3_IDBDatabaseEventsImpl$1 = function(_ptr) {
-  return new $._IDBDatabaseEventsImpl(_ptr);
-};
-
-$.isFirefox = function() {
-  return $.contains$2($.userAgent(), 'Firefox', 0);
-};
-
-$.compareTo = function(a, b) {
-  if ($.checkNumbers(a, b) === true) {
-    if ($.ltB(a, b)) {
-      return -1;
-    } else {
-      if ($.gtB(a, b)) {
-        return 1;
-      } else {
-        if ($.eqB(a, b)) {
-          if ($.eqB(a, 0)) {
-            var aIsNegative = $.isNegative(a);
-            if ($.eqB(aIsNegative, $.isNegative(b))) {
-              return 0;
-            }
-            if (aIsNegative === true) {
-              return -1;
-            }
-            return 1;
-          }
-          return 0;
-        } else {
-          if ($.isNaN(a) === true) {
-            if ($.isNaN(b) === true) {
-              return 0;
-            }
-            return 1;
-          } else {
-            return -1;
-          }
-        }
-      }
-    }
-  } else {
-    if (typeof a === 'string') {
-      if (!(typeof b === 'string')) {
-        throw $.captureStackTrace($.IllegalArgumentException$1(b));
-      }
-      if (a == b) {
-        var t0 = 0;
-      } else {
-        if (a < b) {
-          t0 = -1;
-        } else {
-          t0 = 1;
-        }
-      }
-      return t0;
-    } else {
-      return a.compareTo$1(b);
-    }
-  }
-};
-
-$.ge = function(a, b) {
-  if ($.checkNumbers(a, b) === true) {
-    return a >= b;
-  }
-  return a.operator$ge$1(b);
-};
-
-$._lib3_TextTrackCueEventsImpl$1 = function(_ptr) {
-  return new $._TextTrackCueEventsImpl(_ptr);
-};
-
-$.MatchImplementation$5 = function(pattern, str, _start, _end, _groups) {
-  return new $.MatchImplementation(_groups, _end, _start, str, pattern);
-};
-
-$.UnsupportedOperationException$1 = function(_message) {
-  return new $.UnsupportedOperationException(_message);
-};
-
-$.indexOf$2 = function(receiver, element, start) {
-  if ($.isJsArray(receiver) === true) {
-    if (!((typeof start === 'number') && (start === (start | 0)))) {
-      throw $.captureStackTrace($.IllegalArgumentException$1(start));
-    }
-    return $.indexOf(receiver, element, start, (receiver.length));
-  } else {
-    if (typeof receiver === 'string') {
-      $.checkNull(element);
-      if (!((typeof start === 'number') && (start === (start | 0)))) {
-        throw $.captureStackTrace($.IllegalArgumentException$1(start));
-      }
-      if (!(typeof element === 'string')) {
-        throw $.captureStackTrace($.IllegalArgumentException$1(element));
-      }
-      if (start < 0) {
-        return -1;
-      }
-      return receiver.indexOf(element, start);
-    }
-  }
-  return receiver.indexOf$2(element, start);
-};
-
-$._lib3_DedicatedWorkerContextEventsImpl$1 = function(_ptr) {
-  return new $._DedicatedWorkerContextEventsImpl(_ptr);
-};
-
-$._lib3_FileReaderEventsImpl$1 = function(_ptr) {
-  return new $._FileReaderEventsImpl(_ptr);
+  var t1 = ({});
+  t1.visiting_2 = visiting;
+  t1.result_1 = result;
+  $.add$1(t1.visiting_2, m);
+  $.add$1(t1.result_1, '{');
+  t1.first_3 = true;
+  $.forEach(m, new $.Closure1(t1));
+  $.add$1(t1.result_1, '}');
+  $.removeLast(t1.visiting_2);
 };
 
 $.isEmpty = function(receiver) {
@@ -2440,28 +2929,123 @@ $.isEmpty = function(receiver) {
   return receiver.isEmpty$0();
 };
 
+$._IDBDatabaseEventsImpl$1 = function(_ptr) {
+  return new $._IDBDatabaseEventsImpl(_ptr);
+};
+
+$.isFirefox = function() {
+  return $.contains$2($.userAgent(), 'Firefox', 0);
+};
+
+$.compareTo = function(a, b) {
+  if ($.checkNumbers(a, b) === true) {
+    if ($.ltB(a, b)) return -1;
+    if ($.gtB(a, b)) return 1;
+    if ($.eqB(a, b)) {
+      if ($.eqB(a, 0)) {
+        var aIsNegative = $.isNegative(a);
+        if ($.eqB(aIsNegative, $.isNegative(b))) return 0;
+        if (aIsNegative === true) return -1;
+        return 1;
+      }
+      return 0;
+    }
+    if ($.isNaN(a) === true) {
+      if ($.isNaN(b) === true) return 0;
+      return 1;
+    }
+    return -1;
+  }
+  if (typeof a === 'string') {
+    if (!(typeof b === 'string')) throw $.captureStackTrace($.IllegalArgumentException$1(b));
+    if (a == b) var t1 = 0;
+    else {
+      t1 = (a < b) ? -1 : 1;
+    }
+    return t1;
+  }
+  return a.compareTo$1(b);
+};
+
+$.Uint8Array = function(length$) {
+  return $._U8(length$);
+};
+
+$._TextTrackCueEventsImpl$1 = function(_ptr) {
+  return new $._TextTrackCueEventsImpl(_ptr);
+};
+
+$.MatchImplementation$5 = function(pattern, str, _start, _end, _groups) {
+  return new $.MatchImplementation(_groups, _end, _start, str, pattern);
+};
+
+$.add = function(a, b) {
+  return typeof a === 'number' && typeof b === 'number' ? (a + b) : $.add$slow(a, b);
+};
+
+$.UnsupportedOperationException$1 = function(_message) {
+  return new $.UnsupportedOperationException(_message);
+};
+
+$.indexOf$2 = function(receiver, element, start) {
+  if ($.isJsArray(receiver) === true) {
+    if (!((typeof start === 'number') && (start === (start | 0)))) throw $.captureStackTrace($.IllegalArgumentException$1(start));
+    return $.indexOf(receiver, element, start, (receiver.length));
+  }
+  if (typeof receiver === 'string') {
+    $.checkNull(element);
+    if (!((typeof start === 'number') && (start === (start | 0)))) throw $.captureStackTrace($.IllegalArgumentException$1(start));
+    if (!(typeof element === 'string')) throw $.captureStackTrace($.IllegalArgumentException$1(element));
+    if (start < 0) return -1;
+    return receiver.indexOf(element, start);
+  }
+  return receiver.indexOf$2(element, start);
+};
+
+$._DedicatedWorkerContextEventsImpl$1 = function(_ptr) {
+  return new $._DedicatedWorkerContextEventsImpl(_ptr);
+};
+
+$._FileReaderEventsImpl$1 = function(_ptr) {
+  return new $._FileReaderEventsImpl(_ptr);
+};
+
 $.NoMoreElementsException$0 = function() {
   return new $.NoMoreElementsException();
 };
 
 $.eqNullB = function(a) {
-  return $.eqNull(a) === true;
-};
-
-$.Element$tag = function(tag) {
-  return document.createElement(tag);
+  if (a == null) return true;
+  if (typeof a === "object") {
+    if (!!a.operator$eq$1) {
+      var t1 = a.operator$eq$1(null);
+      return t1 === true;
+    }
+  }
+  return false;
 };
 
 $._F32 = function(arg) {
   return new Float32Array(arg);;
 };
 
-$._lib3_FrameSetElementEventsImpl$1 = function(_ptr) {
+$.Element$tag = function(tag) {
+  return document.createElement(tag);
+};
+
+$._FrameSetElementEventsImpl$1 = function(_ptr) {
   return new $._FrameSetElementEventsImpl(_ptr);
 };
 
+$.add$slow = function(a, b) {
+  if ($.checkNumbers(a, b) === true) {
+    return a + b;
+  }
+  return a.operator$add$1(b);
+};
+
 $.List$from = function(other) {
-  var result = $.List((void 0));
+  var result = $.List(null);
   $.setRuntimeTypeInfo(result, ({E: 'E'}));
   var iterator = $.iterator(other);
   for (; iterator.hasNext$0() === true; ) {
@@ -2471,17 +3055,10 @@ $.List$from = function(other) {
 };
 
 $.newList = function(length$) {
-  if (length$ === (void 0)) {
+  if (length$ == null) {
     return new Array();
   }
-  var t0 = typeof length$ === 'number' && length$ === (length$ | 0);
-  var t1 = !t0;
-  if (t0) {
-    t1 = length$ < 0;
-  }
-  if (t1) {
-    throw $.captureStackTrace($.IllegalArgumentException$1(length$));
-  }
+  if (!((typeof length$ === 'number') && (length$ === (length$ | 0))) || length$ < 0) throw $.captureStackTrace($.IllegalArgumentException$1(length$));
   var result = (new Array(length$));
   result.fixed$length = true;
   return result;
@@ -2495,7 +3072,7 @@ $.dateNow = function() {
   return Date.now();
 };
 
-$._lib3_AbstractWorkerEventsImpl$1 = function(_ptr) {
+$._AbstractWorkerEventsImpl$1 = function(_ptr) {
   return new $._AbstractWorkerEventsImpl(_ptr);
 };
 
@@ -2504,29 +3081,29 @@ $._computeLoadLimit = function(capacity) {
 };
 
 $.HashSetIterator$1 = function(set_) {
-  var t0 = new $.HashSetIterator(-1, set_.get$_lib_backingMap().get$_lib_keys());
-  t0.HashSetIterator$1(set_);
-  return t0;
+  var t1 = new $.HashSetIterator(-1, set_.get$_backingMap().get$_keys());
+  t1.HashSetIterator$1(set_);
+  return t1;
 };
 
 $.IllegalArgumentException$1 = function(arg) {
   return new $.IllegalArgumentException(arg);
 };
 
-$._lib3_MediaElementEventsImpl$1 = function(_ptr) {
+$._MediaElementEventsImpl$1 = function(_ptr) {
   return new $._MediaElementEventsImpl(_ptr);
 };
 
-$._lib3_IDBTransactionEventsImpl$1 = function(_ptr) {
+$._IDBTransactionEventsImpl$1 = function(_ptr) {
   return new $._IDBTransactionEventsImpl(_ptr);
 };
 
-$._lib3_BodyElementEventsImpl$1 = function(_ptr) {
+$._BodyElementEventsImpl$1 = function(_ptr) {
   return new $._BodyElementEventsImpl(_ptr);
 };
 
-$._lib_AllMatchesIterator$2 = function(re, _str) {
-  return new $._AllMatchesIterator(false, (void 0), _str, $.JSSyntaxRegExp$_globalVersionOf$1(re));
+$._AllMatchesIterator$2 = function(re, _str) {
+  return new $._AllMatchesIterator(false, null, _str, $.JSSyntaxRegExp$_globalVersionOf$1(re));
 };
 
 $.iae = function(argument) {
@@ -2534,15 +3111,8 @@ $.iae = function(argument) {
 };
 
 $.truncate = function(receiver) {
-  if (!(typeof receiver === 'number')) {
-    return receiver.truncate$0();
-  }
-  if (receiver < 0) {
-    var t0 = $.ceil(receiver);
-  } else {
-    t0 = $.floor(receiver);
-  }
-  return t0;
+  if (!(typeof receiver === 'number')) return receiver.truncate$0();
+  return receiver < 0 ? $.ceil(receiver) : $.floor(receiver);
 };
 
 $.Float32Array$fromList = function(list) {
@@ -2552,60 +3122,63 @@ $.Float32Array$fromList = function(list) {
 $.isNaN = function(receiver) {
   if (typeof receiver === 'number') {
     return isNaN(receiver);
-  } else {
-    return receiver.isNegative$0();
   }
+  return receiver.isNaN$0();
+};
+
+$.isInfinite = function(receiver) {
+  if (!(typeof receiver === 'number')) return receiver.isInfinite$0();
+  return (receiver == Infinity) || (receiver == -Infinity);
 };
 
 $.round = function(receiver) {
-  if (!(typeof receiver === 'number')) {
-    return receiver.round$0();
-  }
+  if (!(typeof receiver === 'number')) return receiver.round$0();
   if (receiver < 0) {
     return -Math.round(-receiver);
-  } else {
-    return Math.round(receiver);
   }
+  return Math.round(receiver);
 };
 
 $.allMatchesInStringUnchecked = function(needle, haystack) {
-  var result = $.List((void 0));
+  var result = $.List(null);
   $.setRuntimeTypeInfo(result, ({E: 'Match'}));
   var length$ = $.get$length(haystack);
   var patternLength = $.get$length(needle);
-  if (patternLength !== (patternLength | 0)) return $.allMatchesInStringUnchecked$bailout(needle, haystack, 1, length$, result, patternLength);
-  for (var startIndex = 0; true; startIndex = startIndex0) {
-    startIndex0 = startIndex;
+  if (patternLength !== (patternLength | 0)) return $.allMatchesInStringUnchecked$bailout(1, needle, haystack, length$, patternLength, result);
+  for (var startIndex = 0; true; ) {
     var position = $.indexOf$2(haystack, needle, startIndex);
-    if ($.eqB(position, -1)) {
-      break;
-    }
+    if ($.eqB(position, -1)) break;
     result.push($.StringMatch$3(position, haystack, needle));
     var endIndex = $.add(position, patternLength);
-    if ($.eqB(endIndex, length$)) {
-      break;
-    } else {
-      if ($.eqB(position, endIndex)) {
-        startIndex0 = $.add(startIndex, 1);
-      } else {
-        startIndex0 = endIndex;
-      }
+    if ($.eqB(endIndex, length$)) break;
+    else {
+      startIndex = $.eqB(position, endIndex) ? $.add(startIndex, 1) : endIndex;
     }
   }
   return result;
 };
 
-$._lib3_ChildrenElementList$_wrap$1 = function(element) {
+$._ChildrenElementList$_wrap$1 = function(element) {
   return new $._ChildrenElementList(element.get$$$dom_children(), element);
 };
 
-$._lib_AllMatchesIterable$2 = function(_re, _str) {
+$._AllMatchesIterable$2 = function(_re, _str) {
   return new $._AllMatchesIterable(_str, _re);
 };
 
 $.dynamicSetMetadata = function(inputTable) {
-  var t0 = $.buildDynamicMetadata(inputTable);
-  $._dynamicMetadata(t0);
+  var t1 = $.buildDynamicMetadata(inputTable);
+  $._dynamicMetadata(t1);
+};
+
+$.endsWith = function(receiver, other) {
+  if (!(typeof receiver === 'string')) return receiver.endsWith$1(other);
+  $.checkString(other);
+  var receiverLength = receiver.length;
+  var otherLength = $.get$length(other);
+  if ($.gtB(otherLength, receiverLength)) return false;
+  if (typeof otherLength !== 'number') throw $.iae(otherLength);
+  return $.eq(other, $.substring$1(receiver, receiverLength - otherLength));
 };
 
 $.ListIterator$1 = function(list) {
@@ -2621,15 +3194,20 @@ $.checkNum = function(value) {
 };
 
 $.StopwatchImplementation$0 = function() {
-  return new $.StopwatchImplementation((void 0), (void 0));
+  return new $.StopwatchImplementation(null, null);
 };
 
-$._lib3_WorkerEventsImpl$1 = function(_ptr) {
+$._WorkerEventsImpl$1 = function(_ptr) {
   return new $._WorkerEventsImpl(_ptr);
 };
 
 $.ltB = function(a, b) {
-  return $.lt(a, b) === true;
+  if (typeof a === 'number' && typeof b === 'number') var t1 = (a < b);
+  else {
+    t1 = $.lt$slow(a, b);
+    t1 = t1 === true;
+  }
+  return t1;
 };
 
 $.now = function() {
@@ -2640,113 +3218,82 @@ $.FilteredElementList$1 = function(node) {
   return new $.FilteredElementList(node.get$nodes(), node);
 };
 
-$.convertDartClosureToJS = function(closure) {
-  if (closure === (void 0)) {
-    return;
-  }
+$.convertDartClosureToJS = function(closure, arity) {
+  if (closure == null) return;
   var function$ = (closure.$identity);
-  if (!!function$) {
-    return function$;
-  }
-  var function0 = (function() {
-    return $.invokeClosure.$call$5(closure, $, arguments.length, arguments[0], arguments[1]);
+  if (!!function$) return function$;
+  function$ = (function() {
+    return $.invokeClosure.$call$5(closure, $, arity, arguments[0], arguments[1]);
   });
-  closure.$identity = function0;
-  return function0;
+  closure.$identity = function$;
+  return function$;
 };
 
-$._lib3_FixedSizeListIterator$1 = function(array) {
+$._FixedSizeListIterator$1 = function(array) {
   return new $._FixedSizeListIterator($.get$length(array), 0, array);
 };
 
-$._lib3_FrozenElementList$_wrap$1 = function(_nodeList) {
+$._FrozenElementList$_wrap$1 = function(_nodeList) {
   return new $._FrozenElementList(_nodeList);
 };
 
 $.split = function(receiver, pattern) {
-  if (!(typeof receiver === 'string')) {
-    return receiver.split$1(pattern);
-  }
+  if (!(typeof receiver === 'string')) return receiver.split$1(pattern);
   $.checkNull(pattern);
   return $.stringSplitUnchecked(receiver, pattern);
 };
 
 $.concatAll = function(strings) {
-  $.checkNull(strings);
-  for (var t0 = $.iterator(strings), result = ''; t0.hasNext$0() === true; result = result0) {
-    result0 = result;
-    var t1 = t0.next$0();
-    $.checkNull(t1);
-    if (!(typeof t1 === 'string')) {
-      throw $.captureStackTrace($.IllegalArgumentException$1(t1));
-    }
-    result0 = result + t1;
-  }
-  return result;
+  return $.stringJoinUnchecked($._toJsStringArray(strings), '');
 };
 
 $.userAgent = function() {
   return $.window().get$navigator().get$userAgent();
 };
 
-$._lib3_InputElementEventsImpl$1 = function(_ptr) {
+$._InputElementEventsImpl$1 = function(_ptr) {
   return new $._InputElementEventsImpl(_ptr);
 };
 
 $.getRange = function(receiver, start, length$) {
-  if ($.isJsArray(receiver) !== true) {
-    return receiver.getRange$2(start, length$);
-  }
-  if (0 === length$) {
-    return [];
-  }
+  if ($.isJsArray(receiver) !== true) return receiver.getRange$2(start, length$);
+  if (0 === length$) return [];
   $.checkNull(start);
   $.checkNull(length$);
-  if (!((typeof start === 'number') && (start === (start | 0)))) {
-    throw $.captureStackTrace($.IllegalArgumentException$1(start));
-  }
-  if (!((typeof length$ === 'number') && (length$ === (length$ | 0)))) {
-    throw $.captureStackTrace($.IllegalArgumentException$1(length$));
-  }
-  if (length$ < 0) {
-    throw $.captureStackTrace($.IllegalArgumentException$1(length$));
-  }
-  if (start < 0) {
-    throw $.captureStackTrace($.IndexOutOfRangeException$1(start));
-  }
+  if (!((typeof start === 'number') && (start === (start | 0)))) throw $.captureStackTrace($.IllegalArgumentException$1(start));
+  if (!((typeof length$ === 'number') && (length$ === (length$ | 0)))) throw $.captureStackTrace($.IllegalArgumentException$1(length$));
+  if (length$ < 0) throw $.captureStackTrace($.IllegalArgumentException$1(length$));
+  if (start < 0) throw $.captureStackTrace($.IndexOutOfRangeException$1(start));
   var end = start + length$;
-  if ($.gtB(end, $.get$length(receiver))) {
-    throw $.captureStackTrace($.IndexOutOfRangeException$1(length$));
-  }
-  if ($.ltB(length$, 0)) {
-    throw $.captureStackTrace($.IllegalArgumentException$1(length$));
-  }
+  if ($.gtB(end, $.get$length(receiver))) throw $.captureStackTrace($.IndexOutOfRangeException$1(length$));
+  if ($.ltB(length$, 0)) throw $.captureStackTrace($.IllegalArgumentException$1(length$));
   return receiver.slice(start, end);
 };
 
-$.getRange2 = function(a, start, length$, accumulator) {
-  if (typeof a !== 'string' && (typeof a !== 'object'||a.constructor !== Array)) return $.getRange2$bailout(a, start, length$, accumulator,  0);
-  if (typeof start !== 'number') return $.getRange2$bailout(a, start, length$, accumulator,  0);
-  if ($.ltB(length$, 0)) {
-    throw $.captureStackTrace($.IllegalArgumentException$1('length'));
-  }
-  if (start < 0) {
-    throw $.captureStackTrace($.IndexOutOfRangeException$1(start));
-  }
-  var end = $.add(start, length$);
-  if (end > a.length) {
-    throw $.captureStackTrace($.IndexOutOfRangeException$1(end));
-  }
-  for (var i = start; i < end; i = i + 1) {
+$.getRange0 = function(a, start, length$, accumulator) {
+  if (typeof a !== 'string' && (typeof a !== 'object' || a === null || (a.constructor !== Array && !a.is$JavaScriptIndexingBehavior()))) return $.getRange0$bailout(1, a, start, length$, accumulator);
+  if (typeof start !== 'number') return $.getRange0$bailout(1, a, start, length$, accumulator);
+  if ($.ltB(length$, 0)) throw $.captureStackTrace($.IllegalArgumentException$1('length'));
+  if (start < 0) throw $.captureStackTrace($.IndexOutOfRangeException$1(start));
+  if (typeof length$ !== 'number') throw $.iae(length$);
+  var end = start + length$;
+  if (end > a.length) throw $.captureStackTrace($.IndexOutOfRangeException$1(end));
+  for (var i = start; i < end; ++i) {
     if (i !== (i | 0)) throw $.iae(i);
-    var t0 = a.length;
-    if (i < 0 || i >= t0) throw $.ioore(i);
+    var t1 = a.length;
+    if (i < 0 || i >= t1) throw $.ioore(i);
     $.add$1(accumulator, a[i]);
   }
   return accumulator;
 };
 
-$._lib3_TextTrackListEventsImpl$1 = function(_ptr) {
+$.S = function(value) {
+  var res = $.toString(value);
+  if (!(typeof res === 'string')) throw $.captureStackTrace($.IllegalArgumentException$1(value));
+  return res;
+};
+
+$._TextTrackListEventsImpl$1 = function(_ptr) {
   return new $._TextTrackListEventsImpl(_ptr);
 };
 
@@ -2754,118 +3301,171 @@ $._dynamicMetadata = function(table) {
   $dynamicMetadata = table;
 };
 
-$._dynamicMetadata2 = function() {
-  if ((typeof($dynamicMetadata)) === 'undefined') {
-    var t0 = [];
-    $._dynamicMetadata(t0);
+$._dynamicMetadata0 = function() {
+  var t1 = (typeof($dynamicMetadata));
+  if (t1 === 'undefined') {
+    t1 = [];
+    $._dynamicMetadata(t1);
   }
   return $dynamicMetadata;
 };
 
-$._lib3_DeprecatedPeerConnectionEventsImpl$1 = function(_ptr) {
+$._DeprecatedPeerConnectionEventsImpl$1 = function(_ptr) {
   return new $._DeprecatedPeerConnectionEventsImpl(_ptr);
 };
 
 $.regExpGetNative = function(regExp) {
   var r = (regExp._re);
-  var r0 = r;
-  if (r === (void 0)) {
-    r0 = (regExp._re = $.regExpMakeNative(regExp, false));
-  }
-  return r0;
+  return r == null ? (regExp._re = $.regExpMakeNative(regExp, false)) : r;
 };
 
 $.throwNoSuchMethod = function(obj, name$, arguments$) {
-  throw $.captureStackTrace($.NoSuchMethodException$4(obj, name$, arguments$, (void 0)));
+  throw $.captureStackTrace($.NoSuchMethodException$4(obj, name$, arguments$, null));
 };
 
 $.checkNull = function(object) {
-  if (object === (void 0)) {
-    throw $.captureStackTrace($.NullPointerException$2((void 0), $.CTC));
-  }
+  if (object == null) throw $.captureStackTrace($.NullPointerException$2(null, $.CTC));
   return object;
 };
 
-$._lib3_EventListenerListImpl$2 = function(_ptr, _type) {
+$._EventListenerListImpl$2 = function(_ptr, _type) {
   return new $._EventListenerListImpl(_type, _ptr);
 };
 
-$._lib3_WindowEventsImpl$1 = function(_ptr) {
+$._WindowEventsImpl$1 = function(_ptr) {
   return new $._WindowEventsImpl(_ptr);
 };
 
 $.checkNumbers = function(a, b) {
   if (typeof a === 'number') {
-    if (typeof b === 'number') {
-      return true;
-    } else {
-      $.checkNull(b);
-      throw $.captureStackTrace($.IllegalArgumentException$1(b));
-    }
+    if (typeof b === 'number') return true;
+    $.checkNull(b);
+    throw $.captureStackTrace($.IllegalArgumentException$1(b));
   }
   return false;
 };
 
 $.random = function() {
-  return $.random2();
+  return $.random0();
 };
 
-$.random2 = function() {
+$.random0 = function() {
   return Math.random();
 };
 
-$.stringToString = function(value) {
-  var res = $.toString(value);
-  if (!(typeof res === 'string')) {
-    throw $.captureStackTrace($.IllegalArgumentException$1(value));
+$.lt$slow = function(a, b) {
+  if ($.checkNumbers(a, b) === true) {
+    return a < b;
   }
-  return res;
+  return a.operator$lt$1(b);
+};
+
+$.index$slow = function(a, index) {
+  if (typeof a === 'string' || $.isJsArray(a) === true) {
+    if (!((typeof index === 'number') && (index === (index | 0)))) {
+      if (!(typeof index === 'number')) throw $.captureStackTrace($.IllegalArgumentException$1(index));
+      var t1 = $.truncate(index);
+      if (!(t1 === index)) throw $.captureStackTrace($.IllegalArgumentException$1(index));
+    }
+    if ($.ltB(index, 0) || $.geB(index, $.get$length(a))) throw $.captureStackTrace($.IndexOutOfRangeException$1(index));
+    return a[index];
+  }
+  return a.operator$index$1(index);
+};
+
+$.removeLast = function(receiver) {
+  if ($.isJsArray(receiver) === true) {
+    $.checkGrowable(receiver, 'removeLast');
+    var t1 = $.get$length(receiver);
+    if (t1 === 0) throw $.captureStackTrace($.IndexOutOfRangeException$1(-1));
+    return receiver.pop();
+  }
+  return receiver.removeLast$0();
+};
+
+$.toString = function(value) {
+  if (typeof value == "object" && value !== null) {
+    if ($.isJsArray(value) === true) return $.collectionToString(value);
+    return value.toString$0();
+  }
+  if (value === 0 && (1 / value) < 0) return '-0.0';
+  if (value == null) return 'null';
+  if (typeof value == "function") return 'Closure';
+  return String(value);
 };
 
 $.contains$2 = function(receiver, other, startIndex) {
-  if (!(typeof receiver === 'string')) {
-    return receiver.contains$2(other, startIndex);
-  }
+  if (!(typeof receiver === 'string')) return receiver.contains$2(other, startIndex);
   $.checkNull(other);
   return $.stringContainsUnchecked(receiver, other, startIndex);
+};
+
+$._toJsStringArray = function(strings) {
+  if (typeof strings !== 'object' || strings === null || ((strings.constructor !== Array || !!strings.immutable$list) && !strings.is$JavaScriptIndexingBehavior())) return $._toJsStringArray$bailout(1, strings);
+  $.checkNull(strings);
+  var length$ = strings.length;
+  if ($.isJsArray(strings) === true) {
+    for (var i = 0; i < length$; ++i) {
+      var t1 = strings.length;
+      if (i < 0 || i >= t1) throw $.ioore(i);
+      var t2 = strings[i];
+      $.checkNull(t2);
+      if (!(typeof t2 === 'string')) throw $.captureStackTrace($.IllegalArgumentException$1(t2));
+    }
+    var array = strings;
+  } else {
+    array = $.List(length$);
+    for (i = 0; i < length$; ++i) {
+      t1 = strings.length;
+      if (i < 0 || i >= t1) throw $.ioore(i);
+      t2 = strings[i];
+      $.checkNull(t2);
+      if (!(typeof t2 === 'string')) throw $.captureStackTrace($.IllegalArgumentException$1(t2));
+      t1 = array.length;
+      if (i < 0 || i >= t1) throw $.ioore(i);
+      array[i] = t2;
+    }
+  }
+  return array;
 };
 
 $.IndexOutOfRangeException$1 = function(_index) {
   return new $.IndexOutOfRangeException(_index);
 };
 
-$._lib3_TextTrackEventsImpl$1 = function(_ptr) {
+$._TextTrackEventsImpl$1 = function(_ptr) {
   return new $._TextTrackEventsImpl(_ptr);
 };
 
 $.charCodeAt = function(receiver, index) {
   if (typeof receiver === 'string') {
-    if (!(typeof index === 'number')) {
-      throw $.captureStackTrace($.IllegalArgumentException$1(index));
-    }
-    if (index < 0) {
-      throw $.captureStackTrace($.IndexOutOfRangeException$1(index));
-    }
-    if (index >= receiver.length) {
-      throw $.captureStackTrace($.IndexOutOfRangeException$1(index));
-    }
+    if (!(typeof index === 'number')) throw $.captureStackTrace($.IllegalArgumentException$1(index));
+    if (index < 0) throw $.captureStackTrace($.IndexOutOfRangeException$1(index));
+    if (index >= receiver.length) throw $.captureStackTrace($.IndexOutOfRangeException$1(index));
     return receiver.charCodeAt(index);
-  } else {
-    return receiver.charCodeAt$1(index);
   }
+  return receiver.charCodeAt$1(index);
 };
 
-$._lib3_BatteryManagerEventsImpl$1 = function(_ptr) {
+$._BatteryManagerEventsImpl$1 = function(_ptr) {
   return new $._BatteryManagerEventsImpl(_ptr);
 };
 
-$._lib3_WebSocketEventsImpl$1 = function(_ptr) {
+$.toInt = function(receiver) {
+  if (!(typeof receiver === 'number')) return receiver.toInt$0();
+  if ($.isNaN(receiver) === true) throw $.captureStackTrace($.BadNumberFormatException$1('NaN'));
+  if ($.isInfinite(receiver) === true) throw $.captureStackTrace($.BadNumberFormatException$1('Infinity'));
+  var truncated = $.truncate(receiver);
+  return (truncated == -0.0) ? 0 : truncated;
+};
+
+$._WebSocketEventsImpl$1 = function(_ptr) {
   return new $._WebSocketEventsImpl(_ptr);
 };
 
 $.collectionToString = function(c) {
   var result = $.StringBufferImpl$1('');
-  $._emitCollection(c, result, $.List((void 0)));
+  $._emitCollection(c, result, $.List(null));
   return result.toString$0();
 };
 
@@ -2873,29 +3473,31 @@ $.MetaInfo$3 = function(tag, tags, set) {
   return new $.MetaInfo(set, tags, tag);
 };
 
-$._lib3_MediaStreamEventsImpl$1 = function(_ptr) {
+$._MediaStreamEventsImpl$1 = function(_ptr) {
   return new $._MediaStreamEventsImpl(_ptr);
 };
 
 $.defineProperty = function(obj, property, value) {
   Object.defineProperty(obj, property,
-      {value: value, enumerable: false, writable: false, configurable: true});;
+      {value: value, enumerable: false, writable: true, configurable: true});;
 };
 
 $.dynamicFunction = function(name$) {
   var f = (Object.prototype[name$]);
-  if (f !== (void 0) && (!!f.methods)) {
+  if (!(f == null) && (!!f.methods)) {
     return f.methods;
   }
   var methods = ({});
-  var dartMethod = (Object.getPrototypeOf($.CTC8)[name$]);
-  if (dartMethod !== (void 0)) {
-    methods['Object'] = dartMethod;
-  }
+  var dartMethod = (Object.getPrototypeOf($.CTC6)[name$]);
+  if (!(dartMethod == null)) methods['Object'] = dartMethod;
   var bind = (function() {return $.dynamicBind.$call$4(this, name$, methods, Array.prototype.slice.call(arguments));});
   bind.methods = methods;
   $.defineProperty((Object.prototype), name$, bind);
   return methods;
+};
+
+$.print = function(obj) {
+  return $.printString($.toString(obj));
 };
 
 $.checkString = function(value) {
@@ -2907,20 +3509,11 @@ $.checkString = function(value) {
 };
 
 $.div = function(a, b) {
-  if ($.checkNumbers(a, b) === true) {
-    return a / b;
-  }
-  return a.operator$div$1(b);
-};
-
-$.print = function(obj) {
-  return $.printString($.toString(obj));
+  return typeof a === 'number' && typeof b === 'number' ? (a / b) : $.div$slow(a, b);
 };
 
 $.addAll = function(receiver, collection) {
-  if ($.isJsArray(receiver) !== true) {
-    return receiver.addAll$1(collection);
-  }
+  if ($.isJsArray(receiver) !== true) return receiver.addAll$1(collection);
   var iterator = $.iterator(collection);
   for (; iterator.hasNext$0() === true; ) {
     $.add$1(receiver, iterator.next$0());
@@ -2928,36 +3521,26 @@ $.addAll = function(receiver, collection) {
 };
 
 $.objectToString = function(object) {
-  var name$ = (object.constructor.name);
-  if (name$ === (void 0)) {
-    var name0 = (object.constructor.toString().match(/^\s*function\s*\$?(\S*)\s*\(/)[1]);
-  } else {
-    name0 = name$;
-    if ($.charCodeAt(name$, 0) === 36) {
-      name0 = $.substring$1(name$, 1);
-    }
+  var name$ = $.constructorNameFallback(object);
+  if ($.eqB(name$, 'Object')) {
+    var decompiled = (String(object.constructor).match(/^\s*function\s*(\S*)\s*\(/)[1]);
+    if (typeof decompiled === 'string') name$ = decompiled;
   }
-  return 'Instance of \'' + $.stringToString(name0) + '\'';
+  var t1 = $.charCodeAt(name$, 0);
+  return 'Instance of \'' + $.S(t1 === 36 ? $.substring$1(name$, 1) : name$) + '\'';
 };
 
 $.indexOf = function(a, element, startIndex, endIndex) {
-  if (typeof a !== 'string' && (typeof a !== 'object'||a.constructor !== Array)) return $.indexOf$bailout(a, element, startIndex, endIndex,  0);
-  if (typeof endIndex !== 'number') return $.indexOf$bailout(a, element, startIndex, endIndex,  0);
-  if ($.geB(startIndex, a.length)) {
-    return -1;
-  }
-  var startIndex0 = startIndex;
-  if ($.ltB(startIndex, 0)) {
-    startIndex0 = 0;
-  }
-  if (typeof startIndex0 !== 'number') return $.indexOf$bailout(a, element, startIndex, endIndex, 3, a, endIndex, startIndex0);
-  for (var i = startIndex0; i < endIndex; i = i + 1) {
+  if (typeof a !== 'string' && (typeof a !== 'object' || a === null || (a.constructor !== Array && !a.is$JavaScriptIndexingBehavior()))) return $.indexOf$bailout(1, a, element, startIndex, endIndex);
+  if (typeof endIndex !== 'number') return $.indexOf$bailout(1, a, element, startIndex, endIndex);
+  if ($.geB(startIndex, a.length)) return -1;
+  if ($.ltB(startIndex, 0)) startIndex = 0;
+  if (typeof startIndex !== 'number') return $.indexOf$bailout(2, a, element, startIndex, endIndex);
+  for (var i = startIndex; i < endIndex; ++i) {
     if (i !== (i | 0)) throw $.iae(i);
-    var t0 = a.length;
-    if (i < 0 || i >= t0) throw $.ioore(i);
-    if ($.eqB(a[i], element)) {
-      return i;
-    }
+    var t1 = a.length;
+    if (i < 0 || i >= t1) throw $.ioore(i);
+    if ($.eqB(a[i], element)) return i;
   }
   return -1;
 };
@@ -2969,24 +3552,12 @@ $._firstProbe = function(hashCode, length$) {
 $.set$length = function(receiver, newLength) {
   if ($.isJsArray(receiver) === true) {
     $.checkNull(newLength);
-    if (!((typeof newLength === 'number') && (newLength === (newLength | 0)))) {
-      throw $.captureStackTrace($.IllegalArgumentException$1(newLength));
-    }
-    if (newLength < 0) {
-      throw $.captureStackTrace($.IndexOutOfRangeException$1(newLength));
-    }
+    if (!((typeof newLength === 'number') && (newLength === (newLength | 0)))) throw $.captureStackTrace($.IllegalArgumentException$1(newLength));
+    if (newLength < 0) throw $.captureStackTrace($.IndexOutOfRangeException$1(newLength));
     $.checkGrowable(receiver, 'set length');
     receiver.length = newLength;
-  } else {
-    receiver.set$length(newLength);
-  }
+  } else receiver.set$length(newLength);
   return newLength;
-};
-
-$.forEach2 = function(iterable, f) {
-  for (var t0 = $.iterator(iterable); t0.hasNext$0() === true; ) {
-    f.$call$1(t0.next$0());
-  }
 };
 
 $.ioore = function(index) {
@@ -2995,187 +3566,146 @@ $.ioore = function(index) {
 
 $.typeNameInFirefox = function(obj) {
   var name$ = $.constructorNameFallback(obj);
-  if ($.eqB(name$, 'Window')) {
-    return 'DOMWindow';
-  }
-  if ($.eqB(name$, 'Document')) {
-    return 'HTMLDocument';
-  }
-  if ($.eqB(name$, 'XMLDocument')) {
-    return 'Document';
-  }
-  if ($.eqB(name$, 'WorkerMessageEvent')) {
-    return 'MessageEvent';
-  }
+  if ($.eqB(name$, 'Window')) return 'DOMWindow';
+  if ($.eqB(name$, 'Document')) return 'HTMLDocument';
+  if ($.eqB(name$, 'XMLDocument')) return 'Document';
+  if ($.eqB(name$, 'WorkerMessageEvent')) return 'MessageEvent';
   return name$;
+};
+
+$.gt$slow = function(a, b) {
+  if ($.checkNumbers(a, b) === true) {
+    return a > b;
+  }
+  return a.operator$gt$1(b);
+};
+
+$.indexOf0 = function(a, element, startIndex, endIndex) {
+  if (typeof a !== 'string' && (typeof a !== 'object' || a === null || (a.constructor !== Array && !a.is$JavaScriptIndexingBehavior()))) return $.indexOf0$bailout(1, a, element, startIndex, endIndex);
+  if (typeof endIndex !== 'number') return $.indexOf0$bailout(1, a, element, startIndex, endIndex);
+  if ($.geB(startIndex, a.length)) return -1;
+  if ($.ltB(startIndex, 0)) startIndex = 0;
+  if (typeof startIndex !== 'number') return $.indexOf0$bailout(2, a, element, startIndex, endIndex);
+  for (var i = startIndex; i < endIndex; ++i) {
+    if (i !== (i | 0)) throw $.iae(i);
+    var t1 = a.length;
+    if (i < 0 || i >= t1) throw $.ioore(i);
+    if ($.eqB(a[i], element)) return i;
+  }
+  return -1;
+};
+
+$.forEach0 = function(iterable, f) {
+  for (var t1 = $.iterator(iterable); t1.hasNext$0() === true; ) {
+    f.$call$1(t1.next$0());
+  }
 };
 
 $.frequency = function() {
   return 1000;
 };
 
+$.forEach = function(receiver, f) {
+  if ($.isJsArray(receiver) !== true) return receiver.forEach$1(f);
+  return $.forEach0(receiver, f);
+};
+
 $.hashCode = function(receiver) {
   if (typeof receiver === 'number') {
     return receiver & 0x1FFFFFFF;
   }
-  if (!(typeof receiver === 'string')) {
-    return receiver.hashCode$0();
-  }
+  if (!(typeof receiver === 'string')) return receiver.hashCode$0();
   var length$ = (receiver.length);
-  for (var hash = 0, i = 0; i < length$; hash = hash0, i = i0) {
-    hash0 = hash;
-    var hash1 = (536870911 & hash + (receiver.charCodeAt(i))) >>> 0;
-    var hash2 = (536870911 & hash1 + ((524287 & hash1) >>> 0 << 10)) >>> 0;
-    hash0 = (hash2 ^ $.shr(hash2, 6)) >>> 0;
-    var i0 = i + 1;
+  for (var hash = 0, i = 0; i < length$; ++i) {
+    hash = (536870911 & hash + (receiver.charCodeAt(i))) >>> 0;
+    hash = (536870911 & hash + ((524287 & hash) >>> 0 << 10)) >>> 0;
+    hash = (hash ^ $.shr(hash, 6)) >>> 0;
   }
-  var hash3 = (536870911 & hash + ((67108863 & hash) >>> 0 << 3)) >>> 0;
-  var hash4 = (hash3 ^ $.shr(hash3, 11)) >>> 0;
-  return (536870911 & hash4 + ((16383 & hash4) >>> 0 << 15)) >>> 0;
-};
-
-$.removeLast = function(receiver) {
-  if ($.isJsArray(receiver) === true) {
-    $.checkGrowable(receiver, 'removeLast');
-    if ($.get$length(receiver) === 0) {
-      throw $.captureStackTrace($.IndexOutOfRangeException$1(-1));
-    }
-    return receiver.pop();
-  }
-  return receiver.removeLast$0();
+  hash = (536870911 & hash + ((67108863 & hash) >>> 0 << 3)) >>> 0;
+  hash = (hash ^ $.shr(hash, 11)) >>> 0;
+  return (536870911 & hash + ((16383 & hash) >>> 0 << 15)) >>> 0;
 };
 
 $.startsWith = function(receiver, other) {
-  if (!(typeof receiver === 'string')) {
-    return receiver.startsWith$1(other);
-  }
+  if (!(typeof receiver === 'string')) return receiver.startsWith$1(other);
   $.checkString(other);
   var length$ = $.get$length(other);
-  if ($.gtB(length$, receiver.length)) {
-    return false;
-  }
+  if ($.gtB(length$, receiver.length)) return false;
   return other == receiver.substring(0, length$);
 };
 
-$.toStringForNativeObject = function(obj) {
-  return 'Instance of ' + $.stringToString($.getTypeNameOf(obj));
+$.forEach1 = function(iterable, f) {
+  for (var t1 = $.iterator(iterable); t1.hasNext$0() === true; ) {
+    f.$call$1(t1.next$0());
+  }
 };
 
-$.indexOf2 = function(a, element, startIndex, endIndex) {
-  if (typeof a !== 'string' && (typeof a !== 'object'||a.constructor !== Array)) return $.indexOf2$bailout(a, element, startIndex, endIndex,  0);
-  if (typeof endIndex !== 'number') return $.indexOf2$bailout(a, element, startIndex, endIndex,  0);
-  if ($.geB(startIndex, a.length)) {
-    return -1;
-  }
-  var startIndex0 = startIndex;
-  if ($.ltB(startIndex, 0)) {
-    startIndex0 = 0;
-  }
-  if (typeof startIndex0 !== 'number') return $.indexOf2$bailout(a, element, startIndex, endIndex, 3, a, endIndex, startIndex0);
-  for (var i = startIndex0; i < endIndex; i = i + 1) {
-    if (i !== (i | 0)) throw $.iae(i);
-    var t0 = a.length;
-    if (i < 0 || i >= t0) throw $.ioore(i);
-    if ($.eqB(a[i], element)) {
-      return i;
-    }
-  }
-  return -1;
+$.toStringForNativeObject = function(obj) {
+  return 'Instance of ' + $.S($.getTypeNameOf(obj));
 };
 
 $.dynamicBind = function(obj, name$, methods, arguments$) {
   var tag = $.getTypeNameOf(obj);
   var method = (methods[tag]);
-  var method0 = method;
-  if (method === (void 0) && $._dynamicMetadata2() !== (void 0)) {
-    for (var method1 = method, i = 0; method0 = method1, $.ltB(i, $.get$length($._dynamicMetadata2())); method1 = method2, i = i0) {
-      method2 = method1;
-      var entry = $.index($._dynamicMetadata2(), i);
-      method2 = method1;
+  if (method == null) {
+    var t1 = $._dynamicMetadata0();
+    t1 = !(t1 == null);
+  } else t1 = false;
+  if (t1) {
+    for (var i = 0; $.ltB(i, $.get$length($._dynamicMetadata0())); ++i) {
+      var entry = $.index($._dynamicMetadata0(), i);
       if ($.contains$1(entry.get$set(), tag) === true) {
-        var method3 = (methods[entry.get$tag()]);
-        if (method3 !== (void 0)) {
-          method0 = method3;
-          break;
-        }
-        method2 = method3;
+        method = (methods[entry.get$tag()]);
+        if (!(method == null)) break;
       }
-      var i0 = i + 1;
     }
   }
-  var method4 = method0;
-  if (method0 === (void 0)) {
-    method4 = (methods['Object']);
+  if (method == null) {
+    method = (methods['Object']);
   }
   var proto = (Object.getPrototypeOf(obj));
-  var method5 = method4;
-  if (method4 === (void 0)) {
-    method5 = (function () {if (Object.getPrototypeOf(this) === proto) {$.throwNoSuchMethod.$call$3(this, name$, Array.prototype.slice.call(arguments));} else {return Object.prototype[name$].apply(this, arguments);}});
+  if (method == null) {
+    method = (function () {if (Object.getPrototypeOf(this) === proto) {$.throwNoSuchMethod.$call$3(this, name$, Array.prototype.slice.call(arguments));} else {return Object.prototype[name$].apply(this, arguments);}});
   }
-  var nullCheckMethod = (function() {var res = method5.apply(this, Array.prototype.slice.call(arguments));return res === null ? (void 0) : res;});
-  if (!proto.hasOwnProperty(name$)) {
-    $.defineProperty(proto, name$, nullCheckMethod);
-  }
-  return nullCheckMethod.apply(obj, arguments$);
+  (!proto.hasOwnProperty(name$)) && $.defineProperty(proto, name$, method);
+  return method.apply(obj, arguments$);
 };
 
-$._lib3_MessagePortEventsImpl$1 = function(_ptr) {
+$._MessagePortEventsImpl$1 = function(_ptr) {
   return new $._MessagePortEventsImpl(_ptr);
 };
 
 $.getFunctionForTypeNameOf = function() {
-  if ((typeof(navigator)) !== 'object') {
-    return $.typeNameInChrome;
-  }
+  var t1 = (typeof(navigator));
+  if (!(t1 === 'object')) return $.typeNameInChrome;
   var userAgent = (navigator.userAgent);
-  if ($.contains$1(userAgent, $.CTC6) === true) {
-    return $.typeNameInChrome;
-  } else {
-    if ($.contains$1(userAgent, 'Firefox') === true) {
-      return $.typeNameInFirefox;
-    } else {
-      if ($.contains$1(userAgent, 'MSIE') === true) {
-        return $.typeNameInIE;
-      } else {
-        return $.constructorNameFallback;
-      }
-    }
-  }
+  if ($.contains$1(userAgent, $.CTC4) === true) return $.typeNameInChrome;
+  if ($.contains$1(userAgent, 'Firefox') === true) return $.typeNameInFirefox;
+  if ($.contains$1(userAgent, 'MSIE') === true) return $.typeNameInIE;
+  return $.constructorNameFallback;
 };
 
 $.index = function(a, index) {
-  if (typeof a === 'string' || $.isJsArray(a) === true) {
-    if (!((typeof index === 'number') && (index === (index | 0)))) {
-      if (!(typeof index === 'number')) {
-        throw $.captureStackTrace($.IllegalArgumentException$1(index));
-      }
-      if ($.truncate(index) !== index) {
-        throw $.captureStackTrace($.IllegalArgumentException$1(index));
-      }
+  if (typeof a == "string" || a.constructor === Array) {
+    var key = (index >>> 0);
+    if (key === index && key < (a.length)) {
+      return a[key];
     }
-    if ($.ltB(index, 0) || $.geB(index, $.get$length(a))) {
-      throw $.captureStackTrace($.IndexOutOfRangeException$1(index));
-    }
-    return a[index];
   }
-  return a.operator$index$1(index);
+  return $.index$slow(a, index);
 };
 
-$._lib3_ElementEventsImpl$1 = function(_ptr) {
+$._ElementEventsImpl$1 = function(_ptr) {
   return new $._ElementEventsImpl(_ptr);
 };
 
 $.toLowerCase = function(receiver) {
-  if (!(typeof receiver === 'string')) {
-    return receiver.toLowerCase$0();
-  }
+  if (!(typeof receiver === 'string')) return receiver.toLowerCase$0();
   return receiver.toLowerCase();
 };
 
 $.toDouble = function(receiver) {
-  if (!(typeof receiver === 'number')) {
-    return receiver.toDouble$0();
-  }
+  if (!(typeof receiver === 'number')) return receiver.toDouble$0();
   return receiver;
 };
 
@@ -3183,11 +3713,7 @@ $.List = function(length$) {
   return $.newList(length$);
 };
 
-$._isPowerOfTwo = function(x) {
-  return $.eq($.and(x, $.sub(x, 1)), 0);
-};
-
-$._lib3_XMLHttpRequestUploadEventsImpl$1 = function(_ptr) {
+$._XMLHttpRequestUploadEventsImpl$1 = function(_ptr) {
   return new $._XMLHttpRequestUploadEventsImpl(_ptr);
 };
 
@@ -3198,86 +3724,68 @@ $.captureStackTrace = function(ex) {
   return jsError;
 };
 
-$.forEach3 = function(iterable, f) {
-  for (var t0 = $.iterator(iterable); t0.hasNext$0() === true; ) {
-    f.$call$1(t0.next$0());
-  }
-};
-
 $.StackOverflowException$0 = function() {
   return new $.StackOverflowException();
 };
 
+$.eq = function(a, b) {
+  if (a == null) {
+    return b == null;
+  }
+  if (typeof a === "object") {
+    if (!!a.operator$eq$1) return a.operator$eq$1(b);
+    return a === b;
+  }
+  return a === b;
+};
+
 $.StringBufferImpl$1 = function(content$) {
-  var t0 = new $.StringBufferImpl((void 0), (void 0));
-  t0.StringBufferImpl$1(content$);
-  return t0;
+  var t1 = new $.StringBufferImpl(null, null);
+  t1.StringBufferImpl$1(content$);
+  return t1;
 };
 
 $.HashMapImplementation$0 = function() {
-  var t0 = new $.HashMapImplementation((void 0), (void 0), (void 0), (void 0), (void 0));
-  t0.HashMapImplementation$0();
-  return t0;
+  var t1 = new $.HashMapImplementation(null, null, null, null, null);
+  t1.HashMapImplementation$0();
+  return t1;
 };
 
 $.substring$1 = function(receiver, startIndex) {
-  if (!(typeof receiver === 'string')) {
-    return receiver.substring$1(startIndex);
-  }
-  return $.substring$2(receiver, startIndex, (void 0));
+  if (!(typeof receiver === 'string')) return receiver.substring$1(startIndex);
+  return $.substring$2(receiver, startIndex, null);
 };
 
 $._U8 = function(arg) {
   return new Uint8Array(arg);;
 };
 
-$.eq = function(a, b) {
-  if (typeof a === "object") {
-    if (!!a.operator$eq$1) {
-      return a.operator$eq$1(b);
-    } else {
-      return a === b;
-    }
+$.div$slow = function(a, b) {
+  if ($.checkNumbers(a, b) === true) {
+    return a / b;
   }
-  return a === b;
+  return a.operator$div$1(b);
 };
 
-$._lib3_SharedWorkerContextEventsImpl$1 = function(_ptr) {
+$._SharedWorkerContextEventsImpl$1 = function(_ptr) {
   return new $._SharedWorkerContextEventsImpl(_ptr);
 };
 
-$._lib3_IDBVersionChangeRequestEventsImpl$1 = function(_ptr) {
+$._IDBVersionChangeRequestEventsImpl$1 = function(_ptr) {
   return new $._IDBVersionChangeRequestEventsImpl(_ptr);
 };
 
-$.toString = function(value) {
-  if (typeof value == "object") {
-    if ($.isJsArray(value) === true) {
-      return $.collectionToString(value);
-    } else {
-      return value.toString$0();
-    }
-  }
-  if (value === 0 && (1 / value) < 0) {
-    return '-0.0';
-  }
-  if (value === (void 0)) {
-    return 'null';
-  }
-  if (typeof value == "function") {
-    return 'Closure';
-  }
-  return String(value);
-};
-
 $.gtB = function(a, b) {
-  return $.gt(a, b) === true;
+  if (typeof a === 'number' && typeof b === 'number') var t1 = (a > b);
+  else {
+    t1 = $.gt$slow(a, b);
+    t1 = t1 === true;
+  }
+  return t1;
 };
 
 $.setRuntimeTypeInfo = function(target, typeInfo) {
-  if (target !== (void 0)) {
-    target.builtin$typeInfo = typeInfo;
-  }
+  if (!(target == null)) target.builtin$typeInfo = typeInfo;
 };
 
 $.loadShader = function(gl, shaderSource, shaderType) {
@@ -3291,249 +3799,116 @@ $.document = function() {
   return document;;
 };
 
-$._lib3_FileWriterEventsImpl$1 = function(_ptr) {
+$._FileWriterEventsImpl$1 = function(_ptr) {
   return new $._FileWriterEventsImpl(_ptr);
 };
 
-$.NoSuchMethodException$4 = function(_receiver, _functionName, _arguments, _existingArgumentNames) {
-  return new $.NoSuchMethodException(_existingArgumentNames, _arguments, _functionName, _receiver);
+$.NoSuchMethodException$4 = function(_receiver, _functionName, _arguments, existingArgumentNames) {
+  return new $.NoSuchMethodException(existingArgumentNames, _arguments, _functionName, _receiver);
 };
 
 $.lt = function(a, b) {
-  if ($.checkNumbers(a, b) === true) {
-    return a < b;
-  }
-  return a.operator$lt$1(b);
+  return typeof a === 'number' && typeof b === 'number' ? (a < b) : $.lt$slow(a, b);
 };
 
 $.unwrapException = function(ex) {
   if ("dartException" in ex) {
     return ex.dartException;
-  } else {
-    if (ex instanceof TypeError) {
-      var type = (ex.type);
-      var name$ = $.index((ex.arguments), 0);
-      if (type === 'property_not_function' || type === 'called_non_callable' || type === 'non_object_property_call' || type === 'non_object_property_load') {
-        if (name$ !== (void 0) && $.startsWith(name$, '$call$') === true) {
-          return $.ObjectNotClosureException$0();
-        } else {
-          return $.NullPointerException$2((void 0), $.CTC);
-        }
-      } else {
-        if (type === 'undefined_method') {
-          if (typeof name$ === 'string' && $.startsWith(name$, '$call$') === true) {
-            return $.ObjectNotClosureException$0();
-          } else {
-            return $.NoSuchMethodException$4('', name$, [], (void 0));
-          }
-        }
-      }
-    } else {
-      if (ex instanceof RangeError) {
-        if ($.contains$1((ex.message), 'call stack') === true) {
-          return $.StackOverflowException$0();
-        }
-      }
+  }
+  var message = (ex.message);
+  if (ex instanceof TypeError) {
+    var type = (ex.type);
+    var name$ = (ex.arguments ? ex.arguments[0] : "");
+    if ($.eqB(type, 'property_not_function') || $.eqB(type, 'called_non_callable') || $.eqB(type, 'non_object_property_call') || $.eqB(type, 'non_object_property_load')) {
+      if (typeof name$ === 'string' && $.startsWith(name$, '$call$') === true) return $.ObjectNotClosureException$0();
+      return $.NullPointerException$2(null, $.CTC);
     }
+    if ($.eqB(type, 'undefined_method')) {
+      if (typeof name$ === 'string' && $.startsWith(name$, '$call$') === true) return $.ObjectNotClosureException$0();
+      return $.NoSuchMethodException$4('', name$, [], null);
+    }
+    if (typeof message === 'string') {
+      if ($.endsWith(message, 'is null') === true || $.endsWith(message, 'is undefined') === true || $.endsWith(message, 'is null or undefined') === true) return $.NullPointerException$2(null, $.CTC);
+      if ($.endsWith(message, 'is not a function') === true) return $.NoSuchMethodException$4('', '<unknown>', [], null);
+    }
+    return $.ExceptionImplementation$1(typeof message === 'string' ? message : '');
+  }
+  if (ex instanceof RangeError) {
+    if (typeof message === 'string' && $.contains$1(message, 'call stack') === true) return $.StackOverflowException$0();
+    return $.IllegalArgumentException$1('');
+  }
+  if (typeof InternalError == 'function' && ex instanceof InternalError) {
+    if (typeof message === 'string' && message === 'too much recursion') return $.StackOverflowException$0();
   }
   return ex;
 };
 
 $.ceil = function(receiver) {
-  if (!(typeof receiver === 'number')) {
-    return receiver.ceil$0();
-  }
+  if (!(typeof receiver === 'number')) return receiver.ceil$0();
   return Math.ceil(receiver);
 };
 
 $.getTypeNameOf = function(obj) {
-  if ($._getTypeNameOf === (void 0)) {
-    $._getTypeNameOf = $.getFunctionForTypeNameOf();
-  }
+  var t1 = $._getTypeNameOf;
+  if (t1 == null) $._getTypeNameOf = $.getFunctionForTypeNameOf();
   return $._getTypeNameOf.$call$1(obj);
 };
 
 $.sub = function(a, b) {
-  if ($.checkNumbers(a, b) === true) {
-    return a - b;
-  }
-  return a.operator$sub$1(b);
+  return typeof a === 'number' && typeof b === 'number' ? (a - b) : $.sub$slow(a, b);
 };
 
-$.getRange2$bailout = function(a, start, length$, accumulator, state, env0, env1) {
+$.indexOf$bailout = function(state, env0, env1, env2, env3) {
   switch (state) {
     case 1:
-      t0 = env0;
+      var a = env0;
+      var element = env1;
+      var startIndex = env2;
+      var endIndex = env3;
+      break;
+    case 1:
+      a = env0;
+      element = env1;
+      startIndex = env2;
+      endIndex = env3;
       break;
     case 2:
-      t0 = env0;
-      i = env1;
+      a = env0;
+      element = env1;
+      startIndex = env2;
+      endIndex = env3;
       break;
   }
   switch (state) {
     case 0:
     case 1:
       state = 0;
-    case 2:
-      state = 0;
-      if ($.ltB(length$, 0)) {
-        throw $.captureStackTrace($.IllegalArgumentException$1('length'));
-      }
-      if ($.ltB(start, 0)) {
-        throw $.captureStackTrace($.IndexOutOfRangeException$1(start));
-      }
-      var end = $.add(start, length$);
-      if ($.gtB(end, $.get$length(a))) {
-        throw $.captureStackTrace($.IndexOutOfRangeException$1(end));
-      }
-      var i0 = start;
-      L0: while (true) {
-        if (!$.ltB(i0, end)) break L0;
-        $.add$1(accumulator, $.index(a, i0));
-        i0 = $.add(i0, 1);
-      }
-      return accumulator;
-  }
-};
-
-$.indexOf2$bailout = function(a, element, startIndex, endIndex, state, env0, env1, env2) {
-  switch (state) {
-    case 1:
-      t0 = env0;
-      break;
-    case 2:
-      t0 = env0;
-      t1 = env1;
-      break;
-    case 3:
-      t0 = env0;
-      t1 = env1;
-      startIndex0 = env2;
-      break;
-  }
-  switch (state) {
-    case 0:
     case 1:
       state = 0;
+      if ($.geB(startIndex, $.get$length(a))) return -1;
+      if ($.ltB(startIndex, 0)) startIndex = 0;
     case 2:
       state = 0;
-      if ($.geB(startIndex, $.get$length(a))) {
-        return -1;
-      }
-      var startIndex0 = startIndex;
-      if ($.ltB(startIndex, 0)) {
-        startIndex0 = 0;
-      }
-    case 3:
-      state = 0;
-      var i = startIndex0;
-      L0: while (true) {
-        if (!$.ltB(i, endIndex)) break L0;
-        if ($.eqB($.index(a, i), element)) {
-          return i;
-        }
-        i = $.add(i, 1);
+      for (var i = startIndex; $.ltB(i, endIndex); i = $.add(i, 1)) {
+        if ($.eqB($.index(a, i), element)) return i;
       }
       return -1;
   }
 };
 
-$.indexOf$bailout = function(a, element, startIndex, endIndex, state, env0, env1, env2) {
+$.buildDynamicMetadata$bailout = function(state, env0, env1, env2, env3, env4, env5, env6) {
   switch (state) {
     case 1:
-      t0 = env0;
+      var inputTable = env0;
       break;
     case 2:
-      t0 = env0;
-      t1 = env1;
-      break;
-    case 3:
-      t0 = env0;
-      t1 = env1;
-      startIndex0 = env2;
-      break;
-  }
-  switch (state) {
-    case 0:
-    case 1:
-      state = 0;
-    case 2:
-      state = 0;
-      if ($.geB(startIndex, $.get$length(a))) {
-        return -1;
-      }
-      var startIndex0 = startIndex;
-      if ($.ltB(startIndex, 0)) {
-        startIndex0 = 0;
-      }
-    case 3:
-      state = 0;
-      var i = startIndex0;
-      L0: while (true) {
-        if (!$.ltB(i, endIndex)) break L0;
-        if ($.eqB($.index(a, i), element)) {
-          return i;
-        }
-        i = $.add(i, 1);
-      }
-      return -1;
-  }
-};
-
-$.allMatchesInStringUnchecked$bailout = function(needle, haystack, state, env0, env1, env2) {
-  switch (state) {
-    case 1:
-      length$ = env0;
+      inputTable = env0;
       result = env1;
-      patternLength = env2;
-      break;
-  }
-  switch (state) {
-    case 0:
-      var result = $.List((void 0));
-      $.setRuntimeTypeInfo(result, ({E: 'Match'}));
-      var length$ = $.get$length(haystack);
-      var patternLength = $.get$length(needle);
-    case 1:
-      state = 0;
-      var startIndex = 0;
-      L0: while (true) {
-        if (!true) break L0;
-        var startIndex0 = startIndex;
-        var position = $.indexOf$2(haystack, needle, startIndex);
-        if ($.eqB(position, -1)) {
-          break;
-        }
-        result.push($.StringMatch$3(position, haystack, needle));
-        var endIndex = $.add(position, patternLength);
-        if ($.eqB(endIndex, length$)) {
-          break;
-        } else {
-          if ($.eqB(position, endIndex)) {
-            startIndex0 = $.add(startIndex, 1);
-          } else {
-            startIndex0 = endIndex;
-          }
-        }
-        startIndex = startIndex0;
-      }
-      return result;
-  }
-};
-
-$.buildDynamicMetadata$bailout = function(inputTable, state, env0, env1, env2, env3, env4, env5, env6) {
-  switch (state) {
-    case 1:
-      t0 = env0;
-      break;
-    case 2:
-      t0 = env0;
-      result = env1;
-      tag = env2;
-      i = env3;
-      tags = env4;
-      set = env5;
-      tagNames = env6;
+      tagNames = env2;
+      tag = env3;
+      i = env4;
+      tags = env5;
+      set = env6;
       break;
   }
   switch (state) {
@@ -3554,272 +3929,494 @@ $.buildDynamicMetadata$bailout = function(inputTable, state, env0, env1, env2, e
             var tagNames = $.split(tags, '|');
           case 2:
             state = 0;
-            var j = 0;
-            L1: while (true) {
-              if (!$.ltB(j, $.get$length(tagNames))) break L1;
+            for (var j = 0; $.ltB(j, $.get$length(tagNames)); ++j) {
               set.add$1($.index(tagNames, j));
-              j = j + 1;
             }
             $.add$1(result, $.MetaInfo$3(tag, tags, set));
-            i = i + 1;
+            ++i;
         }
       }
       return result;
   }
 };
 
+$.allMatchesInStringUnchecked$bailout = function(state, needle, haystack, length$, patternLength, result) {
+  for (var startIndex = 0; true; ) {
+    var position = $.indexOf$2(haystack, needle, startIndex);
+    if ($.eqB(position, -1)) break;
+    result.push($.StringMatch$3(position, haystack, needle));
+    var endIndex = $.add(position, patternLength);
+    if ($.eqB(endIndex, length$)) break;
+    else {
+      startIndex = $.eqB(position, endIndex) ? $.add(startIndex, 1) : endIndex;
+    }
+  }
+  return result;
+};
+
+$.indexOf0$bailout = function(state, env0, env1, env2, env3) {
+  switch (state) {
+    case 1:
+      var a = env0;
+      var element = env1;
+      var startIndex = env2;
+      var endIndex = env3;
+      break;
+    case 1:
+      a = env0;
+      element = env1;
+      startIndex = env2;
+      endIndex = env3;
+      break;
+    case 2:
+      a = env0;
+      element = env1;
+      startIndex = env2;
+      endIndex = env3;
+      break;
+  }
+  switch (state) {
+    case 0:
+    case 1:
+      state = 0;
+    case 1:
+      state = 0;
+      if ($.geB(startIndex, $.get$length(a))) return -1;
+      if ($.ltB(startIndex, 0)) startIndex = 0;
+    case 2:
+      state = 0;
+      for (var i = startIndex; $.ltB(i, endIndex); i = $.add(i, 1)) {
+        if ($.eqB($.index(a, i), element)) return i;
+      }
+      return -1;
+  }
+};
+
+$.getRange0$bailout = function(state, a, start, length$, accumulator) {
+  if ($.ltB(length$, 0)) throw $.captureStackTrace($.IllegalArgumentException$1('length'));
+  if ($.ltB(start, 0)) throw $.captureStackTrace($.IndexOutOfRangeException$1(start));
+  var end = $.add(start, length$);
+  if ($.gtB(end, $.get$length(a))) throw $.captureStackTrace($.IndexOutOfRangeException$1(end));
+  for (var i = start; $.ltB(i, end); i = $.add(i, 1)) {
+    $.add$1(accumulator, $.index(a, i));
+  }
+  return accumulator;
+};
+
+$._toJsStringArray$bailout = function(state, strings) {
+  $.checkNull(strings);
+  var length$ = $.get$length(strings);
+  if ($.isJsArray(strings) === true) {
+    for (var i = 0; $.ltB(i, length$); ++i) {
+      var string = $.index(strings, i);
+      $.checkNull(string);
+      if (!(typeof string === 'string')) throw $.captureStackTrace($.IllegalArgumentException$1(string));
+    }
+    var array = strings;
+  } else {
+    array = $.List(length$);
+    for (i = 0; $.ltB(i, length$); ++i) {
+      string = $.index(strings, i);
+      $.checkNull(string);
+      if (!(typeof string === 'string')) throw $.captureStackTrace($.IllegalArgumentException$1(string));
+      var t1 = array.length;
+      if (i < 0 || i >= t1) throw $.ioore(i);
+      array[i] = string;
+    }
+  }
+  return array;
+};
+
 $.dynamicBind.$call$4 = $.dynamicBind;
+$.dynamicBind.$name = "dynamicBind";
 $.throwNoSuchMethod.$call$3 = $.throwNoSuchMethod;
+$.throwNoSuchMethod.$name = "throwNoSuchMethod";
 $.typeNameInIE.$call$1 = $.typeNameInIE;
+$.typeNameInIE.$name = "typeNameInIE";
 $.typeNameInChrome.$call$1 = $.typeNameInChrome;
+$.typeNameInChrome.$name = "typeNameInChrome";
 $.toStringWrapper.$call$0 = $.toStringWrapper;
+$.toStringWrapper.$name = "toStringWrapper";
 $.invokeClosure.$call$5 = $.invokeClosure;
+$.invokeClosure.$name = "invokeClosure";
 $.typeNameInFirefox.$call$1 = $.typeNameInFirefox;
+$.typeNameInFirefox.$name = "typeNameInFirefox";
 $.constructorNameFallback.$call$1 = $.constructorNameFallback;
-Isolate.$finishClasses();
+$.constructorNameFallback.$name = "constructorNameFallback";
+Isolate.$finishClasses($$);
+$$ = {};
 Isolate.makeConstantList = function(list) {
   list.immutable$list = true;
   list.fixed$length = true;
   return list;
 };
 $.CTC = Isolate.makeConstantList([]);
-$.CTC3 = new Isolate.$isolateProperties.UnsupportedOperationException('');
-$.CTC4 = new Isolate.$isolateProperties.IllegalArgumentException('Invalid list length');
-$.CTC5 = new Isolate.$isolateProperties.JSSyntaxRegExp(false, false, '^#[_a-zA-Z]\\w*$');
-$.CTC7 = new Isolate.$isolateProperties._DeletedKeySentinel();
-$.CTC6 = new Isolate.$isolateProperties.JSSyntaxRegExp(false, false, 'Chrome|DumpRenderTree');
-$.CTC8 = new Isolate.$isolateProperties.Object();
-$.CTC2 = new Isolate.$isolateProperties.NoMoreElementsException();
-$._cachedBrowserPrefix = (void 0);
-$._getTypeNameOf = (void 0);
+$.CTC1 = new Isolate.$isolateProperties.UnsupportedOperationException('');
+$.CTC2 = new Isolate.$isolateProperties.IllegalArgumentException('Invalid list length');
+$.CTC3 = new Isolate.$isolateProperties.JSSyntaxRegExp(false, false, '^#[_a-zA-Z]\\w*$');
+$.CTC5 = new Isolate.$isolateProperties._DeletedKeySentinel();
+$.CTC4 = new Isolate.$isolateProperties.JSSyntaxRegExp(false, false, 'Chrome|DumpRenderTree');
+$.CTC6 = new Isolate.$isolateProperties.Object();
+$.CTC0 = new Isolate.$isolateProperties.NoMoreElementsException();
+$._getTypeNameOf = null;
+$._cachedBrowserPrefix = null;
 var $ = null;
-Isolate.$finishClasses();
+Isolate.$finishClasses($$);
+$$ = {};
 Isolate = Isolate.$finishIsolateConstructor(Isolate);
 var $ = new Isolate();
-(function() {
-$.defineProperty(Object.prototype, 'is$CanvasElement', function() { return false; });
-$.defineProperty(Object.prototype, 'is$List2', function() { return false; });
+$.$defineNativeClass = function(cls, fields, methods) {
+  var generateGetterSetter = function(field, prototype) {
+  var len = field.length;
+  var lastChar = field[len - 1];
+  var needsGetter = lastChar == '?' || lastChar == '=';
+  var needsSetter = lastChar == '!' || lastChar == '=';
+  if (needsGetter || needsSetter) field = field.substring(0, len - 1);
+  if (needsGetter) {
+    var getterString = "return this." + field + ";";
+    prototype["get$" + field] = new Function(getterString);
+  }
+  if (needsSetter) {
+    var setterString = "this." + field + " = v;";
+    prototype["set$" + field] = new Function("v", setterString);
+  }
+  return field;
+};
+  for (var i = 0; i < fields.length; i++) {
+    generateGetterSetter(fields[i], methods);
+  }
+  for (var method in methods) {
+    $.dynamicFunction(method)[cls] = methods[method];
+  }
+};
+$.defineProperty(Object.prototype, 'is$List0', function() { return false; });
 $.defineProperty(Object.prototype, 'is$Map', function() { return false; });
-$.defineProperty(Object.prototype, 'is$Collection', function() { return false; });
+$.defineProperty(Object.prototype, 'is$JavaScriptIndexingBehavior', function() { return false; });
+$.defineProperty(Object.prototype, 'is$CanvasElement', function() { return false; });
 $.defineProperty(Object.prototype, 'is$Element', function() { return false; });
+$.defineProperty(Object.prototype, 'is$Collection', function() { return false; });
 $.defineProperty(Object.prototype, 'is$WebGLRenderingContext', function() { return false; });
 $.defineProperty(Object.prototype, 'toString$0', function() { return $.toStringForNativeObject(this); });
-$.dynamicFunction('$dom_addEventListener$3').AbstractWorker = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$on').AbstractWorker = function() {
+$.$defineNativeClass('AbstractWorker', [], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
   if (Object.getPrototypeOf(this).hasOwnProperty('get$on')) {
-    return $._lib3_AbstractWorkerEventsImpl$1(this);
+    return $._AbstractWorkerEventsImpl$1(this);
   } else {
     return Object.prototype.get$on.call(this);
   }
- };
-$.dynamicFunction('toString$0').HTMLAnchorElement = function() {
+ }
+});
+
+$.$defineNativeClass('HTMLAnchorElement', ["type?"], {
+ toString$0: function() {
   return this.toString();
- };
-$.dynamicFunction('get$type').HTMLAnchorElement = function() { return this.type; };
-$.dynamicFunction('is$Element').HTMLAnchorElement = function() { return true; };
-$.dynamicFunction('get$length').WebKitAnimationList = function() { return this.length; };
-$.dynamicFunction('set$width').HTMLAppletElement = function(v) { this.width = v; };
-$.dynamicFunction('set$height').HTMLAppletElement = function(v) { this.height = v; };
-$.dynamicFunction('is$Element').HTMLAppletElement = function() { return true; };
-$.dynamicFunction('is$Element').HTMLAreaElement = function() { return true; };
-$.dynamicFunction('get$byteLength').ArrayBuffer = function() { return this.byteLength; };
-$.dynamicFunction('get$byteLength').ArrayBufferView = function() { return this.byteLength; };
-$.dynamicFunction('get$length').AudioBuffer = function() { return this.length; };
-$.dynamicFunction('get$on').AudioContext = function() {
-  return $._lib3_AudioContextEventsImpl$1(this);
- };
-$.dynamicFunction('is$Element').HTMLAudioElement = function() { return true; };
-$.dynamicFunction('clear$0').HTMLBRElement = function() { return this.clear.$call$0(); };
-$.dynamicFunction('is$Element').HTMLBRElement = function() { return true; };
-$.dynamicFunction('is$Element').HTMLBaseElement = function() { return true; };
-$.dynamicFunction('is$Element').HTMLBaseFontElement = function() { return true; };
-$.dynamicFunction('$dom_addEventListener$3').BatteryManager = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$on').BatteryManager = function() {
-  return $._lib3_BatteryManagerEventsImpl$1(this);
- };
-$.dynamicFunction('get$type').BiquadFilterNode = function() { return this.type; };
-$.dynamicFunction('get$type').Blob = function() { return this.type; };
-$.dynamicFunction('get$on').HTMLBodyElement = function() {
-  return $._lib3_BodyElementEventsImpl$1(this);
- };
-$.dynamicFunction('is$Element').HTMLBodyElement = function() { return true; };
-$.dynamicFunction('get$type').HTMLButtonElement = function() { return this.type; };
-$.dynamicFunction('is$Element').HTMLButtonElement = function() { return true; };
-$.dynamicFunction('toString$0').WebKitCSSMatrix = function() {
+ },
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('WebKitAnimationList', ["length?"], {
+});
+
+$.$defineNativeClass('HTMLAppletElement', ["width!", "height!"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLAreaElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('ArrayBuffer', ["byteLength?"], {
+});
+
+$.$defineNativeClass('ArrayBufferView', ["byteLength?"], {
+});
+
+$.$defineNativeClass('AudioBuffer', ["length?"], {
+});
+
+$.$defineNativeClass('AudioContext', [], {
+ get$on: function() {
+  return $._AudioContextEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('HTMLAudioElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLBRElement', [], {
+ clear$0: function() { return this.clear.$call$0(); },
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLBaseElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLBaseFontElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('BatteryManager', [], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
+  return $._BatteryManagerEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('BiquadFilterNode', ["type?"], {
+});
+
+$.$defineNativeClass('Blob', ["type?"], {
+});
+
+$.$defineNativeClass('HTMLBodyElement', [], {
+ get$on: function() {
+  return $._BodyElementEventsImpl$1(this);
+ },
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLButtonElement', ["type?"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('WebKitCSSMatrix', [], {
+ toString$0: function() {
   return this.toString();
- };
-$.dynamicFunction('get$type').CSSRule = function() { return this.type; };
-$.dynamicFunction('get$length').CSSRuleList = function() { return this.length; };
-$.dynamicFunction('set$width').CSSStyleDeclaration = function(value) {
+ }
+});
+
+$.$defineNativeClass('CSSRule', ["type?"], {
+});
+
+$.$defineNativeClass('CSSRuleList', ["length?"], {
+});
+
+$.$defineNativeClass('CSSStyleDeclaration', ["length?"], {
+ set$width: function(value) {
   this.setProperty$3('width', value, '');
- };
-$.dynamicFunction('set$height').CSSStyleDeclaration = function(value) {
+ },
+ set$height: function(value) {
   this.setProperty$3('height', value, '');
- };
-$.dynamicFunction('get$filter').CSSStyleDeclaration = function() {
-  return this.getPropertyValue$1('' + $.stringToString($._browserPrefix()) + 'filter');
- };
-$.dynamicFunction('filter$1').CSSStyleDeclaration = function(arg0) { return this.get$filter().$call$1(arg0); };
-$.dynamicFunction('get$clear').CSSStyleDeclaration = function() {
+ },
+ get$filter: function() {
+  return this.getPropertyValue$1($.S($._browserPrefix()) + 'filter');
+ },
+ filter$1: function(arg0) { return this.get$filter().$call$1(arg0); },
+ get$clear: function() {
   return this.getPropertyValue$1('clear');
- };
-$.dynamicFunction('clear$0').CSSStyleDeclaration = function() { return this.get$clear().$call$0(); };
-$.dynamicFunction('setProperty$3').CSSStyleDeclaration = function(propertyName, value, priority) {
+ },
+ clear$0: function() { return this.get$clear().$call$0(); },
+ setProperty$3: function(propertyName, value, priority) {
   return this.setProperty(propertyName,value,priority);
- };
-$.dynamicFunction('getPropertyValue$1').CSSStyleDeclaration = function(propertyName) {
+ },
+ getPropertyValue$1: function(propertyName) {
   return this.getPropertyValue(propertyName);
- };
-$.dynamicFunction('get$length').CSSStyleDeclaration = function() { return this.length; };
-$.dynamicFunction('get$length').CSSValueList = function() { return this.length; };
-$.dynamicFunction('getContext$1').HTMLCanvasElement = function(contextId) {
+ }
+});
+
+$.$defineNativeClass('CSSValueList', ["length?"], {
+});
+
+$.$defineNativeClass('HTMLCanvasElement', ["width!", "height!"], {
+ getContext$1: function(contextId) {
   return this.getContext(contextId);
- };
-$.dynamicFunction('set$width').HTMLCanvasElement = function(v) { this.width = v; };
-$.dynamicFunction('set$height').HTMLCanvasElement = function(v) { this.height = v; };
-$.dynamicFunction('is$CanvasElement').HTMLCanvasElement = function() { return true; };
-$.dynamicFunction('is$Element').HTMLCanvasElement = function() { return true; };
-$.dynamicFunction('get$length').CharacterData = function() { return this.length; };
-$.dynamicFunction('get$length').ClientRectList = function() { return this.length; };
+ },
+ is$CanvasElement: function() { return true; },
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('CharacterData', ["length?"], {
+});
+
+$.$defineNativeClass('ClientRectList', ["length?"], {
+});
+
 _ConsoleImpl = (typeof console == 'undefined' ? {} : console);
-$.dynamicFunction('is$Element').HTMLContentElement = function() { return true; };
-$.dynamicFunction('is$Element').HTMLDListElement = function() { return true; };
-$.dynamicFunction('$dom_addEventListener$3').DOMApplicationCache = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$on').DOMApplicationCache = function() {
-  return $._lib3_DOMApplicationCacheEventsImpl$1(this);
- };
-$.dynamicFunction('toString$0').DOMException = function() {
+$.$defineNativeClass('HTMLContentElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLDListElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('DOMApplicationCache', [], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
+  return $._DOMApplicationCacheEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('DOMException', [], {
+ toString$0: function() {
   return this.toString();
- };
-$.dynamicFunction('get$type').DOMMimeType = function() { return this.type; };
-$.dynamicFunction('get$length').DOMMimeTypeArray = function() { return this.length; };
-$.dynamicFunction('get$length').DOMPlugin = function() { return this.length; };
-$.dynamicFunction('get$length').DOMPluginArray = function() { return this.length; };
-$.dynamicFunction('toString$0').DOMSelection = function() {
+ }
+});
+
+$.$defineNativeClass('DOMMimeType', ["type?"], {
+});
+
+$.$defineNativeClass('DOMMimeTypeArray', ["length?"], {
+});
+
+$.$defineNativeClass('DOMPlugin', ["length?"], {
+});
+
+$.$defineNativeClass('DOMPluginArray', ["length?"], {
+});
+
+$.$defineNativeClass('DOMSelection', ["type?"], {
+ toString$0: function() {
   return this.toString();
- };
-$.dynamicFunction('get$type').DOMSelection = function() { return this.type; };
-$.dynamicFunction('contains$1').DOMStringList = function(string) {
+ }
+});
+
+$.$defineNativeClass('DOMStringList', ["length?"], {
+ contains$1: function(string) {
   return this.contains(string);
- };
-$.dynamicFunction('getRange$2').DOMStringList = function(start, rangeLength) {
-  return $.getRange2(this, start, rangeLength, []);
- };
-$.dynamicFunction('removeLast$0').DOMStringList = function() {
+ },
+ getRange$2: function(start, rangeLength) {
+  return $.getRange0(this, start, rangeLength, []);
+ },
+ removeLast$0: function() {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot removeLast on immutable List.'));
- };
-$.dynamicFunction('last$0').DOMStringList = function() {
+ },
+ last$0: function() {
   return this.operator$index$1($.sub($.get$length(this), 1));
- };
-$.dynamicFunction('indexOf$2').DOMStringList = function(element, start) {
-  return $.indexOf2(this, element, start, $.get$length(this));
- };
-$.dynamicFunction('isEmpty$0').DOMStringList = function() {
+ },
+ indexOf$2: function(element, start) {
+  return $.indexOf0(this, element, start, $.get$length(this));
+ },
+ isEmpty$0: function() {
   return $.eq($.get$length(this), 0);
- };
-$.dynamicFunction('filter$1').DOMStringList = function(f) {
-  return $.filter3(this, [], f);
- };
-$.dynamicFunction('forEach$1').DOMStringList = function(f) {
-  return $.forEach3(this, f);
- };
-$.dynamicFunction('addAll$1').DOMStringList = function(collection) {
+ },
+ filter$1: function(f) {
+  return $.filter1(this, [], f);
+ },
+ forEach$1: function(f) {
+  return $.forEach1(this, f);
+ },
+ addAll$1: function(collection) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('add$1').DOMStringList = function(value) {
+ },
+ add$1: function(value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('iterator$0').DOMStringList = function() {
-  var t0 = $._lib3_FixedSizeListIterator$1(this);
-  $.setRuntimeTypeInfo(t0, ({T: 'String'}));
-  return t0;
- };
-$.dynamicFunction('operator$indexSet$2').DOMStringList = function(index, value) {
+ },
+ iterator$0: function() {
+  var t1 = $._FixedSizeListIterator$1(this);
+  $.setRuntimeTypeInfo(t1, ({T: 'String'}));
+  return t1;
+ },
+ operator$indexSet$2: function(index, value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot assign element of immutable List.'));
- };
-$.dynamicFunction('operator$index$1').DOMStringList = function(index) {
+ },
+ operator$index$1: function(index) {
   return this[index];;
- };
-$.dynamicFunction('get$length').DOMStringList = function() { return this.length; };
-$.dynamicFunction('is$List2').DOMStringList = function() { return true; };
-$.dynamicFunction('is$Collection').DOMStringList = function() { return true; };
-$.dynamicFunction('toString$0').DOMTokenList = function() {
+ },
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+});
+
+$.$defineNativeClass('DOMTokenList', ["length?"], {
+ toString$0: function() {
   return this.toString();
- };
-$.dynamicFunction('contains$1').DOMTokenList = function(token) {
+ },
+ contains$1: function(token) {
   return this.contains(token);
- };
-$.dynamicFunction('add$1').DOMTokenList = function(token) {
+ },
+ add$1: function(token) {
   return this.add(token);
- };
-$.dynamicFunction('get$length').DOMTokenList = function() { return this.length; };
-$.dynamicFunction('get$type').DataTransferItem = function() { return this.type; };
-$.dynamicFunction('clear$0').DataTransferItemList = function() {
+ }
+});
+
+$.$defineNativeClass('DataTransferItem', ["type?"], {
+});
+
+$.$defineNativeClass('DataTransferItemList', ["length?"], {
+ clear$0: function() {
   return this.clear();
- };
-$.dynamicFunction('add$2').DataTransferItemList = function(data_OR_file, type) {
+ },
+ add$2: function(data_OR_file, type) {
   return this.add(data_OR_file,type);
- };
-$.dynamicFunction('add$1').DataTransferItemList = function(data_OR_file) {
+ },
+ add$1: function(data_OR_file) {
   return this.add(data_OR_file);
-};
-$.dynamicFunction('get$length').DataTransferItemList = function() { return this.length; };
-$.dynamicFunction('get$on').DedicatedWorkerContext = function() {
-  return $._lib3_DedicatedWorkerContextEventsImpl$1(this);
- };
-$.dynamicFunction('$dom_addEventListener$3').DeprecatedPeerConnection = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$on').DeprecatedPeerConnection = function() {
-  return $._lib3_DeprecatedPeerConnectionEventsImpl$1(this);
- };
-$.dynamicFunction('is$Element').HTMLDetailsElement = function() { return true; };
-$.dynamicFunction('is$Element').HTMLDirectoryElement = function() { return true; };
-$.dynamicFunction('is$Element').HTMLDivElement = function() { return true; };
-$.dynamicFunction('$dom_querySelector$1').HTMLDocument = function(selectors) {
-  return this.querySelector(selectors);;
- };
-$.dynamicFunction('query$1').HTMLDocument = function(selectors) {
-  if ($.CTC5.hasMatch$1(selectors) === true) {
-    return this.$dom_getElementById$1($.substring$1(selectors, 1));
-  }
+}
+});
+
+$.$defineNativeClass('DedicatedWorkerContext', [], {
+ get$on: function() {
+  return $._DedicatedWorkerContextEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('DeprecatedPeerConnection', [], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
+  return $._DeprecatedPeerConnectionEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('HTMLDetailsElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLDirectoryElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLDivElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLDocument', [], {
+ query$1: function(selectors) {
+  if ($.CTC3.hasMatch$1(selectors) === true) return this.$dom_getElementById$1($.substring$1(selectors, 1));
   return this.$dom_querySelector$1(selectors);
- };
-$.dynamicFunction('$dom_getElementById$1').HTMLDocument = function(elementId) {
-  return this.getElementById(elementId);
- };
-$.dynamicFunction('get$window').HTMLDocument = function() {
-  return this.defaultView;;
- };
-$.dynamicFunction('get$on').HTMLDocument = function() {
-  return $._lib3_DocumentEventsImpl$1(this);
- };
-$.dynamicFunction('is$Element').HTMLDocument = function() { return true; };
-$.dynamicFunction('query$1').DocumentFragment = function(selectors) {
+ },
+ $dom_querySelector$1: function(selectors) {
   return this.querySelector(selectors);
- };
-$.dynamicFunction('get$on').DocumentFragment = function() {
-  return $._lib3_ElementEventsImpl$1(this);
- };
-$.dynamicFunction('click$0').DocumentFragment = function() {
- };
-$.dynamicFunction('get$click').DocumentFragment = function() { return new $.Closure16(this); };
-$.dynamicFunction('get$parent').DocumentFragment = function() {
+ },
+ $dom_getElementById$1: function(elementId) {
+  return this.getElementById(elementId);
+ },
+ get$on: function() {
+  return $._DocumentEventsImpl$1(this);
+ },
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('DocumentFragment', [], {
+ $dom_querySelector$1: function(selectors) {
+  return this.querySelector(selectors);
+ },
+ get$on: function() {
+  return $._ElementEventsImpl$1(this);
+ },
+ click$0: function() {
+ },
+ get$click: function() { return new $.Closure13(this, 'click$0'); },
+ get$parent: function() {
   return;
- };
-$.dynamicFunction('get$$$dom_lastElementChild').DocumentFragment = function() {
+ },
+ get$$$dom_lastElementChild: function() {
   return $.last(this.get$elements());
- };
-$.dynamicFunction('get$$$dom_firstElementChild').DocumentFragment = function() {
+ },
+ get$$$dom_firstElementChild: function() {
   return this.get$elements().first$0();
- };
-$.dynamicFunction('set$innerHTML').DocumentFragment = function(value) {
+ },
+ set$innerHTML: function(value) {
   if (Object.getPrototypeOf(this).hasOwnProperty('set$innerHTML')) {
     $.clear(this.get$nodes());
   var e = $.Element$tag('div');
@@ -3829,46 +4426,52 @@ $.dynamicFunction('set$innerHTML').DocumentFragment = function(value) {
   } else {
     return Object.prototype.set$innerHTML.call(this, value);
   }
- };
-$.dynamicFunction('get$elements').DocumentFragment = function() {
-  if ($.eqNullB(this._lib3_elements)) {
-    this._lib3_elements = $.FilteredElementList$1(this);
-  }
-  return this._lib3_elements;
- };
-$.dynamicFunction('is$Element').DocumentFragment = function() { return true; };
-$.dynamicFunction('query$1').Element = function(selectors) {
+ },
+ query$1: function(selectors) {
+  return this.$dom_querySelector$1(selectors);
+ },
+ get$elements: function() {
+  if ($.eqNullB(this._elements)) this._elements = $.FilteredElementList$1(this);
+  return this._elements;
+ },
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('Element', ["innerHTML!"], {
+ $dom_querySelector$1: function(selectors) {
   return this.querySelector(selectors);
- };
-$.dynamicFunction('click$0').Element = function() {
-  return this.click();
- };
-$.dynamicFunction('get$click').Element = function() { return new $.Closure17(this); };
-$.dynamicFunction('get$$$dom_lastElementChild').Element = function() {
+ },
+ get$$$dom_lastElementChild: function() {
   return this.lastElementChild;;
- };
-$.dynamicFunction('set$innerHTML').Element = function(v) { this.innerHTML = v; };
-$.dynamicFunction('get$$$dom_firstElementChild').Element = function() {
+ },
+ get$$$dom_firstElementChild: function() {
   return this.firstElementChild;;
- };
-$.dynamicFunction('get$$$dom_children').Element = function() {
+ },
+ click$0: function() {
+  return this.click();
+ },
+ get$click: function() { return new $.Closure13(this, 'click$0'); },
+ get$$$dom_children: function() {
   return this.children;;
- };
-$.dynamicFunction('get$on').Element = function() {
+ },
+ get$on: function() {
   if (Object.getPrototypeOf(this).hasOwnProperty('get$on')) {
-    return $._lib3_ElementEventsImpl$1(this);
+    return $._ElementEventsImpl$1(this);
   } else {
     return Object.prototype.get$on.call(this);
   }
- };
-$.dynamicFunction('get$elements').Element = function() {
+ },
+ query$1: function(selectors) {
+  return this.$dom_querySelector$1(selectors);
+ },
+ get$elements: function() {
   if (Object.getPrototypeOf(this).hasOwnProperty('get$elements')) {
-    return $._lib3_ChildrenElementList$_wrap$1(this);
+    return $._ChildrenElementList$_wrap$1(this);
   } else {
     return Object.prototype.get$elements.call(this);
   }
- };
-$.dynamicFunction('set$elements').Element = function(value) {
+ },
+ set$elements: function(value) {
   if (Object.getPrototypeOf(this).hasOwnProperty('set$elements')) {
     var elements = this.get$elements();
   $.clear(elements);
@@ -3876,1450 +4479,2031 @@ $.dynamicFunction('set$elements').Element = function(value) {
   } else {
     return Object.prototype.set$elements.call(this, value);
   }
- };
-$.dynamicFunction('is$Element').Element = function() { return true; };
-$.dynamicFunction('set$width').HTMLEmbedElement = function(v) { this.width = v; };
-$.dynamicFunction('get$type').HTMLEmbedElement = function() { return this.type; };
-$.dynamicFunction('set$height').HTMLEmbedElement = function(v) { this.height = v; };
-$.dynamicFunction('is$Element').HTMLEmbedElement = function() { return true; };
-$.dynamicFunction('get$length').EntryArray = function() { return this.length; };
-$.dynamicFunction('get$length').EntryArraySync = function() { return this.length; };
-$.dynamicFunction('remove$0').EntrySync = function() {
+ },
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLEmbedElement', ["width!", "type?", "height!"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('EntryArray', ["length?"], {
+});
+
+$.$defineNativeClass('EntryArraySync', ["length?"], {
+});
+
+$.$defineNativeClass('EntrySync', [], {
+ remove$0: function() {
   return this.remove();
- };
-$.dynamicFunction('get$type').Event = function() { return this.type; };
-$.dynamicFunction('toString$0').EventException = function() {
+ }
+});
+
+$.$defineNativeClass('Event', ["type?"], {
+});
+
+$.$defineNativeClass('EventException', [], {
+ toString$0: function() {
   return this.toString();
- };
-$.dynamicFunction('$dom_addEventListener$3').EventSource = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$on').EventSource = function() {
-  return $._lib3_EventSourceEventsImpl$1(this);
- };
-$.dynamicFunction('$dom_addEventListener$3').EventTarget = function(type, listener, useCapture) {
+ }
+});
+
+$.$defineNativeClass('EventSource', [], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
+  return $._EventSourceEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('EventTarget', [], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
   if (Object.getPrototypeOf(this).hasOwnProperty('$dom_addEventListener$3')) {
-    return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
+    return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
   } else {
     return Object.prototype.$dom_addEventListener$3.call(this, type, listener, useCapture);
   }
- };
-$.dynamicFunction('get$on').EventTarget = function() {
+ },
+ get$on: function() {
   if (Object.getPrototypeOf(this).hasOwnProperty('get$on')) {
-    return $._lib3_EventsImpl$1(this);
+    return $._EventsImpl$1(this);
   } else {
     return Object.prototype.get$on.call(this);
   }
- };
-$.dynamicFunction('get$type').HTMLFieldSetElement = function() { return this.type; };
-$.dynamicFunction('is$Element').HTMLFieldSetElement = function() { return true; };
-$.dynamicFunction('toString$0').FileException = function() {
+ }
+});
+
+$.$defineNativeClass('HTMLFieldSetElement', ["type?", "lib$_FieldSetElementImpl$elements?"], {
+ get$elements: function() {
+  return this.lib$_FieldSetElementImpl$elements;
+ },
+ set$elements: function(x) {
+  this.lib$_FieldSetElementImpl$elements = x;
+ },
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('FileException', [], {
+ toString$0: function() {
   return this.toString();
- };
-$.dynamicFunction('getRange$2').FileList = function(start, rangeLength) {
-  return $.getRange2(this, start, rangeLength, []);
- };
-$.dynamicFunction('removeLast$0').FileList = function() {
+ }
+});
+
+$.$defineNativeClass('FileList', ["length?"], {
+ getRange$2: function(start, rangeLength) {
+  return $.getRange0(this, start, rangeLength, []);
+ },
+ removeLast$0: function() {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot removeLast on immutable List.'));
- };
-$.dynamicFunction('last$0').FileList = function() {
+ },
+ last$0: function() {
   return this.operator$index$1($.sub($.get$length(this), 1));
- };
-$.dynamicFunction('indexOf$2').FileList = function(element, start) {
-  return $.indexOf2(this, element, start, $.get$length(this));
- };
-$.dynamicFunction('isEmpty$0').FileList = function() {
+ },
+ indexOf$2: function(element, start) {
+  return $.indexOf0(this, element, start, $.get$length(this));
+ },
+ isEmpty$0: function() {
   return $.eq($.get$length(this), 0);
- };
-$.dynamicFunction('filter$1').FileList = function(f) {
-  return $.filter3(this, [], f);
- };
-$.dynamicFunction('forEach$1').FileList = function(f) {
-  return $.forEach3(this, f);
- };
-$.dynamicFunction('addAll$1').FileList = function(collection) {
+ },
+ filter$1: function(f) {
+  return $.filter1(this, [], f);
+ },
+ forEach$1: function(f) {
+  return $.forEach1(this, f);
+ },
+ addAll$1: function(collection) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('add$1').FileList = function(value) {
+ },
+ add$1: function(value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('iterator$0').FileList = function() {
-  var t0 = $._lib3_FixedSizeListIterator$1(this);
-  $.setRuntimeTypeInfo(t0, ({T: 'File'}));
-  return t0;
- };
-$.dynamicFunction('operator$indexSet$2').FileList = function(index, value) {
+ },
+ iterator$0: function() {
+  var t1 = $._FixedSizeListIterator$1(this);
+  $.setRuntimeTypeInfo(t1, ({T: 'File'}));
+  return t1;
+ },
+ operator$indexSet$2: function(index, value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot assign element of immutable List.'));
- };
-$.dynamicFunction('operator$index$1').FileList = function(index) {
+ },
+ operator$index$1: function(index) {
   return this[index];;
- };
-$.dynamicFunction('get$length').FileList = function() { return this.length; };
-$.dynamicFunction('is$List2').FileList = function() { return true; };
-$.dynamicFunction('is$Collection').FileList = function() { return true; };
-$.dynamicFunction('$dom_addEventListener$3').FileReader = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$on').FileReader = function() {
-  return $._lib3_FileReaderEventsImpl$1(this);
- };
-$.dynamicFunction('$dom_addEventListener$3').FileWriter = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$length').FileWriter = function() { return this.length; };
-$.dynamicFunction('get$on').FileWriter = function() {
-  return $._lib3_FileWriterEventsImpl$1(this);
- };
-$.dynamicFunction('get$length').FileWriterSync = function() { return this.length; };
-$.dynamicFunction('getRange$2').Float32Array = function(start, rangeLength) {
-  return $.getRange2(this, start, rangeLength, []);
- };
-$.dynamicFunction('removeLast$0').Float32Array = function() {
+ },
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+});
+
+$.$defineNativeClass('FileReader', [], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
+  return $._FileReaderEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('FileWriter', ["length?"], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
+  return $._FileWriterEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('FileWriterSync', ["length?"], {
+});
+
+$.$defineNativeClass('Float32Array', ["length?"], {
+ getRange$2: function(start, rangeLength) {
+  return $.getRange0(this, start, rangeLength, []);
+ },
+ removeLast$0: function() {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot removeLast on immutable List.'));
- };
-$.dynamicFunction('last$0').Float32Array = function() {
+ },
+ last$0: function() {
   return this.operator$index$1($.sub($.get$length(this), 1));
- };
-$.dynamicFunction('indexOf$2').Float32Array = function(element, start) {
-  return $.indexOf2(this, element, start, $.get$length(this));
- };
-$.dynamicFunction('isEmpty$0').Float32Array = function() {
+ },
+ indexOf$2: function(element, start) {
+  return $.indexOf0(this, element, start, $.get$length(this));
+ },
+ isEmpty$0: function() {
   return $.eq($.get$length(this), 0);
- };
-$.dynamicFunction('filter$1').Float32Array = function(f) {
-  return $.filter3(this, [], f);
- };
-$.dynamicFunction('forEach$1').Float32Array = function(f) {
-  return $.forEach3(this, f);
- };
-$.dynamicFunction('addAll$1').Float32Array = function(collection) {
+ },
+ filter$1: function(f) {
+  return $.filter1(this, [], f);
+ },
+ forEach$1: function(f) {
+  return $.forEach1(this, f);
+ },
+ addAll$1: function(collection) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('add$1').Float32Array = function(value) {
+ },
+ add$1: function(value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('iterator$0').Float32Array = function() {
-  var t0 = $._lib3_FixedSizeListIterator$1(this);
-  $.setRuntimeTypeInfo(t0, ({T: 'num'}));
-  return t0;
- };
-$.dynamicFunction('operator$indexSet$2').Float32Array = function(index, value) {
+ },
+ iterator$0: function() {
+  var t1 = $._FixedSizeListIterator$1(this);
+  $.setRuntimeTypeInfo(t1, ({T: 'num'}));
+  return t1;
+ },
+ operator$indexSet$2: function(index, value) {
   this[index] = value;
- };
-$.dynamicFunction('operator$index$1').Float32Array = function(index) {
+ },
+ operator$index$1: function(index) {
   return this[index];;
- };
-$.dynamicFunction('get$length').Float32Array = function() { return this.length; };
-$.dynamicFunction('is$List2').Float32Array = function() { return true; };
-$.dynamicFunction('is$Collection').Float32Array = function() { return true; };
-$.dynamicFunction('getRange$2').Float64Array = function(start, rangeLength) {
-  return $.getRange2(this, start, rangeLength, []);
- };
-$.dynamicFunction('removeLast$0').Float64Array = function() {
+ },
+ is$JavaScriptIndexingBehavior: function() { return true; },
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+});
+
+$.$defineNativeClass('Float64Array', ["length?"], {
+ getRange$2: function(start, rangeLength) {
+  return $.getRange0(this, start, rangeLength, []);
+ },
+ removeLast$0: function() {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot removeLast on immutable List.'));
- };
-$.dynamicFunction('last$0').Float64Array = function() {
+ },
+ last$0: function() {
   return this.operator$index$1($.sub($.get$length(this), 1));
- };
-$.dynamicFunction('indexOf$2').Float64Array = function(element, start) {
-  return $.indexOf2(this, element, start, $.get$length(this));
- };
-$.dynamicFunction('isEmpty$0').Float64Array = function() {
+ },
+ indexOf$2: function(element, start) {
+  return $.indexOf0(this, element, start, $.get$length(this));
+ },
+ isEmpty$0: function() {
   return $.eq($.get$length(this), 0);
- };
-$.dynamicFunction('filter$1').Float64Array = function(f) {
-  return $.filter3(this, [], f);
- };
-$.dynamicFunction('forEach$1').Float64Array = function(f) {
-  return $.forEach3(this, f);
- };
-$.dynamicFunction('addAll$1').Float64Array = function(collection) {
+ },
+ filter$1: function(f) {
+  return $.filter1(this, [], f);
+ },
+ forEach$1: function(f) {
+  return $.forEach1(this, f);
+ },
+ addAll$1: function(collection) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('add$1').Float64Array = function(value) {
+ },
+ add$1: function(value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('iterator$0').Float64Array = function() {
-  var t0 = $._lib3_FixedSizeListIterator$1(this);
-  $.setRuntimeTypeInfo(t0, ({T: 'num'}));
-  return t0;
- };
-$.dynamicFunction('operator$indexSet$2').Float64Array = function(index, value) {
+ },
+ iterator$0: function() {
+  var t1 = $._FixedSizeListIterator$1(this);
+  $.setRuntimeTypeInfo(t1, ({T: 'num'}));
+  return t1;
+ },
+ operator$indexSet$2: function(index, value) {
   this[index] = value;
- };
-$.dynamicFunction('operator$index$1').Float64Array = function(index) {
+ },
+ operator$index$1: function(index) {
   return this[index];;
- };
-$.dynamicFunction('get$length').Float64Array = function() { return this.length; };
-$.dynamicFunction('is$List2').Float64Array = function() { return true; };
-$.dynamicFunction('is$Collection').Float64Array = function() { return true; };
-$.dynamicFunction('is$Element').HTMLFontElement = function() { return true; };
-$.dynamicFunction('reset$0').HTMLFormElement = function() {
+ },
+ is$JavaScriptIndexingBehavior: function() { return true; },
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLFontElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLFormElement', ["length?"], {
+ reset$0: function() {
   return this.reset();
- };
-$.dynamicFunction('get$length').HTMLFormElement = function() { return this.length; };
-$.dynamicFunction('is$Element').HTMLFormElement = function() { return true; };
-$.dynamicFunction('is$Element').HTMLFrameElement = function() { return true; };
-$.dynamicFunction('get$on').HTMLFrameSetElement = function() {
-  return $._lib3_FrameSetElementEventsImpl$1(this);
- };
-$.dynamicFunction('is$Element').HTMLFrameSetElement = function() { return true; };
-$.dynamicFunction('set$width').HTMLHRElement = function(v) { this.width = v; };
-$.dynamicFunction('is$Element').HTMLHRElement = function() { return true; };
-$.dynamicFunction('get$length').HTMLAllCollection = function() { return this.length; };
-$.dynamicFunction('getRange$2').HTMLCollection = function(start, rangeLength) {
-  return $.getRange2(this, start, rangeLength, []);
- };
-$.dynamicFunction('removeLast$0').HTMLCollection = function() {
+ },
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLFrameElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLFrameSetElement', [], {
+ get$on: function() {
+  return $._FrameSetElementEventsImpl$1(this);
+ },
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLHRElement', ["width!"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLAllCollection', ["length?"], {
+});
+
+$.$defineNativeClass('HTMLCollection', ["length?"], {
+ getRange$2: function(start, rangeLength) {
+  return $.getRange0(this, start, rangeLength, []);
+ },
+ removeLast$0: function() {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot removeLast on immutable List.'));
- };
-$.dynamicFunction('last$0').HTMLCollection = function() {
+ },
+ last$0: function() {
   return this.operator$index$1($.sub($.get$length(this), 1));
- };
-$.dynamicFunction('indexOf$2').HTMLCollection = function(element, start) {
-  return $.indexOf2(this, element, start, $.get$length(this));
- };
-$.dynamicFunction('isEmpty$0').HTMLCollection = function() {
+ },
+ indexOf$2: function(element, start) {
+  return $.indexOf0(this, element, start, $.get$length(this));
+ },
+ isEmpty$0: function() {
   return $.eq($.get$length(this), 0);
- };
-$.dynamicFunction('filter$1').HTMLCollection = function(f) {
-  return $.filter3(this, [], f);
- };
-$.dynamicFunction('forEach$1').HTMLCollection = function(f) {
-  return $.forEach3(this, f);
- };
-$.dynamicFunction('addAll$1').HTMLCollection = function(collection) {
+ },
+ filter$1: function(f) {
+  return $.filter1(this, [], f);
+ },
+ forEach$1: function(f) {
+  return $.forEach1(this, f);
+ },
+ addAll$1: function(collection) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('add$1').HTMLCollection = function(value) {
+ },
+ add$1: function(value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('iterator$0').HTMLCollection = function() {
-  var t0 = $._lib3_FixedSizeListIterator$1(this);
-  $.setRuntimeTypeInfo(t0, ({T: 'Node'}));
-  return t0;
- };
-$.dynamicFunction('operator$indexSet$2').HTMLCollection = function(index, value) {
+ },
+ iterator$0: function() {
+  var t1 = $._FixedSizeListIterator$1(this);
+  $.setRuntimeTypeInfo(t1, ({T: 'Node'}));
+  return t1;
+ },
+ operator$indexSet$2: function(index, value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot assign element of immutable List.'));
- };
-$.dynamicFunction('operator$index$1').HTMLCollection = function(index) {
+ },
+ operator$index$1: function(index) {
   return this[index];;
- };
-$.dynamicFunction('get$length').HTMLCollection = function() { return this.length; };
-$.dynamicFunction('is$List2').HTMLCollection = function() { return true; };
-$.dynamicFunction('is$Collection').HTMLCollection = function() { return true; };
-$.dynamicFunction('set$length').HTMLOptionsCollection = function(value) {
+ },
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLOptionsCollection', [], {
+ set$length: function(value) {
   this.length = value;;
- };
-$.dynamicFunction('get$length').HTMLOptionsCollection = function() {
+ },
+ get$length: function() {
   return this.length;;
- };
-$.dynamicFunction('is$List2').HTMLOptionsCollection = function() { return true; };
-$.dynamicFunction('is$Collection').HTMLOptionsCollection = function() { return true; };
-$.dynamicFunction('is$Element').HTMLHeadElement = function() { return true; };
-$.dynamicFunction('is$Element').HTMLHeadingElement = function() { return true; };
-$.dynamicFunction('get$length').History = function() { return this.length; };
-$.dynamicFunction('is$Element').HTMLHtmlElement = function() { return true; };
-$.dynamicFunction('$dom_addEventListener$3').IDBDatabase = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$on').IDBDatabase = function() {
-  return $._lib3_IDBDatabaseEventsImpl$1(this);
- };
-$.dynamicFunction('toString$0').IDBDatabaseException = function() {
+ },
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLHeadElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLHeadingElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('History', ["length?"], {
+});
+
+$.$defineNativeClass('HTMLHtmlElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('IDBDatabase', [], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
+  return $._IDBDatabaseEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('IDBDatabaseException', [], {
+ toString$0: function() {
   return this.toString();
- };
-$.dynamicFunction('clear$0').IDBObjectStore = function() {
+ }
+});
+
+$.$defineNativeClass('IDBObjectStore', [], {
+ clear$0: function() {
   return this.clear();
- };
-$.dynamicFunction('add$2').IDBObjectStore = function(value, key) {
+ },
+ add$2: function(value, key) {
   return this.add(value,key);
- };
-$.dynamicFunction('add$1').IDBObjectStore = function(value) {
+ },
+ add$1: function(value) {
   return this.add(value);
-};
-$.dynamicFunction('$dom_addEventListener$3').IDBRequest = function(type, listener, useCapture) {
+}
+});
+
+$.$defineNativeClass('IDBRequest', [], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
   if (Object.getPrototypeOf(this).hasOwnProperty('$dom_addEventListener$3')) {
-    return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
+    return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
   } else {
     return Object.prototype.$dom_addEventListener$3.call(this, type, listener, useCapture);
   }
- };
-$.dynamicFunction('get$on').IDBRequest = function() {
+ },
+ get$on: function() {
   if (Object.getPrototypeOf(this).hasOwnProperty('get$on')) {
-    return $._lib3_IDBRequestEventsImpl$1(this);
+    return $._IDBRequestEventsImpl$1(this);
   } else {
     return Object.prototype.get$on.call(this);
   }
- };
-$.dynamicFunction('$dom_addEventListener$3').IDBTransaction = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$on').IDBTransaction = function() {
-  return $._lib3_IDBTransactionEventsImpl$1(this);
- };
-$.dynamicFunction('$dom_addEventListener$3').IDBVersionChangeRequest = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$on').IDBVersionChangeRequest = function() {
-  return $._lib3_IDBVersionChangeRequestEventsImpl$1(this);
- };
-$.dynamicFunction('set$width').HTMLIFrameElement = function(v) { this.width = v; };
-$.dynamicFunction('set$height').HTMLIFrameElement = function(v) { this.height = v; };
-$.dynamicFunction('is$Element').HTMLIFrameElement = function() { return true; };
-$.dynamicFunction('set$width').HTMLImageElement = function(v) { this.width = v; };
-$.dynamicFunction('set$height').HTMLImageElement = function(v) { this.height = v; };
-$.dynamicFunction('is$Element').HTMLImageElement = function() { return true; };
-$.dynamicFunction('get$type').HTMLInputElement = function() { return this.type; };
-$.dynamicFunction('get$pattern').HTMLInputElement = function() { return this.pattern; };
-$.dynamicFunction('get$on').HTMLInputElement = function() {
-  return $._lib3_InputElementEventsImpl$1(this);
- };
-$.dynamicFunction('is$Element').HTMLInputElement = function() { return true; };
-$.dynamicFunction('getRange$2').Int16Array = function(start, rangeLength) {
-  return $.getRange2(this, start, rangeLength, []);
- };
-$.dynamicFunction('removeLast$0').Int16Array = function() {
+ }
+});
+
+$.$defineNativeClass('IDBTransaction', [], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
+  return $._IDBTransactionEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('IDBVersionChangeRequest', [], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
+  return $._IDBVersionChangeRequestEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('HTMLIFrameElement', ["width!", "height!"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLImageElement', ["width!", "height!"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLInputElement', ["width!", "type?", "pattern?", "height!"], {
+ get$on: function() {
+  return $._InputElementEventsImpl$1(this);
+ },
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('Int16Array', ["length?"], {
+ getRange$2: function(start, rangeLength) {
+  return $.getRange0(this, start, rangeLength, []);
+ },
+ removeLast$0: function() {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot removeLast on immutable List.'));
- };
-$.dynamicFunction('last$0').Int16Array = function() {
+ },
+ last$0: function() {
   return this.operator$index$1($.sub($.get$length(this), 1));
- };
-$.dynamicFunction('indexOf$2').Int16Array = function(element, start) {
-  return $.indexOf2(this, element, start, $.get$length(this));
- };
-$.dynamicFunction('isEmpty$0').Int16Array = function() {
+ },
+ indexOf$2: function(element, start) {
+  return $.indexOf0(this, element, start, $.get$length(this));
+ },
+ isEmpty$0: function() {
   return $.eq($.get$length(this), 0);
- };
-$.dynamicFunction('filter$1').Int16Array = function(f) {
-  return $.filter3(this, [], f);
- };
-$.dynamicFunction('forEach$1').Int16Array = function(f) {
-  return $.forEach3(this, f);
- };
-$.dynamicFunction('addAll$1').Int16Array = function(collection) {
+ },
+ filter$1: function(f) {
+  return $.filter1(this, [], f);
+ },
+ forEach$1: function(f) {
+  return $.forEach1(this, f);
+ },
+ addAll$1: function(collection) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('add$1').Int16Array = function(value) {
+ },
+ add$1: function(value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('iterator$0').Int16Array = function() {
-  var t0 = $._lib3_FixedSizeListIterator$1(this);
-  $.setRuntimeTypeInfo(t0, ({T: 'int'}));
-  return t0;
- };
-$.dynamicFunction('operator$indexSet$2').Int16Array = function(index, value) {
+ },
+ iterator$0: function() {
+  var t1 = $._FixedSizeListIterator$1(this);
+  $.setRuntimeTypeInfo(t1, ({T: 'int'}));
+  return t1;
+ },
+ operator$indexSet$2: function(index, value) {
   this[index] = value;
- };
-$.dynamicFunction('operator$index$1').Int16Array = function(index) {
+ },
+ operator$index$1: function(index) {
   return this[index];;
- };
-$.dynamicFunction('get$length').Int16Array = function() { return this.length; };
-$.dynamicFunction('is$List2').Int16Array = function() { return true; };
-$.dynamicFunction('is$Collection').Int16Array = function() { return true; };
-$.dynamicFunction('getRange$2').Int32Array = function(start, rangeLength) {
-  return $.getRange2(this, start, rangeLength, []);
- };
-$.dynamicFunction('removeLast$0').Int32Array = function() {
+ },
+ is$JavaScriptIndexingBehavior: function() { return true; },
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+});
+
+$.$defineNativeClass('Int32Array', ["length?"], {
+ getRange$2: function(start, rangeLength) {
+  return $.getRange0(this, start, rangeLength, []);
+ },
+ removeLast$0: function() {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot removeLast on immutable List.'));
- };
-$.dynamicFunction('last$0').Int32Array = function() {
+ },
+ last$0: function() {
   return this.operator$index$1($.sub($.get$length(this), 1));
- };
-$.dynamicFunction('indexOf$2').Int32Array = function(element, start) {
-  return $.indexOf2(this, element, start, $.get$length(this));
- };
-$.dynamicFunction('isEmpty$0').Int32Array = function() {
+ },
+ indexOf$2: function(element, start) {
+  return $.indexOf0(this, element, start, $.get$length(this));
+ },
+ isEmpty$0: function() {
   return $.eq($.get$length(this), 0);
- };
-$.dynamicFunction('filter$1').Int32Array = function(f) {
-  return $.filter3(this, [], f);
- };
-$.dynamicFunction('forEach$1').Int32Array = function(f) {
-  return $.forEach3(this, f);
- };
-$.dynamicFunction('addAll$1').Int32Array = function(collection) {
+ },
+ filter$1: function(f) {
+  return $.filter1(this, [], f);
+ },
+ forEach$1: function(f) {
+  return $.forEach1(this, f);
+ },
+ addAll$1: function(collection) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('add$1').Int32Array = function(value) {
+ },
+ add$1: function(value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('iterator$0').Int32Array = function() {
-  var t0 = $._lib3_FixedSizeListIterator$1(this);
-  $.setRuntimeTypeInfo(t0, ({T: 'int'}));
-  return t0;
- };
-$.dynamicFunction('operator$indexSet$2').Int32Array = function(index, value) {
+ },
+ iterator$0: function() {
+  var t1 = $._FixedSizeListIterator$1(this);
+  $.setRuntimeTypeInfo(t1, ({T: 'int'}));
+  return t1;
+ },
+ operator$indexSet$2: function(index, value) {
   this[index] = value;
- };
-$.dynamicFunction('operator$index$1').Int32Array = function(index) {
+ },
+ operator$index$1: function(index) {
   return this[index];;
- };
-$.dynamicFunction('get$length').Int32Array = function() { return this.length; };
-$.dynamicFunction('is$List2').Int32Array = function() { return true; };
-$.dynamicFunction('is$Collection').Int32Array = function() { return true; };
-$.dynamicFunction('getRange$2').Int8Array = function(start, rangeLength) {
-  return $.getRange2(this, start, rangeLength, []);
- };
-$.dynamicFunction('removeLast$0').Int8Array = function() {
+ },
+ is$JavaScriptIndexingBehavior: function() { return true; },
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+});
+
+$.$defineNativeClass('Int8Array', ["length?"], {
+ getRange$2: function(start, rangeLength) {
+  return $.getRange0(this, start, rangeLength, []);
+ },
+ removeLast$0: function() {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot removeLast on immutable List.'));
- };
-$.dynamicFunction('last$0').Int8Array = function() {
+ },
+ last$0: function() {
   return this.operator$index$1($.sub($.get$length(this), 1));
- };
-$.dynamicFunction('indexOf$2').Int8Array = function(element, start) {
-  return $.indexOf2(this, element, start, $.get$length(this));
- };
-$.dynamicFunction('isEmpty$0').Int8Array = function() {
+ },
+ indexOf$2: function(element, start) {
+  return $.indexOf0(this, element, start, $.get$length(this));
+ },
+ isEmpty$0: function() {
   return $.eq($.get$length(this), 0);
- };
-$.dynamicFunction('filter$1').Int8Array = function(f) {
-  return $.filter3(this, [], f);
- };
-$.dynamicFunction('forEach$1').Int8Array = function(f) {
-  return $.forEach3(this, f);
- };
-$.dynamicFunction('addAll$1').Int8Array = function(collection) {
+ },
+ filter$1: function(f) {
+  return $.filter1(this, [], f);
+ },
+ forEach$1: function(f) {
+  return $.forEach1(this, f);
+ },
+ addAll$1: function(collection) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('add$1').Int8Array = function(value) {
+ },
+ add$1: function(value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('iterator$0').Int8Array = function() {
-  var t0 = $._lib3_FixedSizeListIterator$1(this);
-  $.setRuntimeTypeInfo(t0, ({T: 'int'}));
-  return t0;
- };
-$.dynamicFunction('operator$indexSet$2').Int8Array = function(index, value) {
+ },
+ iterator$0: function() {
+  var t1 = $._FixedSizeListIterator$1(this);
+  $.setRuntimeTypeInfo(t1, ({T: 'int'}));
+  return t1;
+ },
+ operator$indexSet$2: function(index, value) {
   this[index] = value;
- };
-$.dynamicFunction('operator$index$1').Int8Array = function(index) {
+ },
+ operator$index$1: function(index) {
   return this[index];;
- };
-$.dynamicFunction('get$length').Int8Array = function() { return this.length; };
-$.dynamicFunction('is$List2').Int8Array = function() { return true; };
-$.dynamicFunction('is$Collection').Int8Array = function() { return true; };
-$.dynamicFunction('$dom_addEventListener$3').JavaScriptAudioNode = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$on').JavaScriptAudioNode = function() {
-  return $._lib3_JavaScriptAudioNodeEventsImpl$1(this);
- };
-$.dynamicFunction('get$type').JavaScriptCallFrame = function() { return this.type; };
-$.dynamicFunction('get$type').HTMLKeygenElement = function() { return this.type; };
-$.dynamicFunction('is$Element').HTMLKeygenElement = function() { return true; };
-$.dynamicFunction('get$type').HTMLLIElement = function() { return this.type; };
-$.dynamicFunction('is$Element').HTMLLIElement = function() { return true; };
-$.dynamicFunction('is$Element').HTMLLabelElement = function() { return true; };
-$.dynamicFunction('is$Element').HTMLLegendElement = function() { return true; };
-$.dynamicFunction('get$type').HTMLLinkElement = function() { return this.type; };
-$.dynamicFunction('is$Element').HTMLLinkElement = function() { return true; };
-$.dynamicFunction('toString$0').Location = function() {
+ },
+ is$JavaScriptIndexingBehavior: function() { return true; },
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+});
+
+$.$defineNativeClass('JavaScriptAudioNode', [], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
+  return $._JavaScriptAudioNodeEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('JavaScriptCallFrame', ["type?"], {
+});
+
+$.$defineNativeClass('HTMLKeygenElement', ["type?"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLLIElement', ["type?"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLLabelElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLLegendElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLLinkElement', ["type?"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('LocalMediaStream', [], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ }
+});
+
+$.$defineNativeClass('Location', [], {
+ toString$0: function() {
   return this.toString();
- };
-$.dynamicFunction('is$Element').HTMLMapElement = function() { return true; };
-$.dynamicFunction('start$0').HTMLMarqueeElement = function() {
+ }
+});
+
+$.$defineNativeClass('HTMLMapElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLMarqueeElement', ["width!", "height!"], {
+ start$0: function() {
   return this.start();
- };
-$.dynamicFunction('set$width').HTMLMarqueeElement = function(v) { this.width = v; };
-$.dynamicFunction('set$height').HTMLMarqueeElement = function(v) { this.height = v; };
-$.dynamicFunction('is$Element').HTMLMarqueeElement = function() { return true; };
-$.dynamicFunction('$dom_addEventListener$3').MediaController = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$on').HTMLMediaElement = function() {
-  return $._lib3_MediaElementEventsImpl$1(this);
- };
-$.dynamicFunction('is$Element').HTMLMediaElement = function() { return true; };
-$.dynamicFunction('getRange$2').MediaList = function(start, rangeLength) {
-  return $.getRange2(this, start, rangeLength, []);
- };
-$.dynamicFunction('removeLast$0').MediaList = function() {
+ },
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('MediaController', [], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ }
+});
+
+$.$defineNativeClass('HTMLMediaElement', [], {
+ get$on: function() {
+  return $._MediaElementEventsImpl$1(this);
+ },
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('MediaList', ["length?"], {
+ getRange$2: function(start, rangeLength) {
+  return $.getRange0(this, start, rangeLength, []);
+ },
+ removeLast$0: function() {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot removeLast on immutable List.'));
- };
-$.dynamicFunction('last$0').MediaList = function() {
+ },
+ last$0: function() {
   return this.operator$index$1($.sub($.get$length(this), 1));
- };
-$.dynamicFunction('indexOf$2').MediaList = function(element, start) {
-  return $.indexOf2(this, element, start, $.get$length(this));
- };
-$.dynamicFunction('isEmpty$0').MediaList = function() {
+ },
+ indexOf$2: function(element, start) {
+  return $.indexOf0(this, element, start, $.get$length(this));
+ },
+ isEmpty$0: function() {
   return $.eq($.get$length(this), 0);
- };
-$.dynamicFunction('filter$1').MediaList = function(f) {
-  return $.filter3(this, [], f);
- };
-$.dynamicFunction('forEach$1').MediaList = function(f) {
-  return $.forEach3(this, f);
- };
-$.dynamicFunction('addAll$1').MediaList = function(collection) {
+ },
+ filter$1: function(f) {
+  return $.filter1(this, [], f);
+ },
+ forEach$1: function(f) {
+  return $.forEach1(this, f);
+ },
+ addAll$1: function(collection) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('add$1').MediaList = function(value) {
+ },
+ add$1: function(value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('iterator$0').MediaList = function() {
-  var t0 = $._lib3_FixedSizeListIterator$1(this);
-  $.setRuntimeTypeInfo(t0, ({T: 'String'}));
-  return t0;
- };
-$.dynamicFunction('operator$indexSet$2').MediaList = function(index, value) {
+ },
+ iterator$0: function() {
+  var t1 = $._FixedSizeListIterator$1(this);
+  $.setRuntimeTypeInfo(t1, ({T: 'String'}));
+  return t1;
+ },
+ operator$indexSet$2: function(index, value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot assign element of immutable List.'));
- };
-$.dynamicFunction('operator$index$1').MediaList = function(index) {
+ },
+ operator$index$1: function(index) {
   return this[index];;
- };
-$.dynamicFunction('get$length').MediaList = function() { return this.length; };
-$.dynamicFunction('is$List2').MediaList = function() { return true; };
-$.dynamicFunction('is$Collection').MediaList = function() { return true; };
-$.dynamicFunction('$dom_addEventListener$3').MediaStream = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$on').MediaStream = function() {
-  return $._lib3_MediaStreamEventsImpl$1(this);
- };
-$.dynamicFunction('get$length').MediaStreamList = function() { return this.length; };
-$.dynamicFunction('get$length').MediaStreamTrackList = function() { return this.length; };
-$.dynamicFunction('is$Element').HTMLMenuElement = function() { return true; };
-$.dynamicFunction('start$0').MessagePort = function() {
+ },
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+});
+
+$.$defineNativeClass('MediaStream', [], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  if (Object.getPrototypeOf(this).hasOwnProperty('$dom_addEventListener$3')) {
+    return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+  } else {
+    return Object.prototype.$dom_addEventListener$3.call(this, type, listener, useCapture);
+  }
+ },
+ get$on: function() {
+  return $._MediaStreamEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('MediaStreamList', ["length?"], {
+});
+
+$.$defineNativeClass('MediaStreamTrackList', ["length?"], {
+});
+
+$.$defineNativeClass('HTMLMenuElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('MessagePort', [], {
+ start$0: function() {
   return this.start();
- };
-$.dynamicFunction('$dom_addEventListener$3').MessagePort = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$on').MessagePort = function() {
-  return $._lib3_MessagePortEventsImpl$1(this);
- };
-$.dynamicFunction('is$Element').HTMLMetaElement = function() { return true; };
-$.dynamicFunction('is$Element').HTMLMeterElement = function() { return true; };
-$.dynamicFunction('is$Element').HTMLModElement = function() { return true; };
-$.dynamicFunction('get$type').MutationRecord = function() { return this.type; };
-$.dynamicFunction('getRange$2').NamedNodeMap = function(start, rangeLength) {
-  return $.getRange2(this, start, rangeLength, []);
- };
-$.dynamicFunction('removeLast$0').NamedNodeMap = function() {
+ },
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
+  return $._MessagePortEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('HTMLMetaElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLMeterElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLModElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('MutationRecord', ["type?"], {
+});
+
+$.$defineNativeClass('NamedNodeMap', ["length?"], {
+ getRange$2: function(start, rangeLength) {
+  return $.getRange0(this, start, rangeLength, []);
+ },
+ removeLast$0: function() {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot removeLast on immutable List.'));
- };
-$.dynamicFunction('last$0').NamedNodeMap = function() {
+ },
+ last$0: function() {
   return this.operator$index$1($.sub($.get$length(this), 1));
- };
-$.dynamicFunction('indexOf$2').NamedNodeMap = function(element, start) {
-  return $.indexOf2(this, element, start, $.get$length(this));
- };
-$.dynamicFunction('isEmpty$0').NamedNodeMap = function() {
+ },
+ indexOf$2: function(element, start) {
+  return $.indexOf0(this, element, start, $.get$length(this));
+ },
+ isEmpty$0: function() {
   return $.eq($.get$length(this), 0);
- };
-$.dynamicFunction('filter$1').NamedNodeMap = function(f) {
-  return $.filter3(this, [], f);
- };
-$.dynamicFunction('forEach$1').NamedNodeMap = function(f) {
-  return $.forEach3(this, f);
- };
-$.dynamicFunction('addAll$1').NamedNodeMap = function(collection) {
+ },
+ filter$1: function(f) {
+  return $.filter1(this, [], f);
+ },
+ forEach$1: function(f) {
+  return $.forEach1(this, f);
+ },
+ addAll$1: function(collection) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('add$1').NamedNodeMap = function(value) {
+ },
+ add$1: function(value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('iterator$0').NamedNodeMap = function() {
-  var t0 = $._lib3_FixedSizeListIterator$1(this);
-  $.setRuntimeTypeInfo(t0, ({T: 'Node'}));
-  return t0;
- };
-$.dynamicFunction('operator$indexSet$2').NamedNodeMap = function(index, value) {
+ },
+ iterator$0: function() {
+  var t1 = $._FixedSizeListIterator$1(this);
+  $.setRuntimeTypeInfo(t1, ({T: 'Node'}));
+  return t1;
+ },
+ operator$indexSet$2: function(index, value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot assign element of immutable List.'));
- };
-$.dynamicFunction('operator$index$1').NamedNodeMap = function(index) {
+ },
+ operator$index$1: function(index) {
   return this[index];;
- };
-$.dynamicFunction('get$length').NamedNodeMap = function() { return this.length; };
-$.dynamicFunction('is$List2').NamedNodeMap = function() { return true; };
-$.dynamicFunction('is$Collection').NamedNodeMap = function() { return true; };
-$.dynamicFunction('get$userAgent').Navigator = function() { return this.userAgent; };
-$.dynamicFunction('$dom_replaceChild$2').Node = function(newChild, oldChild) {
+ },
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+});
+
+$.$defineNativeClass('Navigator', ["userAgent?"], {
+});
+
+$.$defineNativeClass('Node', [], {
+ $dom_replaceChild$2: function(newChild, oldChild) {
   return this.replaceChild(newChild,oldChild);
- };
-$.dynamicFunction('$dom_removeChild$1').Node = function(oldChild) {
+ },
+ $dom_removeChild$1: function(oldChild) {
   return this.removeChild(oldChild);
- };
-$.dynamicFunction('contains$1').Node = function(other) {
+ },
+ contains$1: function(other) {
   return this.contains(other);
- };
-$.dynamicFunction('$dom_appendChild$1').Node = function(newChild) {
+ },
+ $dom_appendChild$1: function(newChild) {
   return this.appendChild(newChild);
- };
-$.dynamicFunction('set$text').Node = function(value) {
+ },
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ set$text: function(value) {
   this.textContent = value;;
- };
-$.dynamicFunction('get$text').Node = function() {
+ },
+ get$text: function() {
   return this.textContent;;
- };
-$.dynamicFunction('get$parent').Node = function() {
+ },
+ get$parent: function() {
   if (Object.getPrototypeOf(this).hasOwnProperty('get$parent')) {
     return this.parentNode;;
   } else {
     return Object.prototype.get$parent.call(this);
   }
- };
-$.dynamicFunction('get$$$dom_childNodes').Node = function() {
+ },
+ get$$$dom_childNodes: function() {
   return this.childNodes;;
- };
-$.dynamicFunction('replaceWith$1').Node = function(otherNode) {
+ },
+ replaceWith$1: function(otherNode) {
   try {
     var parent$ = this.get$parent();
     parent$.$dom_replaceChild$2(otherNode, this);
-  }catch (t0) {
-    $.unwrapException(t0);
+  } catch (exception) {
+    $.unwrapException(exception);
   }
   return this;
- };
-$.dynamicFunction('remove$0').Node = function() {
-  if (!$.eqNullB(this.get$parent())) {
-    this.get$parent().$dom_removeChild$1(this);
-  }
+ },
+ remove$0: function() {
+  !$.eqNullB(this.get$parent()) && this.get$parent().$dom_removeChild$1(this);
   return this;
- };
-$.dynamicFunction('get$nodes').Node = function() {
-  return $._lib3_ChildNodeListLazy$1(this);
- };
-$.dynamicFunction('filter$1').NodeIterator = function(arg0) { return this.filter.$call$1(arg0); };
-$.dynamicFunction('operator$index$1').NodeList = function(index) {
+ },
+ get$nodes: function() {
+  return $._ChildNodeListLazy$1(this);
+ }
+});
+
+$.$defineNativeClass('NodeIterator', [], {
+ filter$1: function(arg0) { return this.filter.$call$1(arg0); }
+});
+
+$.$defineNativeClass('NodeList', ["length?"], {
+ operator$index$1: function(index) {
   return this[index];;
- };
-$.dynamicFunction('get$length').NodeList = function() { return this.length; };
-$.dynamicFunction('getRange$2').NodeList = function(start, rangeLength) {
-  return $._lib3_NodeListWrapper$1($.getRange2(this, start, rangeLength, []));
- };
-$.dynamicFunction('get$first').NodeList = function() {
+ },
+ getRange$2: function(start, rangeLength) {
+  return $._NodeListWrapper$1($.getRange0(this, start, rangeLength, []));
+ },
+ get$first: function() {
   return this.operator$index$1(0);
- };
-$.dynamicFunction('first$0').NodeList = function() { return this.get$first().$call$0(); };
-$.dynamicFunction('last$0').NodeList = function() {
+ },
+ first$0: function() { return this.get$first().$call$0(); },
+ last$0: function() {
   return this.operator$index$1($.sub($.get$length(this), 1));
- };
-$.dynamicFunction('indexOf$2').NodeList = function(element, start) {
-  return $.indexOf2(this, element, start, $.get$length(this));
- };
-$.dynamicFunction('isEmpty$0').NodeList = function() {
+ },
+ indexOf$2: function(element, start) {
+  return $.indexOf0(this, element, start, $.get$length(this));
+ },
+ isEmpty$0: function() {
   return $.eq($.get$length(this), 0);
- };
-$.dynamicFunction('filter$1').NodeList = function(f) {
-  return $._lib3_NodeListWrapper$1($.filter3(this, [], f));
- };
-$.dynamicFunction('forEach$1').NodeList = function(f) {
-  return $.forEach3(this, f);
- };
-$.dynamicFunction('operator$indexSet$2').NodeList = function(index, value) {
-  this._lib3_parent.$dom_replaceChild$2(value, this.operator$index$1(index));
- };
-$.dynamicFunction('clear$0').NodeList = function() {
-  this._lib3_parent.set$text('');
- };
-$.dynamicFunction('removeLast$0').NodeList = function() {
+ },
+ filter$1: function(f) {
+  return $._NodeListWrapper$1($.filter1(this, [], f));
+ },
+ forEach$1: function(f) {
+  return $.forEach1(this, f);
+ },
+ operator$indexSet$2: function(index, value) {
+  this._parent.$dom_replaceChild$2(value, this.operator$index$1(index));
+ },
+ clear$0: function() {
+  this._parent.set$text('');
+ },
+ removeLast$0: function() {
   var result = this.last$0();
-  if (!$.eqNullB(result)) {
-    this._lib3_parent.$dom_removeChild$1(result);
-  }
+  !$.eqNullB(result) && this._parent.$dom_removeChild$1(result);
   return result;
- };
-$.dynamicFunction('addAll$1').NodeList = function(collection) {
-  for (var t0 = $.iterator(collection); t0.hasNext$0() === true; ) {
-    var t1 = t0.next$0();
-    this._lib3_parent.$dom_appendChild$1(t1);
+ },
+ addAll$1: function(collection) {
+  for (var t1 = $.iterator(collection), t2 = this._parent; t1.hasNext$0() === true; ) {
+    t2.$dom_appendChild$1(t1.next$0());
   }
- };
-$.dynamicFunction('add$1').NodeList = function(value) {
-  this._lib3_parent.$dom_appendChild$1(value);
- };
-$.dynamicFunction('iterator$0').NodeList = function() {
-  var t0 = $._lib3_FixedSizeListIterator$1(this);
-  $.setRuntimeTypeInfo(t0, ({T: 'Node'}));
-  return t0;
- };
-$.dynamicFunction('is$List2').NodeList = function() { return true; };
-$.dynamicFunction('is$Collection').NodeList = function() { return true; };
-$.dynamicFunction('query$1').NodeSelector = function(selectors) {
-  return this.querySelector(selectors);
- };
-$.dynamicFunction('get$tag').Notification = function() { return this.tag; };
-$.dynamicFunction('get$on').Notification = function() {
-  return $._lib3_NotificationEventsImpl$1(this);
- };
-$.dynamicFunction('get$type').HTMLOListElement = function() { return this.type; };
-$.dynamicFunction('start$0').HTMLOListElement = function() { return this.start.$call$0(); };
-$.dynamicFunction('is$Element').HTMLOListElement = function() { return true; };
-$.dynamicFunction('set$width').HTMLObjectElement = function(v) { this.width = v; };
-$.dynamicFunction('get$type').HTMLObjectElement = function() { return this.type; };
-$.dynamicFunction('set$height').HTMLObjectElement = function(v) { this.height = v; };
-$.dynamicFunction('is$Element').HTMLObjectElement = function() { return true; };
-$.dynamicFunction('toString$0').OperationNotAllowedException = function() {
+ },
+ add$1: function(value) {
+  this._parent.$dom_appendChild$1(value);
+ },
+ iterator$0: function() {
+  var t1 = $._FixedSizeListIterator$1(this);
+  $.setRuntimeTypeInfo(t1, ({T: 'Node'}));
+  return t1;
+ },
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+});
+
+$.$defineNativeClass('Notification', ["tag?"], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
+  return $._NotificationEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('HTMLOListElement', ["type?"], {
+ start$0: function() { return this.start.$call$0(); },
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLObjectElement', ["width!", "type?", "height!"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLOptGroupElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLOptionElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('Oscillator', ["type?"], {
+});
+
+$.$defineNativeClass('HTMLOutputElement', ["type?"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLParagraphElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLParamElement', ["type?"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('PeerConnection00', [], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
+  return $._PeerConnection00EventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('PerformanceNavigation', ["type?"], {
+});
+
+$.$defineNativeClass('HTMLPreElement', ["width!"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLProgressElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLQuoteElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('RadioNodeList', [], {
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+});
+
+$.$defineNativeClass('Range', [], {
+ toString$0: function() {
   return this.toString();
- };
-$.dynamicFunction('is$Element').HTMLOptGroupElement = function() { return true; };
-$.dynamicFunction('is$Element').HTMLOptionElement = function() { return true; };
-$.dynamicFunction('get$type').Oscillator = function() { return this.type; };
-$.dynamicFunction('get$type').HTMLOutputElement = function() { return this.type; };
-$.dynamicFunction('is$Element').HTMLOutputElement = function() { return true; };
-$.dynamicFunction('is$Element').HTMLParagraphElement = function() { return true; };
-$.dynamicFunction('get$type').HTMLParamElement = function() { return this.type; };
-$.dynamicFunction('is$Element').HTMLParamElement = function() { return true; };
-$.dynamicFunction('$dom_addEventListener$3').PeerConnection00 = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$on').PeerConnection00 = function() {
-  return $._lib3_PeerConnection00EventsImpl$1(this);
- };
-$.dynamicFunction('get$type').PerformanceNavigation = function() { return this.type; };
-$.dynamicFunction('set$width').HTMLPreElement = function(v) { this.width = v; };
-$.dynamicFunction('is$Element').HTMLPreElement = function() { return true; };
-$.dynamicFunction('is$Element').HTMLProgressElement = function() { return true; };
-$.dynamicFunction('is$Element').HTMLQuoteElement = function() { return true; };
-$.dynamicFunction('toString$0').Range = function() {
+ }
+});
+
+$.$defineNativeClass('RangeException', [], {
+ toString$0: function() {
   return this.toString();
- };
-$.dynamicFunction('toString$0').RangeException = function() {
-  return this.toString();
- };
-$.dynamicFunction('get$length').SQLResultSetRowList = function() { return this.length; };
-$.dynamicFunction('is$Element').SVGAElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGAltGlyphDefElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGAltGlyphElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGAltGlyphItemElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGAnimateColorElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGAnimateElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGAnimateMotionElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGAnimateTransformElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGAnimationElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGCircleElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGClipPathElement = function() { return true; };
-$.dynamicFunction('get$type').SVGComponentTransferFunctionElement = function() { return this.type; };
-$.dynamicFunction('is$Element').SVGComponentTransferFunctionElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGCursorElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGDefsElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGDescElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGDocument = function() { return true; };
-$.dynamicFunction('set$innerHTML').SVGElement = function(svg) {
+ }
+});
+
+$.$defineNativeClass('SQLResultSetRowList', ["length?"], {
+});
+
+$.$defineNativeClass('SVGAElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGAltGlyphDefElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGAltGlyphElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGAltGlyphItemElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGAnimateColorElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGAnimateElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGAnimateMotionElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGAnimateTransformElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGAnimationElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGCircleElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGClipPathElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGComponentTransferFunctionElement', ["type?"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGCursorElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGDefsElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGDescElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGDocument', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGElement', [], {
+ set$innerHTML: function(svg) {
   var container = $.Element$tag('div');
-  container.set$innerHTML('<svg version="1.1">' + $.stringToString(svg) + '</svg>');
+  container.set$innerHTML('<svg version="1.1">' + $.S(svg) + '</svg>');
   this.set$elements(container.get$elements().get$first().get$elements());
- };
-$.dynamicFunction('set$elements').SVGElement = function(value) {
+ },
+ set$elements: function(value) {
   var elements = this.get$elements();
   $.clear(elements);
   $.addAll(elements, value);
- };
-$.dynamicFunction('get$elements').SVGElement = function() {
+ },
+ get$elements: function() {
   return $.FilteredElementList$1(this);
- };
-$.dynamicFunction('is$Element').SVGElement = function() { return true; };
-$.dynamicFunction('get$on').SVGElementInstance = function() {
-  return $._lib3_SVGElementInstanceEventsImpl$1(this);
- };
-$.dynamicFunction('get$length').SVGElementInstanceList = function() { return this.length; };
-$.dynamicFunction('is$Element').SVGEllipseElement = function() { return true; };
-$.dynamicFunction('toString$0').SVGException = function() {
+ },
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGElementInstance', [], {
+ get$on: function() {
+  return $._SVGElementInstanceEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('SVGElementInstanceList', ["length?"], {
+});
+
+$.$defineNativeClass('SVGEllipseElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGException', [], {
+ toString$0: function() {
   return this.toString();
- };
-$.dynamicFunction('is$Element').SVGFEBlendElement = function() { return true; };
-$.dynamicFunction('get$type').SVGFEColorMatrixElement = function() { return this.type; };
-$.dynamicFunction('is$Element').SVGFEColorMatrixElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFEComponentTransferElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFECompositeElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFEConvolveMatrixElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFEDiffuseLightingElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFEDisplacementMapElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFEDistantLightElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFEDropShadowElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFEFloodElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFEFuncAElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFEFuncBElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFEFuncGElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFEFuncRElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFEGaussianBlurElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFEImageElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFEMergeElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFEMergeNodeElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFEMorphologyElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFEOffsetElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFEPointLightElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFESpecularLightingElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFESpotLightElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFETileElement = function() { return true; };
-$.dynamicFunction('get$type').SVGFETurbulenceElement = function() { return this.type; };
-$.dynamicFunction('is$Element').SVGFETurbulenceElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFilterElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFontElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFontFaceElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFontFaceFormatElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFontFaceNameElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFontFaceSrcElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGFontFaceUriElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGForeignObjectElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGGElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGGlyphElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGGlyphRefElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGGradientElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGHKernElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGImageElement = function() { return true; };
-$.dynamicFunction('clear$0').SVGLengthList = function() {
+ }
+});
+
+$.$defineNativeClass('SVGFEBlendElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFEColorMatrixElement', ["type?"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFEComponentTransferElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFECompositeElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFEConvolveMatrixElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFEDiffuseLightingElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFEDisplacementMapElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFEDistantLightElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFEDropShadowElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFEFloodElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFEFuncAElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFEFuncBElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFEFuncGElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFEFuncRElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFEGaussianBlurElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFEImageElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFEMergeElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFEMergeNodeElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFEMorphologyElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFEOffsetElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFEPointLightElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFESpecularLightingElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFESpotLightElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFETileElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFETurbulenceElement', ["type?"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFilterElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFontElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFontFaceElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFontFaceFormatElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFontFaceNameElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFontFaceSrcElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGFontFaceUriElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGForeignObjectElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGGElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGGlyphElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGGlyphRefElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGGradientElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGHKernElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGImageElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGLengthList', [], {
+ clear$0: function() {
   return this.clear();
- };
-$.dynamicFunction('is$Element').SVGLineElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGLinearGradientElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGMPathElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGMarkerElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGMaskElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGMetadataElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGMissingGlyphElement = function() { return true; };
-$.dynamicFunction('clear$0').SVGNumberList = function() {
+ }
+});
+
+$.$defineNativeClass('SVGLineElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGLinearGradientElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGMPathElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGMarkerElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGMaskElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGMetadataElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGMissingGlyphElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGNumberList', [], {
+ clear$0: function() {
   return this.clear();
- };
-$.dynamicFunction('is$Element').SVGPathElement = function() { return true; };
-$.dynamicFunction('clear$0').SVGPathSegList = function() {
+ }
+});
+
+$.$defineNativeClass('SVGPathElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGPathSegList', [], {
+ clear$0: function() {
   return this.clear();
- };
-$.dynamicFunction('is$Element').SVGPatternElement = function() { return true; };
-$.dynamicFunction('clear$0').SVGPointList = function() {
+ }
+});
+
+$.$defineNativeClass('SVGPatternElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGPointList', [], {
+ clear$0: function() {
   return this.clear();
- };
-$.dynamicFunction('is$Element').SVGPolygonElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGPolylineElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGRadialGradientElement = function() { return true; };
-$.dynamicFunction('set$width').SVGRect = function(v) { this.width = v; };
-$.dynamicFunction('set$height').SVGRect = function(v) { this.height = v; };
-$.dynamicFunction('is$Element').SVGRectElement = function() { return true; };
-$.dynamicFunction('viewport$4').SVGSVGElement = function(arg0, arg1, arg2, arg3) { return this.viewport.$call$4(arg0, arg1, arg2, arg3); };
-$.dynamicFunction('is$Element').SVGSVGElement = function() { return true; };
-$.dynamicFunction('get$type').SVGScriptElement = function() { return this.type; };
-$.dynamicFunction('is$Element').SVGScriptElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGSetElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGStopElement = function() { return true; };
-$.dynamicFunction('clear$0').SVGStringList = function() {
+ }
+});
+
+$.$defineNativeClass('SVGPolygonElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGPolylineElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGRadialGradientElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGRect', ["width!", "height!"], {
+});
+
+$.$defineNativeClass('SVGRectElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGSVGElement', [], {
+ viewport$4: function(arg0, arg1, arg2, arg3) { return this.viewport.$call$4(arg0, arg1, arg2, arg3); },
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGScriptElement', ["type?"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGSetElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGStopElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGStringList', [], {
+ clear$0: function() {
   return this.clear();
- };
-$.dynamicFunction('get$type').SVGStyleElement = function() { return this.type; };
-$.dynamicFunction('is$Element').SVGStyleElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGSwitchElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGSymbolElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGTRefElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGTSpanElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGTextContentElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGTextElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGTextPathElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGTextPositioningElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGTitleElement = function() { return true; };
-$.dynamicFunction('get$type').SVGTransform = function() { return this.type; };
-$.dynamicFunction('clear$0').SVGTransformList = function() {
+ }
+});
+
+$.$defineNativeClass('SVGStyleElement', ["type?"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGSwitchElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGSymbolElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGTRefElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGTSpanElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGTextContentElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGTextElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGTextPathElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGTextPositioningElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGTitleElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGTransform', ["type?"], {
+});
+
+$.$defineNativeClass('SVGTransformList', [], {
+ clear$0: function() {
   return this.clear();
- };
-$.dynamicFunction('is$Element').SVGUseElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGVKernElement = function() { return true; };
-$.dynamicFunction('is$Element').SVGViewElement = function() { return true; };
-$.dynamicFunction('get$type').HTMLScriptElement = function() { return this.type; };
-$.dynamicFunction('is$Element').HTMLScriptElement = function() { return true; };
-$.dynamicFunction('get$type').HTMLSelectElement = function() { return this.type; };
-$.dynamicFunction('get$length').HTMLSelectElement = function() { return this.length; };
-$.dynamicFunction('set$length').HTMLSelectElement = function(v) { this.length = v; };
-$.dynamicFunction('is$Element').HTMLSelectElement = function() { return true; };
-$.dynamicFunction('is$Element').HTMLShadowElement = function() { return true; };
-$.dynamicFunction('set$innerHTML').ShadowRoot = function(v) { this.innerHTML = v; };
-$.dynamicFunction('is$Element').ShadowRoot = function() { return true; };
-$.dynamicFunction('get$on').SharedWorkerContext = function() {
-  return $._lib3_SharedWorkerContextEventsImpl$1(this);
- };
-$.dynamicFunction('get$type').HTMLSourceElement = function() { return this.type; };
-$.dynamicFunction('is$Element').HTMLSourceElement = function() { return true; };
-$.dynamicFunction('is$Element').HTMLSpanElement = function() { return true; };
-$.dynamicFunction('get$length').SpeechGrammarList = function() { return this.length; };
-$.dynamicFunction('get$length').SpeechInputResultList = function() { return this.length; };
-$.dynamicFunction('start$0').SpeechRecognition = function() {
+ }
+});
+
+$.$defineNativeClass('SVGUseElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGVKernElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SVGViewElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLScriptElement', ["type?"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLSelectElement', ["type?", "length="], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLShadowElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('ShadowRoot', ["lib$_ShadowRootImpl$innerHTML!"], {
+ get$innerHTML: function() {
+  return this.lib$_ShadowRootImpl$innerHTML;
+ },
+ set$innerHTML: function(x) {
+  this.lib$_ShadowRootImpl$innerHTML = x;
+ },
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SharedWorkerContext', [], {
+ get$on: function() {
+  return $._SharedWorkerContextEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('HTMLSourceElement', ["type?"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLSpanElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('SpeechGrammarList', ["length?"], {
+});
+
+$.$defineNativeClass('SpeechInputResultList', ["length?"], {
+});
+
+$.$defineNativeClass('SpeechRecognition', [], {
+ start$0: function() {
   return this.start();
- };
-$.dynamicFunction('$dom_addEventListener$3').SpeechRecognition = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$on').SpeechRecognition = function() {
-  return $._lib3_SpeechRecognitionEventsImpl$1(this);
- };
-$.dynamicFunction('get$length').SpeechRecognitionResult = function() { return this.length; };
-$.dynamicFunction('get$length').SpeechRecognitionResultList = function() { return this.length; };
-$.dynamicFunction('$dom_setItem$2').Storage = function(key, data) {
+ },
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
+  return $._SpeechRecognitionEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('SpeechRecognitionResult', ["length?"], {
+});
+
+$.$defineNativeClass('SpeechRecognitionResultList', ["length?"], {
+});
+
+$.$defineNativeClass('Storage', [], {
+ $dom_setItem$2: function(key, data) {
   return this.setItem(key,data);
- };
-$.dynamicFunction('$dom_key$1').Storage = function(index) {
+ },
+ $dom_key$1: function(index) {
   return this.key(index);
- };
-$.dynamicFunction('$dom_getItem$1').Storage = function(key) {
+ },
+ $dom_getItem$1: function(key) {
   return this.getItem(key);
- };
-$.dynamicFunction('$dom_clear$0').Storage = function() {
+ },
+ $dom_clear$0: function() {
   return this.clear();
- };
-$.dynamicFunction('get$$$dom_length').Storage = function() {
+ },
+ get$$$dom_length: function() {
   return this.length;;
- };
-$.dynamicFunction('isEmpty$0').Storage = function() {
+ },
+ isEmpty$0: function() {
   return $.eqNull(this.$dom_key$1(0));
- };
-$.dynamicFunction('get$length').Storage = function() {
+ },
+ get$length: function() {
   return this.get$$$dom_length();
- };
-$.dynamicFunction('forEach$1').Storage = function(f) {
-  for (var i = 0; true; i = i + 1) {
+ },
+ forEach$1: function(f) {
+  for (var i = 0; true; ++i) {
     var key = this.$dom_key$1(i);
-    if ($.eqNullB(key)) {
-      return;
-    }
+    if ($.eqNullB(key)) return;
     f.$call$2(key, this.operator$index$1(key));
   }
- };
-$.dynamicFunction('clear$0').Storage = function() {
+ },
+ clear$0: function() {
   return this.$dom_clear$0();
- };
-$.dynamicFunction('operator$indexSet$2').Storage = function(key, value) {
+ },
+ operator$indexSet$2: function(key, value) {
   return this.$dom_setItem$2(key, value);
- };
-$.dynamicFunction('operator$index$1').Storage = function(key) {
+ },
+ operator$index$1: function(key) {
   return this.$dom_getItem$1(key);
- };
-$.dynamicFunction('containsKey$1').Storage = function(key) {
+ },
+ containsKey$1: function(key) {
   return !$.eqNullB(this.$dom_getItem$1(key));
- };
-$.dynamicFunction('is$Map').Storage = function() { return true; };
-$.dynamicFunction('get$type').HTMLStyleElement = function() { return this.type; };
-$.dynamicFunction('is$Element').HTMLStyleElement = function() { return true; };
-$.dynamicFunction('get$type').StyleMedia = function() { return this.type; };
-$.dynamicFunction('get$type').StyleSheet = function() { return this.type; };
-$.dynamicFunction('getRange$2').StyleSheetList = function(start, rangeLength) {
-  return $.getRange2(this, start, rangeLength, []);
- };
-$.dynamicFunction('removeLast$0').StyleSheetList = function() {
+ },
+ is$Map: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLStyleElement', ["type?"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('StyleMedia', ["type?"], {
+});
+
+$.$defineNativeClass('StyleSheet', ["type?"], {
+});
+
+$.$defineNativeClass('StyleSheetList', ["length?"], {
+ getRange$2: function(start, rangeLength) {
+  return $.getRange0(this, start, rangeLength, []);
+ },
+ removeLast$0: function() {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot removeLast on immutable List.'));
- };
-$.dynamicFunction('last$0').StyleSheetList = function() {
+ },
+ last$0: function() {
   return this.operator$index$1($.sub($.get$length(this), 1));
- };
-$.dynamicFunction('indexOf$2').StyleSheetList = function(element, start) {
-  return $.indexOf2(this, element, start, $.get$length(this));
- };
-$.dynamicFunction('isEmpty$0').StyleSheetList = function() {
+ },
+ indexOf$2: function(element, start) {
+  return $.indexOf0(this, element, start, $.get$length(this));
+ },
+ isEmpty$0: function() {
   return $.eq($.get$length(this), 0);
- };
-$.dynamicFunction('filter$1').StyleSheetList = function(f) {
-  return $.filter3(this, [], f);
- };
-$.dynamicFunction('forEach$1').StyleSheetList = function(f) {
-  return $.forEach3(this, f);
- };
-$.dynamicFunction('addAll$1').StyleSheetList = function(collection) {
+ },
+ filter$1: function(f) {
+  return $.filter1(this, [], f);
+ },
+ forEach$1: function(f) {
+  return $.forEach1(this, f);
+ },
+ addAll$1: function(collection) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('add$1').StyleSheetList = function(value) {
+ },
+ add$1: function(value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('iterator$0').StyleSheetList = function() {
-  var t0 = $._lib3_FixedSizeListIterator$1(this);
-  $.setRuntimeTypeInfo(t0, ({T: 'StyleSheet'}));
-  return t0;
- };
-$.dynamicFunction('operator$indexSet$2').StyleSheetList = function(index, value) {
+ },
+ iterator$0: function() {
+  var t1 = $._FixedSizeListIterator$1(this);
+  $.setRuntimeTypeInfo(t1, ({T: 'StyleSheet'}));
+  return t1;
+ },
+ operator$indexSet$2: function(index, value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot assign element of immutable List.'));
- };
-$.dynamicFunction('operator$index$1').StyleSheetList = function(index) {
+ },
+ operator$index$1: function(index) {
   return this[index];;
- };
-$.dynamicFunction('get$length').StyleSheetList = function() { return this.length; };
-$.dynamicFunction('is$List2').StyleSheetList = function() { return true; };
-$.dynamicFunction('is$Collection').StyleSheetList = function() { return true; };
-$.dynamicFunction('is$Element').HTMLTableCaptionElement = function() { return true; };
-$.dynamicFunction('set$width').HTMLTableCellElement = function(v) { this.width = v; };
-$.dynamicFunction('set$height').HTMLTableCellElement = function(v) { this.height = v; };
-$.dynamicFunction('is$Element').HTMLTableCellElement = function() { return true; };
-$.dynamicFunction('set$width').HTMLTableColElement = function(v) { this.width = v; };
-$.dynamicFunction('is$Element').HTMLTableColElement = function() { return true; };
-$.dynamicFunction('set$width').HTMLTableElement = function(v) { this.width = v; };
-$.dynamicFunction('is$Element').HTMLTableElement = function() { return true; };
-$.dynamicFunction('is$Element').HTMLTableRowElement = function() { return true; };
-$.dynamicFunction('is$Element').HTMLTableSectionElement = function() { return true; };
-$.dynamicFunction('get$type').HTMLTextAreaElement = function() { return this.type; };
-$.dynamicFunction('is$Element').HTMLTextAreaElement = function() { return true; };
-$.dynamicFunction('$dom_addEventListener$3').TextTrack = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$on').TextTrack = function() {
-  return $._lib3_TextTrackEventsImpl$1(this);
- };
-$.dynamicFunction('$dom_addEventListener$3').TextTrackCue = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$text').TextTrackCue = function() { return this.text; };
-$.dynamicFunction('set$text').TextTrackCue = function(v) { this.text = v; };
-$.dynamicFunction('get$on').TextTrackCue = function() {
-  return $._lib3_TextTrackCueEventsImpl$1(this);
- };
-$.dynamicFunction('get$length').TextTrackCueList = function() { return this.length; };
-$.dynamicFunction('$dom_addEventListener$3').TextTrackList = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$length').TextTrackList = function() { return this.length; };
-$.dynamicFunction('get$on').TextTrackList = function() {
-  return $._lib3_TextTrackListEventsImpl$1(this);
- };
-$.dynamicFunction('get$length').TimeRanges = function() { return this.length; };
-$.dynamicFunction('is$Element').HTMLTitleElement = function() { return true; };
-$.dynamicFunction('get$pageY').Touch = function() { return this.pageY; };
-$.dynamicFunction('get$pageX').Touch = function() { return this.pageX; };
-$.dynamicFunction('getRange$2').TouchList = function(start, rangeLength) {
-  return $.getRange2(this, start, rangeLength, []);
- };
-$.dynamicFunction('removeLast$0').TouchList = function() {
+ },
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLTableCaptionElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLTableCellElement', ["width!", "height!"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLTableColElement', ["width!"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLTableElement', ["width!"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLTableRowElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLTableSectionElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLTextAreaElement', ["type?"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('TextTrack', [], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
+  return $._TextTrackEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('TextTrackCue', ["text="], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
+  return $._TextTrackCueEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('TextTrackCueList', ["length?"], {
+});
+
+$.$defineNativeClass('TextTrackList', ["length?"], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
+  return $._TextTrackListEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('TimeRanges', ["length?"], {
+});
+
+$.$defineNativeClass('HTMLTitleElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('Touch', ["pageY?", "pageX?"], {
+});
+
+$.$defineNativeClass('TouchList', ["length?"], {
+ getRange$2: function(start, rangeLength) {
+  return $.getRange0(this, start, rangeLength, []);
+ },
+ removeLast$0: function() {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot removeLast on immutable List.'));
- };
-$.dynamicFunction('last$0').TouchList = function() {
+ },
+ last$0: function() {
   return this.operator$index$1($.sub($.get$length(this), 1));
- };
-$.dynamicFunction('indexOf$2').TouchList = function(element, start) {
-  return $.indexOf2(this, element, start, $.get$length(this));
- };
-$.dynamicFunction('isEmpty$0').TouchList = function() {
+ },
+ indexOf$2: function(element, start) {
+  return $.indexOf0(this, element, start, $.get$length(this));
+ },
+ isEmpty$0: function() {
   return $.eq($.get$length(this), 0);
- };
-$.dynamicFunction('filter$1').TouchList = function(f) {
-  return $.filter3(this, [], f);
- };
-$.dynamicFunction('forEach$1').TouchList = function(f) {
-  return $.forEach3(this, f);
- };
-$.dynamicFunction('addAll$1').TouchList = function(collection) {
+ },
+ filter$1: function(f) {
+  return $.filter1(this, [], f);
+ },
+ forEach$1: function(f) {
+  return $.forEach1(this, f);
+ },
+ addAll$1: function(collection) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('add$1').TouchList = function(value) {
+ },
+ add$1: function(value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('iterator$0').TouchList = function() {
-  var t0 = $._lib3_FixedSizeListIterator$1(this);
-  $.setRuntimeTypeInfo(t0, ({T: 'Touch'}));
-  return t0;
- };
-$.dynamicFunction('operator$indexSet$2').TouchList = function(index, value) {
+ },
+ iterator$0: function() {
+  var t1 = $._FixedSizeListIterator$1(this);
+  $.setRuntimeTypeInfo(t1, ({T: 'Touch'}));
+  return t1;
+ },
+ operator$indexSet$2: function(index, value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot assign element of immutable List.'));
- };
-$.dynamicFunction('operator$index$1').TouchList = function(index) {
+ },
+ operator$index$1: function(index) {
   return this[index];;
- };
-$.dynamicFunction('get$length').TouchList = function() { return this.length; };
-$.dynamicFunction('is$List2').TouchList = function() { return true; };
-$.dynamicFunction('is$Collection').TouchList = function() { return true; };
-$.dynamicFunction('is$Element').HTMLTrackElement = function() { return true; };
-$.dynamicFunction('filter$1').TreeWalker = function(arg0) { return this.filter.$call$1(arg0); };
-$.dynamicFunction('get$pageY').UIEvent = function() { return this.pageY; };
-$.dynamicFunction('get$pageX').UIEvent = function() { return this.pageX; };
-$.dynamicFunction('get$type').HTMLUListElement = function() { return this.type; };
-$.dynamicFunction('is$Element').HTMLUListElement = function() { return true; };
-$.dynamicFunction('getRange$2').Uint16Array = function(start, rangeLength) {
-  return $.getRange2(this, start, rangeLength, []);
- };
-$.dynamicFunction('removeLast$0').Uint16Array = function() {
+ },
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLTrackElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('TreeWalker', [], {
+ filter$1: function(arg0) { return this.filter.$call$1(arg0); }
+});
+
+$.$defineNativeClass('UIEvent', ["pageY?", "pageX?"], {
+});
+
+$.$defineNativeClass('HTMLUListElement', ["type?"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('Uint16Array', ["length?"], {
+ getRange$2: function(start, rangeLength) {
+  return $.getRange0(this, start, rangeLength, []);
+ },
+ removeLast$0: function() {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot removeLast on immutable List.'));
- };
-$.dynamicFunction('last$0').Uint16Array = function() {
+ },
+ last$0: function() {
   return this.operator$index$1($.sub($.get$length(this), 1));
- };
-$.dynamicFunction('indexOf$2').Uint16Array = function(element, start) {
-  return $.indexOf2(this, element, start, $.get$length(this));
- };
-$.dynamicFunction('isEmpty$0').Uint16Array = function() {
+ },
+ indexOf$2: function(element, start) {
+  return $.indexOf0(this, element, start, $.get$length(this));
+ },
+ isEmpty$0: function() {
   return $.eq($.get$length(this), 0);
- };
-$.dynamicFunction('filter$1').Uint16Array = function(f) {
-  return $.filter3(this, [], f);
- };
-$.dynamicFunction('forEach$1').Uint16Array = function(f) {
-  return $.forEach3(this, f);
- };
-$.dynamicFunction('addAll$1').Uint16Array = function(collection) {
+ },
+ filter$1: function(f) {
+  return $.filter1(this, [], f);
+ },
+ forEach$1: function(f) {
+  return $.forEach1(this, f);
+ },
+ addAll$1: function(collection) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('add$1').Uint16Array = function(value) {
+ },
+ add$1: function(value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('iterator$0').Uint16Array = function() {
-  var t0 = $._lib3_FixedSizeListIterator$1(this);
-  $.setRuntimeTypeInfo(t0, ({T: 'int'}));
-  return t0;
- };
-$.dynamicFunction('operator$indexSet$2').Uint16Array = function(index, value) {
+ },
+ iterator$0: function() {
+  var t1 = $._FixedSizeListIterator$1(this);
+  $.setRuntimeTypeInfo(t1, ({T: 'int'}));
+  return t1;
+ },
+ operator$indexSet$2: function(index, value) {
   this[index] = value;
- };
-$.dynamicFunction('operator$index$1').Uint16Array = function(index) {
+ },
+ operator$index$1: function(index) {
   return this[index];;
- };
-$.dynamicFunction('get$length').Uint16Array = function() { return this.length; };
-$.dynamicFunction('is$List2').Uint16Array = function() { return true; };
-$.dynamicFunction('is$Collection').Uint16Array = function() { return true; };
-$.dynamicFunction('getRange$2').Uint32Array = function(start, rangeLength) {
-  return $.getRange2(this, start, rangeLength, []);
- };
-$.dynamicFunction('removeLast$0').Uint32Array = function() {
+ },
+ is$JavaScriptIndexingBehavior: function() { return true; },
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+});
+
+$.$defineNativeClass('Uint32Array', ["length?"], {
+ getRange$2: function(start, rangeLength) {
+  return $.getRange0(this, start, rangeLength, []);
+ },
+ removeLast$0: function() {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot removeLast on immutable List.'));
- };
-$.dynamicFunction('last$0').Uint32Array = function() {
+ },
+ last$0: function() {
   return this.operator$index$1($.sub($.get$length(this), 1));
- };
-$.dynamicFunction('indexOf$2').Uint32Array = function(element, start) {
-  return $.indexOf2(this, element, start, $.get$length(this));
- };
-$.dynamicFunction('isEmpty$0').Uint32Array = function() {
+ },
+ indexOf$2: function(element, start) {
+  return $.indexOf0(this, element, start, $.get$length(this));
+ },
+ isEmpty$0: function() {
   return $.eq($.get$length(this), 0);
- };
-$.dynamicFunction('filter$1').Uint32Array = function(f) {
-  return $.filter3(this, [], f);
- };
-$.dynamicFunction('forEach$1').Uint32Array = function(f) {
-  return $.forEach3(this, f);
- };
-$.dynamicFunction('addAll$1').Uint32Array = function(collection) {
+ },
+ filter$1: function(f) {
+  return $.filter1(this, [], f);
+ },
+ forEach$1: function(f) {
+  return $.forEach1(this, f);
+ },
+ addAll$1: function(collection) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('add$1').Uint32Array = function(value) {
+ },
+ add$1: function(value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('iterator$0').Uint32Array = function() {
-  var t0 = $._lib3_FixedSizeListIterator$1(this);
-  $.setRuntimeTypeInfo(t0, ({T: 'int'}));
-  return t0;
- };
-$.dynamicFunction('operator$indexSet$2').Uint32Array = function(index, value) {
+ },
+ iterator$0: function() {
+  var t1 = $._FixedSizeListIterator$1(this);
+  $.setRuntimeTypeInfo(t1, ({T: 'int'}));
+  return t1;
+ },
+ operator$indexSet$2: function(index, value) {
   this[index] = value;
- };
-$.dynamicFunction('operator$index$1').Uint32Array = function(index) {
+ },
+ operator$index$1: function(index) {
   return this[index];;
- };
-$.dynamicFunction('get$length').Uint32Array = function() { return this.length; };
-$.dynamicFunction('is$List2').Uint32Array = function() { return true; };
-$.dynamicFunction('is$Collection').Uint32Array = function() { return true; };
-$.dynamicFunction('getRange$2').Uint8Array = function(start, rangeLength) {
-  if (Object.getPrototypeOf(this).hasOwnProperty('getRange$2')) {
-    return $.getRange2(this, start, rangeLength, []);
-  } else {
-    return Object.prototype.getRange$2.call(this, start, rangeLength);
-  }
- };
-$.dynamicFunction('removeLast$0').Uint8Array = function() {
-  if (Object.getPrototypeOf(this).hasOwnProperty('removeLast$0')) {
-    throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot removeLast on immutable List.'));
-  } else {
-    return Object.prototype.removeLast$0.call(this);
-  }
- };
-$.dynamicFunction('last$0').Uint8Array = function() {
-  if (Object.getPrototypeOf(this).hasOwnProperty('last$0')) {
-    return this.operator$index$1($.sub($.get$length(this), 1));
-  } else {
-    return Object.prototype.last$0.call(this);
-  }
- };
-$.dynamicFunction('indexOf$2').Uint8Array = function(element, start) {
-  if (Object.getPrototypeOf(this).hasOwnProperty('indexOf$2')) {
-    return $.indexOf2(this, element, start, $.get$length(this));
-  } else {
-    return Object.prototype.indexOf$2.call(this, element, start);
-  }
- };
-$.dynamicFunction('isEmpty$0').Uint8Array = function() {
-  if (Object.getPrototypeOf(this).hasOwnProperty('isEmpty$0')) {
-    return $.eq($.get$length(this), 0);
-  } else {
-    return Object.prototype.isEmpty$0.call(this);
-  }
- };
-$.dynamicFunction('filter$1').Uint8Array = function(f) {
-  if (Object.getPrototypeOf(this).hasOwnProperty('filter$1')) {
-    return $.filter3(this, [], f);
-  } else {
-    return Object.prototype.filter$1.call(this, f);
-  }
- };
-$.dynamicFunction('forEach$1').Uint8Array = function(f) {
-  if (Object.getPrototypeOf(this).hasOwnProperty('forEach$1')) {
-    return $.forEach3(this, f);
-  } else {
-    return Object.prototype.forEach$1.call(this, f);
-  }
- };
-$.dynamicFunction('addAll$1').Uint8Array = function(collection) {
-  if (Object.getPrototypeOf(this).hasOwnProperty('addAll$1')) {
-    throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
-  } else {
-    return Object.prototype.addAll$1.call(this, collection);
-  }
- };
-$.dynamicFunction('add$1').Uint8Array = function(value) {
-  if (Object.getPrototypeOf(this).hasOwnProperty('add$1')) {
-    throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
-  } else {
-    return Object.prototype.add$1.call(this, value);
-  }
- };
-$.dynamicFunction('iterator$0').Uint8Array = function() {
-  if (Object.getPrototypeOf(this).hasOwnProperty('iterator$0')) {
-    var t0 = $._lib3_FixedSizeListIterator$1(this);
-  $.setRuntimeTypeInfo(t0, ({T: 'int'}));
-  return t0;
-  } else {
-    return Object.prototype.iterator$0.call(this);
-  }
- };
-$.dynamicFunction('operator$indexSet$2').Uint8Array = function(index, value) {
-  if (Object.getPrototypeOf(this).hasOwnProperty('operator$indexSet$2')) {
-    this[index] = value;
-  } else {
-    return Object.prototype.operator$indexSet$2.call(this, index, value);
-  }
- };
-$.dynamicFunction('operator$index$1').Uint8Array = function(index) {
-  if (Object.getPrototypeOf(this).hasOwnProperty('operator$index$1')) {
-    return this[index];;
-  } else {
-    return Object.prototype.operator$index$1.call(this, index);
-  }
- };
-$.dynamicFunction('get$length').Uint8Array = function() { return this.length; };
-$.dynamicFunction('is$List2').Uint8Array = function() { return true; };
-$.dynamicFunction('is$Collection').Uint8Array = function() { return true; };
-$.dynamicFunction('getRange$2').Uint8ClampedArray = function(start, rangeLength) {
-  return $.getRange2(this, start, rangeLength, []);
- };
-$.dynamicFunction('removeLast$0').Uint8ClampedArray = function() {
+ },
+ is$JavaScriptIndexingBehavior: function() { return true; },
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+});
+
+$.$defineNativeClass('Uint8Array', ["length?"], {
+ getRange$2: function(start, rangeLength) {
+  return $.getRange0(this, start, rangeLength, []);
+ },
+ removeLast$0: function() {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot removeLast on immutable List.'));
- };
-$.dynamicFunction('last$0').Uint8ClampedArray = function() {
+ },
+ last$0: function() {
   return this.operator$index$1($.sub($.get$length(this), 1));
- };
-$.dynamicFunction('indexOf$2').Uint8ClampedArray = function(element, start) {
-  return $.indexOf2(this, element, start, $.get$length(this));
- };
-$.dynamicFunction('isEmpty$0').Uint8ClampedArray = function() {
+ },
+ indexOf$2: function(element, start) {
+  return $.indexOf0(this, element, start, $.get$length(this));
+ },
+ isEmpty$0: function() {
   return $.eq($.get$length(this), 0);
- };
-$.dynamicFunction('filter$1').Uint8ClampedArray = function(f) {
-  return $.filter3(this, [], f);
- };
-$.dynamicFunction('forEach$1').Uint8ClampedArray = function(f) {
-  return $.forEach3(this, f);
- };
-$.dynamicFunction('addAll$1').Uint8ClampedArray = function(collection) {
+ },
+ filter$1: function(f) {
+  return $.filter1(this, [], f);
+ },
+ forEach$1: function(f) {
+  return $.forEach1(this, f);
+ },
+ addAll$1: function(collection) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('add$1').Uint8ClampedArray = function(value) {
+ },
+ add$1: function(value) {
   throw $.captureStackTrace($.UnsupportedOperationException$1('Cannot add to immutable List.'));
- };
-$.dynamicFunction('iterator$0').Uint8ClampedArray = function() {
-  var t0 = $._lib3_FixedSizeListIterator$1(this);
-  $.setRuntimeTypeInfo(t0, ({T: 'int'}));
-  return t0;
- };
-$.dynamicFunction('operator$indexSet$2').Uint8ClampedArray = function(index, value) {
+ },
+ iterator$0: function() {
+  var t1 = $._FixedSizeListIterator$1(this);
+  $.setRuntimeTypeInfo(t1, ({T: 'int'}));
+  return t1;
+ },
+ operator$indexSet$2: function(index, value) {
   this[index] = value;
- };
-$.dynamicFunction('operator$index$1').Uint8ClampedArray = function(index) {
+ },
+ operator$index$1: function(index) {
   return this[index];;
- };
-$.dynamicFunction('is$List2').Uint8ClampedArray = function() { return true; };
-$.dynamicFunction('is$Collection').Uint8ClampedArray = function() { return true; };
-$.dynamicFunction('is$Element').HTMLUnknownElement = function() { return true; };
-$.dynamicFunction('set$width').HTMLVideoElement = function(v) { this.width = v; };
-$.dynamicFunction('set$height').HTMLVideoElement = function(v) { this.height = v; };
-$.dynamicFunction('is$Element').HTMLVideoElement = function() { return true; };
-$.dynamicFunction('get$type').WebGLActiveInfo = function() { return this.type; };
-$.dynamicFunction('viewport$4').WebGLRenderingContext = function(x, y, width, height) {
+ },
+ is$JavaScriptIndexingBehavior: function() { return true; },
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+});
+
+$.$defineNativeClass('Uint8ClampedArray', [], {
+ is$List0: function() { return true; },
+ is$Collection: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLUnknownElement', [], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('HTMLVideoElement', ["width!", "height!"], {
+ is$Element: function() { return true; }
+});
+
+$.$defineNativeClass('WebGLActiveInfo', ["type?"], {
+});
+
+$.$defineNativeClass('WebGLRenderingContext', [], {
+ viewport$4: function(x, y, width, height) {
   return this.viewport(x,y,width,height);
- };
-$.dynamicFunction('vertexAttribPointer$6').WebGLRenderingContext = function(indx, size, type, normalized, stride, offset) {
+ },
+ vertexAttribPointer$6: function(indx, size, type, normalized, stride, offset) {
   return this.vertexAttribPointer(indx,size,type,normalized,stride,offset);
- };
-$.dynamicFunction('useProgram$1').WebGLRenderingContext = function(program) {
+ },
+ useProgram$1: function(program) {
   return this.useProgram(program);
- };
-$.dynamicFunction('uniform4f$5').WebGLRenderingContext = function(location, x, y, z, w) {
+ },
+ uniform4f$5: function(location, x, y, z, w) {
   return this.uniform4f(location,x,y,z,w);
- };
-$.dynamicFunction('uniform2f$3').WebGLRenderingContext = function(location, x, y) {
+ },
+ uniform2f$3: function(location, x, y) {
   return this.uniform2f(location,x,y);
- };
-$.dynamicFunction('uniform1i$2').WebGLRenderingContext = function(location, x) {
+ },
+ uniform1i$2: function(location, x) {
   return this.uniform1i(location,x);
- };
-$.dynamicFunction('uniform1f$2').WebGLRenderingContext = function(location, x) {
+ },
+ uniform1f$2: function(location, x) {
   return this.uniform1f(location,x);
- };
-$.dynamicFunction('texParameteri$3').WebGLRenderingContext = function(target, pname, param) {
+ },
+ texParameteri$3: function(target, pname, param) {
   return this.texParameteri(target,pname,param);
- };
-$.dynamicFunction('texImage2D$9').WebGLRenderingContext = function(target, level, internalformat, format_OR_width, height_OR_type, border_OR_canvas_OR_image_OR_pixels_OR_video, format, type, pixels) {
+ },
+ texImage2D$9: function(target, level, internalformat, format_OR_width, height_OR_type, border_OR_canvas_OR_image_OR_pixels_OR_video, format, type, pixels) {
   return this.texImage2D(target,level,internalformat,format_OR_width,height_OR_type,border_OR_canvas_OR_image_OR_pixels_OR_video,format,type,pixels);
- };
-$.dynamicFunction('shaderSource$2').WebGLRenderingContext = function(shader, string) {
+ },
+ shaderSource$2: function(shader, string) {
   return this.shaderSource(shader,string);
- };
-$.dynamicFunction('pixelStorei$2').WebGLRenderingContext = function(pname, param) {
+ },
+ pixelStorei$2: function(pname, param) {
   return this.pixelStorei(pname,param);
- };
-$.dynamicFunction('linkProgram$1').WebGLRenderingContext = function(program) {
+ },
+ linkProgram$1: function(program) {
   return this.linkProgram(program);
- };
-$.dynamicFunction('getUniformLocation$2').WebGLRenderingContext = function(program, name) {
+ },
+ getUniformLocation$2: function(program, name) {
   return this.getUniformLocation(program,name);
- };
-$.dynamicFunction('getAttribLocation$2').WebGLRenderingContext = function(program, name) {
+ },
+ getAttribLocation$2: function(program, name) {
   return this.getAttribLocation(program,name);
- };
-$.dynamicFunction('framebufferTexture2D$5').WebGLRenderingContext = function(target, attachment, textarget, texture, level) {
+ },
+ framebufferTexture2D$5: function(target, attachment, textarget, texture, level) {
   return this.framebufferTexture2D(target,attachment,textarget,texture,level);
- };
-$.dynamicFunction('flush$0').WebGLRenderingContext = function() {
+ },
+ flush$0: function() {
   return this.flush();
- };
-$.dynamicFunction('enableVertexAttribArray$1').WebGLRenderingContext = function(index) {
+ },
+ enableVertexAttribArray$1: function(index) {
   return this.enableVertexAttribArray(index);
- };
-$.dynamicFunction('drawArrays$3').WebGLRenderingContext = function(mode, first, count) {
+ },
+ drawArrays$3: function(mode, first, count) {
   return this.drawArrays(mode,first,count);
- };
-$.dynamicFunction('createTexture$0').WebGLRenderingContext = function() {
+ },
+ createTexture$0: function() {
   return this.createTexture();
- };
-$.dynamicFunction('createShader$1').WebGLRenderingContext = function(type) {
+ },
+ createShader$1: function(type) {
   return this.createShader(type);
- };
-$.dynamicFunction('createProgram$0').WebGLRenderingContext = function() {
+ },
+ createProgram$0: function() {
   return this.createProgram();
- };
-$.dynamicFunction('createFramebuffer$0').WebGLRenderingContext = function() {
+ },
+ createFramebuffer$0: function() {
   return this.createFramebuffer();
- };
-$.dynamicFunction('createBuffer$0').WebGLRenderingContext = function() {
+ },
+ createBuffer$0: function() {
   return this.createBuffer();
- };
-$.dynamicFunction('compileShader$1').WebGLRenderingContext = function(shader) {
+ },
+ compileShader$1: function(shader) {
   return this.compileShader(shader);
- };
-$.dynamicFunction('bufferSubData$3').WebGLRenderingContext = function(target, offset, data) {
+ },
+ bufferSubData$3: function(target, offset, data) {
   return this.bufferSubData(target,offset,data);
- };
-$.dynamicFunction('bufferData$3').WebGLRenderingContext = function(target, data_OR_size, usage) {
+ },
+ bufferData$3: function(target, data_OR_size, usage) {
   return this.bufferData(target,data_OR_size,usage);
- };
-$.dynamicFunction('bindTexture$2').WebGLRenderingContext = function(target, texture) {
+ },
+ bindTexture$2: function(target, texture) {
   return this.bindTexture(target,texture);
- };
-$.dynamicFunction('bindFramebuffer$2').WebGLRenderingContext = function(target, framebuffer) {
+ },
+ bindFramebuffer$2: function(target, framebuffer) {
   return this.bindFramebuffer(target,framebuffer);
- };
-$.dynamicFunction('bindBuffer$2').WebGLRenderingContext = function(target, buffer) {
+ },
+ bindBuffer$2: function(target, buffer) {
   return this.bindBuffer(target,buffer);
- };
-$.dynamicFunction('attachShader$2').WebGLRenderingContext = function(program, shader) {
+ },
+ attachShader$2: function(program, shader) {
   return this.attachShader(program,shader);
- };
-$.dynamicFunction('activeTexture$1').WebGLRenderingContext = function(texture) {
+ },
+ activeTexture$1: function(texture) {
   return this.activeTexture(texture);
- };
-$.dynamicFunction('is$WebGLRenderingContext').WebGLRenderingContext = function() { return true; };
-$.dynamicFunction('$dom_addEventListener$3').WebSocket = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$on').WebSocket = function() {
-  return $._lib3_WebSocketEventsImpl$1(this);
- };
-$.dynamicFunction('webkitRequestAnimationFrame$1').DOMWindow = function(callback) {
-  return this.webkitRequestAnimationFrame($.convertDartClosureToJS(callback));
- };
-$.dynamicFunction('$dom_addEventListener$3').DOMWindow = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$window').DOMWindow = function() { return this.window; };
-$.dynamicFunction('get$navigator').DOMWindow = function() { return this.navigator; };
-$.dynamicFunction('get$length').DOMWindow = function() { return this.length; };
-$.dynamicFunction('get$on').DOMWindow = function() {
-  return $._lib3_WindowEventsImpl$1(this);
- };
-$.dynamicFunction('get$on').Worker = function() {
-  return $._lib3_WorkerEventsImpl$1(this);
- };
-$.dynamicFunction('$dom_addEventListener$3').WorkerContext = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$navigator').WorkerContext = function() { return this.navigator; };
-$.dynamicFunction('get$on').WorkerContext = function() {
+ },
+ is$WebGLRenderingContext: function() { return true; }
+});
+
+$.$defineNativeClass('WebSocket', [], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
+  return $._WebSocketEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('DOMWindow', ["navigator?", "length?"], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
+  return $._WindowEventsImpl$1(this);
+ },
+ _ensureRequestAnimationFrame$0: function() {
+     if (this.requestAnimationFrame && this.cancelAnimationFrame) return;
+   var vendors = ['ms', 'moz', 'webkit', 'o'];
+   for (var i = 0; i < vendors.length && !this.requestAnimationFrame; ++i) {
+     this.requestAnimationFrame = this[vendors[i] + 'RequestAnimationFrame'];
+     this.cancelAnimationFrame =
+         this[vendors[i]+'CancelAnimationFrame'] ||
+         this[vendors[i]+'CancelRequestAnimationFrame'];
+   }
+   if (this.requestAnimationFrame && this.cancelAnimationFrame) return;
+   this.requestAnimationFrame = function(callback) {
+       return window.setTimeout(callback, 16 /* 16ms ~= 60fps */);
+   };
+   this.cancelAnimationFrame = function(id) { clearTimeout(id); }
+;
+ },
+ _requestAnimationFrame$1: function(callback) {
+  return this.requestAnimationFrame($.convertDartClosureToJS(callback, 1));
+ },
+ requestAnimationFrame$1: function(callback) {
+  this._ensureRequestAnimationFrame$0();
+  return this._requestAnimationFrame$1(callback);
+ }
+});
+
+$.$defineNativeClass('Worker', [], {
+ get$on: function() {
+  return $._WorkerEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('WorkerContext', ["navigator?"], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
   if (Object.getPrototypeOf(this).hasOwnProperty('get$on')) {
-    return $._lib3_WorkerContextEventsImpl$1(this);
+    return $._WorkerContextEventsImpl$1(this);
   } else {
     return Object.prototype.get$on.call(this);
   }
- };
-$.dynamicFunction('toString$0').WorkerLocation = function() {
+ }
+});
+
+$.$defineNativeClass('WorkerLocation', [], {
+ toString$0: function() {
   return this.toString();
- };
-$.dynamicFunction('get$userAgent').WorkerNavigator = function() { return this.userAgent; };
-$.dynamicFunction('$dom_addEventListener$3').XMLHttpRequest = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$on').XMLHttpRequest = function() {
-  return $._lib3_XMLHttpRequestEventsImpl$1(this);
- };
-$.dynamicFunction('toString$0').XMLHttpRequestException = function() {
+ }
+});
+
+$.$defineNativeClass('WorkerNavigator', ["userAgent?"], {
+});
+
+$.$defineNativeClass('XMLHttpRequest', [], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
+  return $._XMLHttpRequestEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('XMLHttpRequestException', [], {
+ toString$0: function() {
   return this.toString();
- };
-$.dynamicFunction('$dom_addEventListener$3').XMLHttpRequestUpload = function(type, listener, useCapture) {
-  return this.addEventListener(type,$.convertDartClosureToJS(listener),useCapture);
- };
-$.dynamicFunction('get$on').XMLHttpRequestUpload = function() {
-  return $._lib3_XMLHttpRequestUploadEventsImpl$1(this);
- };
-$.dynamicFunction('toString$0').XPathException = function() {
+ }
+});
+
+$.$defineNativeClass('XMLHttpRequestUpload', [], {
+ $dom_addEventListener$3: function(type, listener, useCapture) {
+  return this.addEventListener(type,$.convertDartClosureToJS(listener, 1),useCapture);
+ },
+ get$on: function() {
+  return $._XMLHttpRequestUploadEventsImpl$1(this);
+ }
+});
+
+$.$defineNativeClass('XPathException', [], {
+ toString$0: function() {
   return this.toString();
- };
-$.dynamicFunction('reset$0').XSLTProcessor = function() {
+ }
+});
+
+$.$defineNativeClass('XSLTProcessor', [], {
+ reset$0: function() {
   return this.reset();
- };
-// 286 dynamic classes.
+ }
+});
+
+$.$defineNativeClass('IDBOpenDBRequest', [], {
+ get$on: function() {
+  return $._IDBOpenDBRequestEventsImpl$1(this);
+ }
+});
+
+// 287 dynamic classes.
 // 349 classes
-// 30 !leaf
+// 31 !leaf
 (function(){
-  var v0/*class(_SVGTextPositioningElementImpl)*/ = 'SVGTextPositioningElement|SVGTextElement|SVGTSpanElement|SVGTRefElement|SVGAltGlyphElement';
-  var v1/*class(_Uint8ArrayImpl)*/ = 'Uint8Array|Uint8ClampedArray';
-  var v2/*class(_SVGTextContentElementImpl)*/ = [v0/*class(_SVGTextPositioningElementImpl)*/,'SVGTextContentElement|SVGTextPathElement'].join('|');
-  var v3/*class(_SVGGradientElementImpl)*/ = 'SVGGradientElement|SVGRadialGradientElement|SVGLinearGradientElement';
-  var v4/*class(_SVGComponentTransferFunctionElementImpl)*/ = 'SVGComponentTransferFunctionElement|SVGFEFuncRElement|SVGFEFuncGElement|SVGFEFuncBElement|SVGFEFuncAElement';
-  var v5/*class(_SVGAnimationElementImpl)*/ = 'SVGAnimationElement|SVGSetElement|SVGAnimateTransformElement|SVGAnimateMotionElement|SVGAnimateElement|SVGAnimateColorElement';
-  var v6/*class(_SVGElementImpl)*/ = [v2/*class(_SVGTextContentElementImpl)*/,v3/*class(_SVGGradientElementImpl)*/,v4/*class(_SVGComponentTransferFunctionElementImpl)*/,v5/*class(_SVGAnimationElementImpl)*/,'SVGElement|SVGViewElement|SVGVKernElement|SVGUseElement|SVGTitleElement|SVGSymbolElement|SVGSwitchElement|SVGStyleElement|SVGStopElement|SVGScriptElement|SVGSVGElement|SVGRectElement|SVGPolylineElement|SVGPolygonElement|SVGPatternElement|SVGPathElement|SVGMissingGlyphElement|SVGMetadataElement|SVGMaskElement|SVGMarkerElement|SVGMPathElement|SVGLineElement|SVGImageElement|SVGHKernElement|SVGGlyphRefElement|SVGGlyphElement|SVGGElement|SVGForeignObjectElement|SVGFontFaceUriElement|SVGFontFaceSrcElement|SVGFontFaceNameElement|SVGFontFaceFormatElement|SVGFontFaceElement|SVGFontElement|SVGFilterElement|SVGFETurbulenceElement|SVGFETileElement|SVGFESpotLightElement|SVGFESpecularLightingElement|SVGFEPointLightElement|SVGFEOffsetElement|SVGFEMorphologyElement|SVGFEMergeNodeElement|SVGFEMergeElement|SVGFEImageElement|SVGFEGaussianBlurElement|SVGFEFloodElement|SVGFEDropShadowElement|SVGFEDistantLightElement|SVGFEDisplacementMapElement|SVGFEDiffuseLightingElement|SVGFEConvolveMatrixElement|SVGFECompositeElement|SVGFEComponentTransferElement|SVGFEColorMatrixElement|SVGFEBlendElement|SVGEllipseElement|SVGDescElement|SVGDefsElement|SVGCursorElement|SVGClipPathElement|SVGCircleElement|SVGAltGlyphItemElement|SVGAltGlyphDefElement|SVGAElement'].join('|');
-  var v7/*class(_MediaElementImpl)*/ = 'HTMLMediaElement|HTMLVideoElement|HTMLAudioElement';
-  var v8/*class(_UIEventImpl)*/ = 'UIEvent|WheelEvent|TouchEvent|TextEvent|SVGZoomEvent|MouseEvent|KeyboardEvent|CompositionEvent';
-  var v9/*class(_ElementImpl)*/ = [v6/*class(_SVGElementImpl)*/,v7/*class(_MediaElementImpl)*/,'Element|HTMLUnknownElement|HTMLUListElement|HTMLTrackElement|HTMLTitleElement|HTMLTextAreaElement|HTMLTableSectionElement|HTMLTableRowElement|HTMLTableElement|HTMLTableColElement|HTMLTableCellElement|HTMLTableCaptionElement|HTMLStyleElement|HTMLSpanElement|HTMLSourceElement|HTMLShadowElement|HTMLSelectElement|HTMLScriptElement|HTMLQuoteElement|HTMLProgressElement|HTMLPreElement|HTMLParamElement|HTMLParagraphElement|HTMLOutputElement|HTMLOptionElement|HTMLOptGroupElement|HTMLObjectElement|HTMLOListElement|HTMLModElement|HTMLMeterElement|HTMLMetaElement|HTMLMenuElement|HTMLMarqueeElement|HTMLMapElement|HTMLLinkElement|HTMLLegendElement|HTMLLabelElement|HTMLLIElement|HTMLKeygenElement|HTMLInputElement|HTMLImageElement|HTMLIFrameElement|HTMLHtmlElement|HTMLHeadingElement|HTMLHeadElement|HTMLHRElement|HTMLFrameSetElement|HTMLFrameElement|HTMLFormElement|HTMLFontElement|HTMLFieldSetElement|HTMLEmbedElement|HTMLDivElement|HTMLDirectoryElement|HTMLDetailsElement|HTMLDListElement|HTMLContentElement|HTMLCanvasElement|HTMLButtonElement|HTMLBodyElement|HTMLBaseFontElement|HTMLBaseElement|HTMLBRElement|HTMLAreaElement|HTMLAppletElement|HTMLAnchorElement|HTMLElement'].join('|');
-  var v10/*class(_DocumentFragmentImpl)*/ = 'DocumentFragment|ShadowRoot';
-  var v11/*class(_DocumentImpl)*/ = 'HTMLDocument|SVGDocument';
-  var v12/*class(_CharacterDataImpl)*/ = 'CharacterData|Text|CDATASection|Comment';
-  var v13/*class(_WorkerContextImpl)*/ = 'WorkerContext|SharedWorkerContext|DedicatedWorkerContext';
-  var v14/*class(_NodeImpl)*/ = [v9/*class(_ElementImpl)*/,v10/*class(_DocumentFragmentImpl)*/,v11/*class(_DocumentImpl)*/,v12/*class(_CharacterDataImpl)*/,'Node|ProcessingInstruction|Notation|EntityReference|Entity|DocumentType|Attr'].join('|');
-  var v15/*class(_MediaStreamImpl)*/ = 'MediaStream|LocalMediaStream';
-  var v16/*class(_IDBRequestImpl)*/ = 'IDBRequest|IDBVersionChangeRequest';
-  var v17/*class(_AbstractWorkerImpl)*/ = 'AbstractWorker|Worker|SharedWorker';
+  var v0/*class(_SVGTextPositioningElementImpl)*/ = 'SVGTextPositioningElement|SVGTextElement|SVGTSpanElement|SVGTRefElement|SVGAltGlyphElement|SVGTextElement|SVGTSpanElement|SVGTRefElement|SVGAltGlyphElement';
+  var v1/*class(_Uint8ArrayImpl)*/ = 'Uint8Array|Uint8ClampedArray|Uint8ClampedArray';
+  var v2/*class(_SVGTextContentElementImpl)*/ = [v0/*class(_SVGTextPositioningElementImpl)*/,v0/*class(_SVGTextPositioningElementImpl)*/,'SVGTextContentElement|SVGTextPathElement|SVGTextPathElement'].join('|');
+  var v3/*class(_SVGGradientElementImpl)*/ = 'SVGGradientElement|SVGRadialGradientElement|SVGLinearGradientElement|SVGRadialGradientElement|SVGLinearGradientElement';
+  var v4/*class(_SVGComponentTransferFunctionElementImpl)*/ = 'SVGComponentTransferFunctionElement|SVGFEFuncRElement|SVGFEFuncGElement|SVGFEFuncBElement|SVGFEFuncAElement|SVGFEFuncRElement|SVGFEFuncGElement|SVGFEFuncBElement|SVGFEFuncAElement';
+  var v5/*class(_SVGAnimationElementImpl)*/ = 'SVGAnimationElement|SVGSetElement|SVGAnimateTransformElement|SVGAnimateMotionElement|SVGAnimateElement|SVGAnimateColorElement|SVGSetElement|SVGAnimateTransformElement|SVGAnimateMotionElement|SVGAnimateElement|SVGAnimateColorElement';
+  var v6/*class(_SVGElementImpl)*/ = [v2/*class(_SVGTextContentElementImpl)*/,v3/*class(_SVGGradientElementImpl)*/,v4/*class(_SVGComponentTransferFunctionElementImpl)*/,v5/*class(_SVGAnimationElementImpl)*/,v2/*class(_SVGTextContentElementImpl)*/,v3/*class(_SVGGradientElementImpl)*/,v4/*class(_SVGComponentTransferFunctionElementImpl)*/,v5/*class(_SVGAnimationElementImpl)*/,'SVGElement|SVGViewElement|SVGVKernElement|SVGUseElement|SVGTitleElement|SVGSymbolElement|SVGSwitchElement|SVGStyleElement|SVGStopElement|SVGScriptElement|SVGSVGElement|SVGRectElement|SVGPolylineElement|SVGPolygonElement|SVGPatternElement|SVGPathElement|SVGMissingGlyphElement|SVGMetadataElement|SVGMaskElement|SVGMarkerElement|SVGMPathElement|SVGLineElement|SVGImageElement|SVGHKernElement|SVGGlyphRefElement|SVGGlyphElement|SVGGElement|SVGForeignObjectElement|SVGFontFaceUriElement|SVGFontFaceSrcElement|SVGFontFaceNameElement|SVGFontFaceFormatElement|SVGFontFaceElement|SVGFontElement|SVGFilterElement|SVGFETurbulenceElement|SVGFETileElement|SVGFESpotLightElement|SVGFESpecularLightingElement|SVGFEPointLightElement|SVGFEOffsetElement|SVGFEMorphologyElement|SVGFEMergeNodeElement|SVGFEMergeElement|SVGFEImageElement|SVGFEGaussianBlurElement|SVGFEFloodElement|SVGFEDropShadowElement|SVGFEDistantLightElement|SVGFEDisplacementMapElement|SVGFEDiffuseLightingElement|SVGFEConvolveMatrixElement|SVGFECompositeElement|SVGFEComponentTransferElement|SVGFEColorMatrixElement|SVGFEBlendElement|SVGEllipseElement|SVGDescElement|SVGDefsElement|SVGCursorElement|SVGClipPathElement|SVGCircleElement|SVGAltGlyphItemElement|SVGAltGlyphDefElement|SVGAElement|SVGViewElement|SVGVKernElement|SVGUseElement|SVGTitleElement|SVGSymbolElement|SVGSwitchElement|SVGStyleElement|SVGStopElement|SVGScriptElement|SVGSVGElement|SVGRectElement|SVGPolylineElement|SVGPolygonElement|SVGPatternElement|SVGPathElement|SVGMissingGlyphElement|SVGMetadataElement|SVGMaskElement|SVGMarkerElement|SVGMPathElement|SVGLineElement|SVGImageElement|SVGHKernElement|SVGGlyphRefElement|SVGGlyphElement|SVGGElement|SVGForeignObjectElement|SVGFontFaceUriElement|SVGFontFaceSrcElement|SVGFontFaceNameElement|SVGFontFaceFormatElement|SVGFontFaceElement|SVGFontElement|SVGFilterElement|SVGFETurbulenceElement|SVGFETileElement|SVGFESpotLightElement|SVGFESpecularLightingElement|SVGFEPointLightElement|SVGFEOffsetElement|SVGFEMorphologyElement|SVGFEMergeNodeElement|SVGFEMergeElement|SVGFEImageElement|SVGFEGaussianBlurElement|SVGFEFloodElement|SVGFEDropShadowElement|SVGFEDistantLightElement|SVGFEDisplacementMapElement|SVGFEDiffuseLightingElement|SVGFEConvolveMatrixElement|SVGFECompositeElement|SVGFEComponentTransferElement|SVGFEColorMatrixElement|SVGFEBlendElement|SVGEllipseElement|SVGDescElement|SVGDefsElement|SVGCursorElement|SVGClipPathElement|SVGCircleElement|SVGAltGlyphItemElement|SVGAltGlyphDefElement|SVGAElement'].join('|');
+  var v7/*class(_MediaElementImpl)*/ = 'HTMLMediaElement|HTMLVideoElement|HTMLAudioElement|HTMLVideoElement|HTMLAudioElement';
+  var v8/*class(_UIEventImpl)*/ = 'UIEvent|WheelEvent|TouchEvent|TextEvent|SVGZoomEvent|MouseEvent|KeyboardEvent|CompositionEvent|WheelEvent|TouchEvent|TextEvent|SVGZoomEvent|MouseEvent|KeyboardEvent|CompositionEvent';
+  var v9/*class(_ElementImpl)*/ = [v6/*class(_SVGElementImpl)*/,v7/*class(_MediaElementImpl)*/,v6/*class(_SVGElementImpl)*/,v7/*class(_MediaElementImpl)*/,'Element|HTMLUnknownElement|HTMLUListElement|HTMLTrackElement|HTMLTitleElement|HTMLTextAreaElement|HTMLTableSectionElement|HTMLTableRowElement|HTMLTableElement|HTMLTableColElement|HTMLTableCellElement|HTMLTableCaptionElement|HTMLStyleElement|HTMLSpanElement|HTMLSourceElement|HTMLShadowElement|HTMLSelectElement|HTMLScriptElement|HTMLQuoteElement|HTMLProgressElement|HTMLPreElement|HTMLParamElement|HTMLParagraphElement|HTMLOutputElement|HTMLOptionElement|HTMLOptGroupElement|HTMLObjectElement|HTMLOListElement|HTMLModElement|HTMLMeterElement|HTMLMetaElement|HTMLMenuElement|HTMLMarqueeElement|HTMLMapElement|HTMLLinkElement|HTMLLegendElement|HTMLLabelElement|HTMLLIElement|HTMLKeygenElement|HTMLInputElement|HTMLImageElement|HTMLIFrameElement|HTMLHtmlElement|HTMLHeadingElement|HTMLHeadElement|HTMLHRElement|HTMLFrameSetElement|HTMLFrameElement|HTMLFormElement|HTMLFontElement|HTMLFieldSetElement|HTMLEmbedElement|HTMLDivElement|HTMLDirectoryElement|HTMLDetailsElement|HTMLDListElement|HTMLContentElement|HTMLCanvasElement|HTMLButtonElement|HTMLBodyElement|HTMLBaseFontElement|HTMLBaseElement|HTMLBRElement|HTMLAreaElement|HTMLAppletElement|HTMLAnchorElement|HTMLElement|HTMLUnknownElement|HTMLUListElement|HTMLTrackElement|HTMLTitleElement|HTMLTextAreaElement|HTMLTableSectionElement|HTMLTableRowElement|HTMLTableElement|HTMLTableColElement|HTMLTableCellElement|HTMLTableCaptionElement|HTMLStyleElement|HTMLSpanElement|HTMLSourceElement|HTMLShadowElement|HTMLSelectElement|HTMLScriptElement|HTMLQuoteElement|HTMLProgressElement|HTMLPreElement|HTMLParamElement|HTMLParagraphElement|HTMLOutputElement|HTMLOptionElement|HTMLOptGroupElement|HTMLObjectElement|HTMLOListElement|HTMLModElement|HTMLMeterElement|HTMLMetaElement|HTMLMenuElement|HTMLMarqueeElement|HTMLMapElement|HTMLLinkElement|HTMLLegendElement|HTMLLabelElement|HTMLLIElement|HTMLKeygenElement|HTMLInputElement|HTMLImageElement|HTMLIFrameElement|HTMLHtmlElement|HTMLHeadingElement|HTMLHeadElement|HTMLHRElement|HTMLFrameSetElement|HTMLFrameElement|HTMLFormElement|HTMLFontElement|HTMLFieldSetElement|HTMLEmbedElement|HTMLDivElement|HTMLDirectoryElement|HTMLDetailsElement|HTMLDListElement|HTMLContentElement|HTMLCanvasElement|HTMLButtonElement|HTMLBodyElement|HTMLBaseFontElement|HTMLBaseElement|HTMLBRElement|HTMLAreaElement|HTMLAppletElement|HTMLAnchorElement|HTMLElement'].join('|');
+  var v10/*class(_DocumentFragmentImpl)*/ = 'DocumentFragment|ShadowRoot|ShadowRoot';
+  var v11/*class(_DocumentImpl)*/ = 'HTMLDocument|SVGDocument|SVGDocument';
+  var v12/*class(_CharacterDataImpl)*/ = 'CharacterData|Text|CDATASection|CDATASection|Comment|Text|CDATASection|CDATASection|Comment';
+  var v13/*class(_WorkerContextImpl)*/ = 'WorkerContext|SharedWorkerContext|DedicatedWorkerContext|SharedWorkerContext|DedicatedWorkerContext';
+  var v14/*class(_NodeImpl)*/ = [v9/*class(_ElementImpl)*/,v10/*class(_DocumentFragmentImpl)*/,v11/*class(_DocumentImpl)*/,v12/*class(_CharacterDataImpl)*/,v9/*class(_ElementImpl)*/,v10/*class(_DocumentFragmentImpl)*/,v11/*class(_DocumentImpl)*/,v12/*class(_CharacterDataImpl)*/,'Node|ProcessingInstruction|Notation|EntityReference|Entity|DocumentType|Attr|ProcessingInstruction|Notation|EntityReference|Entity|DocumentType|Attr'].join('|');
+  var v15/*class(_MediaStreamImpl)*/ = 'MediaStream|LocalMediaStream|LocalMediaStream';
+  var v16/*class(_IDBRequestImpl)*/ = 'IDBRequest|IDBOpenDBRequest|IDBVersionChangeRequest|IDBOpenDBRequest|IDBVersionChangeRequest';
+  var v17/*class(_AbstractWorkerImpl)*/ = 'AbstractWorker|Worker|SharedWorker|Worker|SharedWorker';
   var table = [
     // [dynamic-dispatch-tag, tags of classes implementing dynamic-dispatch-tag]
     ['SVGTextPositioningElement', v0/*class(_SVGTextPositioningElementImpl)*/],
     ['SVGTextContentElement', v2/*class(_SVGTextContentElementImpl)*/],
-    ['StyleSheet', 'StyleSheet|CSSStyleSheet'],
-    ['AbstractWorker', v17/*class(_AbstractWorkerImpl)*/],
-    ['Uint8Array', v1/*class(_Uint8ArrayImpl)*/],
-    ['ArrayBufferView', [v1/*class(_Uint8ArrayImpl)*/,'ArrayBufferView|Uint32Array|Uint16Array|Int8Array|Int32Array|Int16Array|Float64Array|Float32Array|DataView'].join('|')],
+    ['StyleSheet', 'StyleSheet|CSSStyleSheet|CSSStyleSheet'],
     ['UIEvent', v8/*class(_UIEventImpl)*/],
-    ['Blob', 'Blob|File'],
+    ['Uint8Array', v1/*class(_Uint8ArrayImpl)*/],
+    ['AbstractWorker', v17/*class(_AbstractWorkerImpl)*/],
+    ['ArrayBufferView', [v1/*class(_Uint8ArrayImpl)*/,v1/*class(_Uint8ArrayImpl)*/,'ArrayBufferView|Uint32Array|Uint16Array|Int8Array|Int32Array|Int16Array|Float64Array|Float32Array|DataView|Uint32Array|Uint16Array|Int8Array|Int32Array|Int16Array|Float64Array|Float32Array|DataView'].join('|')],
     ['WorkerContext', v13/*class(_WorkerContextImpl)*/],
-    ['CSSRule', 'CSSRule|WebKitCSSRegionRule|CSSUnknownRule|CSSStyleRule|CSSPageRule|CSSMediaRule|WebKitCSSKeyframesRule|WebKitCSSKeyframeRule|CSSImportRule|CSSFontFaceRule|CSSCharsetRule'],
-    ['CSSValueList', 'CSSValueList|WebKitCSSFilterValue|WebKitCSSTransformValue'],
+    ['Blob', 'Blob|File|File'],
+    ['CSSRule', 'CSSRule|CSSUnknownRule|CSSStyleRule|CSSPageRule|CSSMediaRule|WebKitCSSKeyframesRule|WebKitCSSKeyframeRule|CSSImportRule|CSSFontFaceRule|CSSCharsetRule|CSSUnknownRule|CSSStyleRule|CSSPageRule|CSSMediaRule|WebKitCSSKeyframesRule|WebKitCSSKeyframeRule|CSSImportRule|CSSFontFaceRule|CSSCharsetRule'],
+    ['CSSValueList', 'CSSValueList|WebKitCSSFilterValue|WebKitCSSTransformValue|WebKitCSSFilterValue|WebKitCSSTransformValue'],
     ['CharacterData', v12/*class(_CharacterDataImpl)*/],
-    ['DOMTokenList', 'DOMTokenList|DOMSettableTokenList'],
+    ['DOMTokenList', 'DOMTokenList|DOMSettableTokenList|DOMSettableTokenList'],
     ['HTMLDocument', v11/*class(_DocumentImpl)*/],
     ['DocumentFragment', v10/*class(_DocumentFragmentImpl)*/],
     ['SVGGradientElement', v3/*class(_SVGGradientElementImpl)*/],
@@ -5328,17 +6512,17 @@ $.dynamicFunction('reset$0').XSLTProcessor = function() {
     ['SVGElement', v6/*class(_SVGElementImpl)*/],
     ['HTMLMediaElement', v7/*class(_MediaElementImpl)*/],
     ['Element', v9/*class(_ElementImpl)*/],
-    ['EntrySync', 'EntrySync|FileEntrySync|DirectoryEntrySync'],
-    ['Event', [v8/*class(_UIEventImpl)*/,'Event|WebGLContextEvent|WebKitTransitionEvent|TrackEvent|StorageEvent|SpeechRecognitionEvent|SpeechInputEvent|ProgressEvent|XMLHttpRequestProgressEvent|PopStateEvent|PageTransitionEvent|OverflowEvent|OfflineAudioCompletionEvent|MutationEvent|MessageEvent|MediaStreamEvent|MediaKeyEvent|IDBVersionChangeEvent|HashChangeEvent|ErrorEvent|DeviceOrientationEvent|DeviceMotionEvent|CustomEvent|CloseEvent|BeforeLoadEvent|AudioProcessingEvent|WebKitAnimationEvent'].join('|')],
+    ['EntrySync', 'EntrySync|FileEntrySync|DirectoryEntrySync|FileEntrySync|DirectoryEntrySync'],
+    ['Event', [v8/*class(_UIEventImpl)*/,v8/*class(_UIEventImpl)*/,'Event|WebGLContextEvent|WebKitTransitionEvent|TrackEvent|StorageEvent|SpeechRecognitionEvent|SpeechRecognitionError|SpeechInputEvent|ProgressEvent|XMLHttpRequestProgressEvent|XMLHttpRequestProgressEvent|PopStateEvent|PageTransitionEvent|OverflowEvent|OfflineAudioCompletionEvent|MutationEvent|MessageEvent|MediaStreamEvent|MediaKeyEvent|IDBVersionChangeEvent|HashChangeEvent|ErrorEvent|DeviceOrientationEvent|DeviceMotionEvent|CustomEvent|CloseEvent|BeforeLoadEvent|AudioProcessingEvent|WebKitAnimationEvent|WebGLContextEvent|WebKitTransitionEvent|TrackEvent|StorageEvent|SpeechRecognitionEvent|SpeechRecognitionError|SpeechInputEvent|ProgressEvent|XMLHttpRequestProgressEvent|XMLHttpRequestProgressEvent|PopStateEvent|PageTransitionEvent|OverflowEvent|OfflineAudioCompletionEvent|MutationEvent|MessageEvent|MediaStreamEvent|MediaKeyEvent|IDBVersionChangeEvent|HashChangeEvent|ErrorEvent|DeviceOrientationEvent|DeviceMotionEvent|CustomEvent|CloseEvent|BeforeLoadEvent|AudioProcessingEvent|WebKitAnimationEvent'].join('|')],
     ['Node', v14/*class(_NodeImpl)*/],
     ['MediaStream', v15/*class(_MediaStreamImpl)*/],
     ['IDBRequest', v16/*class(_IDBRequestImpl)*/],
-    ['EventTarget', [v13/*class(_WorkerContextImpl)*/,v14/*class(_NodeImpl)*/,v15/*class(_MediaStreamImpl)*/,v16/*class(_IDBRequestImpl)*/,v17/*class(_AbstractWorkerImpl)*/,'EventTarget|XMLHttpRequestUpload|XMLHttpRequest|DOMWindow|WebSocket|TextTrackList|TextTrackCue|TextTrack|SpeechRecognition|PeerConnection00|Notification|MessagePort|MediaController|IDBTransaction|IDBDatabase|FileWriter|FileReader|EventSource|DeprecatedPeerConnection|DOMApplicationCache|BatteryManager|AudioContext'].join('|')],
-    ['HTMLCollection', 'HTMLCollection|HTMLOptionsCollection']];
+    ['EventTarget', [v13/*class(_WorkerContextImpl)*/,v14/*class(_NodeImpl)*/,v15/*class(_MediaStreamImpl)*/,v16/*class(_IDBRequestImpl)*/,v17/*class(_AbstractWorkerImpl)*/,v13/*class(_WorkerContextImpl)*/,v14/*class(_NodeImpl)*/,v15/*class(_MediaStreamImpl)*/,v16/*class(_IDBRequestImpl)*/,v17/*class(_AbstractWorkerImpl)*/,'EventTarget|XMLHttpRequestUpload|XMLHttpRequest|DOMWindow|WebSocket|TextTrackList|TextTrackCue|TextTrack|SpeechRecognition|PeerConnection00|Notification|MessagePort|MediaController|IDBTransaction|IDBDatabase|FileWriter|FileReader|EventSource|DeprecatedPeerConnection|DOMApplicationCache|BatteryManager|AudioContext|XMLHttpRequestUpload|XMLHttpRequest|DOMWindow|WebSocket|TextTrackList|TextTrackCue|TextTrack|SpeechRecognition|PeerConnection00|Notification|MessagePort|MediaController|IDBTransaction|IDBDatabase|FileWriter|FileReader|EventSource|DeprecatedPeerConnection|DOMApplicationCache|BatteryManager|AudioContext'].join('|')],
+    ['HTMLCollection', 'HTMLCollection|HTMLOptionsCollection|HTMLOptionsCollection'],
+    ['NodeList', 'NodeList|RadioNodeList|RadioNodeList']];
 $.dynamicSetMetadata(table);
 })();
 
-})();
 if (typeof window != 'undefined' && typeof document != 'undefined' &&
     window.addEventListener && document.readyState == 'loading') {
   window.addEventListener('DOMContentLoaded', function(e) {
@@ -5350,38 +6534,38 @@ if (typeof window != 'undefined' && typeof document != 'undefined' &&
 function init() {
   Isolate.$isolateProperties = {};
 Isolate.$defineClass = function(cls, superclass, fields, prototype) {
+  var generateGetterSetter = function(field, prototype) {
+  var len = field.length;
+  var lastChar = field[len - 1];
+  var needsGetter = lastChar == '?' || lastChar == '=';
+  var needsSetter = lastChar == '!' || lastChar == '=';
+  if (needsGetter || needsSetter) field = field.substring(0, len - 1);
+  if (needsGetter) {
+    var getterString = "return this." + field + ";";
+    prototype["get$" + field] = new Function(getterString);
+  }
+  if (needsSetter) {
+    var setterString = "this." + field + " = v;";
+    prototype["set$" + field] = new Function("v", setterString);
+  }
+  return field;
+};
   var constructor;
   if (typeof fields == 'function') {
     constructor = fields;
   } else {
-    var str = "(function " + cls + "(";
+    var str = "function " + cls + "(";
     var body = "";
     for (var i = 0; i < fields.length; i++) {
       if (i != 0) str += ", ";
       var field = fields[i];
-      var len = field.length;
-      var lastChar = field[len - 1];
-      var needsGetter = false;
-      var needsSetter = false;
-      switch (lastChar) {
-        case '?': needsGetter = true; break;
-        case '=': needsGetter = true; // Fall-through.
-        case '!': needsSetter = true;
-      }
-      if (needsGetter || needsSetter) field = field.substring(0, len - 1);
+      field = generateGetterSetter(field, prototype);
       str += field;
       body += "this." + field + " = " + field + ";\n";
-      if (needsGetter) {
-        var getterString = "return this." + field + ";";
-        prototype["get$" + field] = new Function(getterString);
-      }
-      if (needsSetter) {
-        var setterString = "this." + field + " = v;";
-        prototype["set$" + field] = new Function("v", setterString);
-      }
     }
-    str += ") {" + body + "})";
-    constructor = eval(str);
+    str += ") {" + body + "}\n";
+    str += "return " + cls + ";";
+    constructor = new Function(str)();
   }
   Isolate.$isolateProperties[cls] = constructor;
   constructor.prototype = prototype;
@@ -5390,7 +6574,13 @@ Isolate.$defineClass = function(cls, superclass, fields, prototype) {
   }
 };
 Isolate.$pendingClasses = {};
-Isolate.$finishClasses = function() {
+Isolate.$finishClasses = function(collectedClasses) {
+  for (var collected in collectedClasses) {
+    if (Object.prototype.hasOwnProperty.call(collectedClasses, collected)) {
+      var desc = collectedClasses[collected];
+      Isolate.$defineClass(collected, desc.super, desc[''], desc);
+    }
+  }
   var pendingClasses = Isolate.$pendingClasses;
   Isolate.$pendingClasses = {};
   var finishedClasses = {};
@@ -5414,6 +6604,7 @@ Isolate.$finishClasses = function() {
       newPrototype.constructor = constructor;
       var hasOwnProperty = Object.prototype.hasOwnProperty;
       for (var member in prototype) {
+        if (member == '' || member == 'super') continue;
         if (hasOwnProperty.call(prototype, member)) {
           newPrototype[member] = prototype[member];
         }
@@ -5440,3 +6631,5 @@ Isolate.$finishIsolateConstructor = function(oldIsolate) {
   return newIsolate;
 };
 }
+
+//@ sourceMappingURL=.map

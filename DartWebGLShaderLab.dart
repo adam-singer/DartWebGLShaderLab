@@ -36,11 +36,20 @@ class DartWebGLShaderLab {
   var animation;
   var timer;
   // texture size (must be powers of two, remember 2048x1024 flat could also be a 128x128x128 voxel)
-  var sizeX = 1024;
-  var sizeY = 1024; // 2048x1024 flat or 128x128x128 cube
+//  var sizeX = 1024;
+//  var sizeY = 1024; // 2048x1024 flat or 128x128x128 cube
+//  // viewport size
+//  var viewX = 1024;
+//  var viewY = 1024;
+  
+  var sizeX = 128;
+  var sizeY = 128; // 2048x1024 flat or 128x128x128 cube
   // viewport size
-  var viewX = 1024;
-  var viewY = 1024;
+  var viewX = 128;
+  var viewY = 128;
+  
+
+  
   
   DartWebGLShaderLab() {
   }
@@ -112,22 +121,36 @@ class DartWebGLShaderLab {
     gl.vertexAttribPointer(aTexLoc, 2, WebGLRenderingContext.FLOAT, false, 0, texCoordOffset);
     
     
-    var noisepixels = [];
-    var pixels = [];
-    for ( var i = 0; i < sizeX; i++) {
-      for ( var j = 0; j < sizeY; j++) {
-        noisepixels.add(Math.random() * 255);
-        noisepixels.add(Math.random() * 255);
-        noisepixels.add(Math.random() * 255);
-        noisepixels.add(255);
-        
-        pixels.add(0);
-        pixels.add(0);
-        pixels.add(0);
-        pixels.add(255);
-      }
-    }
+//    var noisepixels = [];
+//    var pixels = [];
+//    for ( var i = 0; i < sizeX; i++) {
+//      for ( var j = 0; j < sizeY; j++) {
+//        noisepixels.add(Math.random() * 255);
+//        noisepixels.add(Math.random() * 255);
+//        noisepixels.add(Math.random() * 255);
+//        noisepixels.add(255);
+//        
+//        pixels.add(0);
+//        pixels.add(0);
+//        pixels.add(0);
+//        pixels.add(255);
+//      }
+//    }
     
+        final int requiredSize = sizeX * sizeY * 4;
+        var noisepixels = new Uint8Array(requiredSize);
+        var pixels = new Uint8Array(requiredSize);
+        for (int i = 0; i < requiredSize; i += 4) {
+          noisepixels[i] = (Math.random() * 255).toInt();
+          noisepixels[i + 1] = (Math.random() * 255).toInt();
+          noisepixels[i + 2] = (Math.random() * 255).toInt();
+          noisepixels[i + 3] = 255;
+    
+          pixels[i] = 0;
+          pixels[i + 1] = 0;
+          pixels[i + 2] = 0;
+          pixels[i + 3] = 255;
+        }
     /*
      * if (Math.random() > density) pixels.push(0, 0, 0, 0); else pixels.push(255, 0, 0, 0);
      */
@@ -332,8 +355,9 @@ class DartWebGLShaderLab {
     frames++;
   }
   
-  anim(int i) {
-    document.window.webkitRequestAnimationFrame(anim);
+  bool anim(int i) {
+    //document.window.webkitRequestAnimationFrame(anim);
+    window.requestAnimationFrame(anim);
     if (!halted) { 
       
       advance(); 
@@ -350,6 +374,7 @@ class DartWebGLShaderLab {
       watch.reset();
       //watch.start();
     }
+    
   }
   
 }
